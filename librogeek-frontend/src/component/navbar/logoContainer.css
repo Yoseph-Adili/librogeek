@@ -1,0 +1,60 @@
+.logo-container{
+    height: 70%;
+    display: flex;
+    align-items: flex-end;
+    /*gap: 0.2rem;*/
+}
+
+.logo{
+    height: 100%;
+    margin-right: 0.2rem;
+    z-index: 2;
+}
+.logo svg{
+    height: 100%;
+    width: auto;
+}
+.logo-text{
+
+    z-index: 0;
+    font-family: var(--body-text);
+    font-size: 1.8rem;
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+    transform: translateY(9px) translateX(0);
+    transition: all 0.5s ease;
+}
+.logo-container.active .logo-text:nth-of-type(1){
+    transform: translateY(9px) translateX(-100%);
+    opacity: 0;
+
+}
+.logo-container.active .logo-text:nth-of-type(2){
+    transform: translateY(9px) translateX(-200%);
+    opacity: 0;
+}
+.logo-container.active .logo-text:nth-of-type(3){
+    transform: translateY(9px) translateX(-300%);
+    opacity: 0;
+}
+.logo-container.active .logo-text:nth-of-type(4){
+    transform: translateY(9px) translateX(-400%);
+    opacity: 0;
+}
+.logo-container.active .logo-text:nth-of-type(5){
+    transform: translateY(9px) translateX(-500%);
+    opacity: 0;
+}
+.logo-container.active .logo-text:nth-of-type(6){
+    transform: translateY(9px) translateX(-600%);
+    opacity: 0;
+}
+.logo-container.active .logo-text:nth-of-type(7){
+    transform: translateY(9px) translateX(-700%);
+    opacity: 0;
+}
+.logo-container.active .logo-text:nth-of-type(8){
+    transform: translateY(9px) translateX(-800%);
+    opacity: 0;
+}

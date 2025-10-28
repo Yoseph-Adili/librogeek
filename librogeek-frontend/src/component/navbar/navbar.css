@@ -1,0 +1,43 @@
+header{
+    height: 70px;
+    width: 100%;
+}
+nav{
+    height: 100%;
+    width: 90%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+nav ul{
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+li a{
+    text-decoration: none;
+    font-family: var(--body-text);
+    font-size: 1.5rem;
+}
+.change-theme-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 1.5rem;
+}
+.change-theme-container svg{
+    height: 32px;
+    width: 32px;
+}
+.change-theme-button{
+    cursor: pointer;
+    position: relative;
+    height: 32px;
+    width: 32px;
+}
+.change-theme-button svg{
+    position: absolute;
+}
