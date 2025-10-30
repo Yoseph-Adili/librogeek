@@ -1,0 +1,16 @@
+.intro-section{
+    width: 100%;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+}
+.home-logo-container{
+    width: 40vw;
+    height: 200vh;
+
+}
+.home-logo{
+    position: sticky;
+    top: 100px;
+    width: 100%;
+}

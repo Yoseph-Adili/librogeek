@@ -5,6 +5,7 @@ header {
     background: transparent;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    z-index: 99;
 }
 
 nav {
