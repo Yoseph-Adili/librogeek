@@ -30,7 +30,11 @@
   color:var(--text-color);
   transition: all 0.1s ease;
 }
+html {
+  scroll-behavior: smooth;
+}
 body{
   height: auto;
   overflow-x: hidden;
+  background: var(--background-color);
 }

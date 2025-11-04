@@ -1,32 +1,39 @@
 // CanvasSection.jsx
 import {useEffect, useRef} from "react";
 import BrainCanvas from "./brainCanvas.js";
-import brainImg from '/brain.jpg';
 
 const CanvasSection = () => {
     const ref = useRef(null);
     const engineRef = useRef(null);
 
     useEffect(() => {
-        const root = getComputedStyle(document.documentElement);
-        let color = root.getPropertyValue('--text-color').trim();
-        console.log(color)
         const canvasElement = ref.current;
         if (!canvasElement) return;
 
-        engineRef.current = new BrainCanvas(canvasElement);
+        const engine = new BrainCanvas(canvasElement);
+        engineRef.current = engine;
+        engine.resize();
 
-        engineRef.current.start();
+        const handleResize = () => {
+            engine.resize();
+            engine.createParticlesFromImage();
+        };
+
+        window.addEventListener('resize', handleResize);
+        engine.start();
+
         return () => {
-            engineRef.current.stop();
+            window.removeEventListener('resize', handleResize);
+            engine.stop();
             engineRef.current = null;
         };
     }, []);
 
+
     return (
-        <div style={{width: "100%", height: "100vh"}}>
-            <canvas ref={ref} style={{width: "100%", height: "100%"}}/>
-        </div>
+
+        <canvas ref={ref} style={{width: "100%", height: "100%"}}/>
+
     );
 };
 

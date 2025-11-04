@@ -42,6 +42,16 @@
     justify-content: flex-end;
     max-width: 1000px;
 }
+.book-card{
+    transform: translateY(50%) scale(1.5) ;
+    opacity: 0;
+    transition: transform 0.5s ease-out;
+}
+.book-card.visible{
+    transform: translateY(0%) scale(1) ;
+    opacity: 1;
+
+}
 
 .book-card a {
     transform-style: preserve-3d;

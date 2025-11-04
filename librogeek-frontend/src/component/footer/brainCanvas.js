@@ -1,4 +1,5 @@
 import Particle from "./particle.js";
+import './footer.css'
 
 export default class BrainCANVAS {
     constructor(canvas) {
@@ -6,9 +7,11 @@ export default class BrainCANVAS {
         this.ctx = canvas.getContext('2d');
         this.particles = []
 
-        this.resize();
-        window.addEventListener('resize', () => this.resize());
-
+        this.mouse={
+            x:null,
+            y:null,
+            radius:100
+        }
 
         this.image = new Image();
         this.image.src = 'brain.jpg'
@@ -18,21 +21,33 @@ export default class BrainCANVAS {
             this.imageLoaded = true;
             this.createParticlesFromImage();
         };
-        const root = getComputedStyle(document.documentElement);
-        this.particleColor = root.getPropertyValue('--text-color').trim();
+
+        window.addEventListener('mousemove', (e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            this.mouse.x = e.clientX - rect.left;
+            this.mouse.y = e.clientY - rect.top;
+        });
+
+
+        window.addEventListener('mouseout', () => {
+            this.mouse.x = null;
+            this.mouse.y = null;
+        });
 
     }
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        const root = getComputedStyle(document.documentElement);
-        const color = root.getPropertyValue('--text-color').trim();
+        const app = document.querySelector('.app');
+        const style = getComputedStyle(app);
+        const color = style.getPropertyValue('--text-color').trim();
+
         const time = performance.now() / 1000
-        console.log(color)
+
         this.particles.forEach((p) => {
             p.color=color;
-            p.update(time)
+            p.update(time,this.mouse)
             p.draw(this.ctx)
         })
 
@@ -82,7 +97,7 @@ export default class BrainCANVAS {
                 if (brightness < threshold) {
                     const px = offsetX + x * scale;
                     const py = offsetY + y * scale;
-                    this.particles.push(new Particle(px, py, 1.5, this.particleColor));
+                    this.particles.push(new Particle(px, py, 1.5));
                 }
             }
         }

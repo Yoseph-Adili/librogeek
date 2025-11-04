@@ -1,7 +1,7 @@
-import {useState} from 'react'
+import {useState,useEffect} from 'react'
 import './App.css'
 import Navbar from "./component/navbar/nav.jsx";
-import {Routes, Route} from "react-router-dom";
+import {Routes, Route,useLocation } from "react-router-dom";
 import Home from "./pages/home.jsx";
 import Books from "./pages/books.jsx";
 import About from "./pages/about.jsx";
@@ -10,12 +10,12 @@ import Footer from "./component/footer/footer.jsx";
 
 function App() {
     let lightTheme;
-    const theme=()=>{
+    const theme = () => {
         if (localStorage.key("theme")) {
-             lightTheme = localStorage.key("theme") ? localStorage.getItem("theme") === "light" : true;
+            lightTheme = localStorage.key("theme") ? localStorage.getItem("theme") === "light" : true;
             return lightTheme;
         } else {
-            const prefers=window.matchMedia("(prefers-color-scheme: light)");
+            const prefers = window.matchMedia("(prefers-color-scheme: light)");
             if (prefers.matches) {
                 lightTheme = true;
             } else {
@@ -25,20 +25,32 @@ function App() {
         }
     }
 
+
     return (
         <div className={`app ${theme() ? ' light-theme' : ''}`}>
+            <ScrollToTop></ScrollToTop>
             <Navbar></Navbar>
             <main>
                 <Routes>
-                   <Route path="/" element={<Home/>}></Route>
-                   <Route path="/books" element={<Books/>}></Route>
-                   <Route path="/about" element={<About/>}></Route>
-                   <Route path="/contact" element={<Contact/>}></Route>
+                    <Route path="/" element={<Home/>}></Route>
+                    <Route path="/books" element={<Books/>}></Route>
+                    <Route path="/about" element={<About/>}></Route>
+                    <Route path="/contact" element={<Contact/>}></Route>
                 </Routes>
             </main>
             <Footer></Footer>
         </div>
     )
+}
+
+const ScrollToTop = () => {
+    const {pathname} = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
+
+    return null;
 }
 
 export default App

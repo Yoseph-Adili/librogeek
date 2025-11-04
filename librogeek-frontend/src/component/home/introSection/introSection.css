@@ -38,10 +38,20 @@
 .intro-text-left,
 .intro-text-right {
     width: 30%;
-
-
+    transition: all 1s ease;
+    opacity: 0;
 }
-
+.intro-text-left{
+    transform: translateX(-100%);
+}
+.intro-text-right{
+    transform: translateX(100%);
+}
+.intro-text-left.visible,
+.intro-text-right.visible {
+    transform: translateX(0%);
+    opacity: 1;
+}
 .intro-text-left h2,
 .intro-text-right h2 {
     font-family: var(--body-text);

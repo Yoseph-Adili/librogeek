@@ -1,8 +1,32 @@
-.app{
+.app {
     background-color: var(--background-color);
     color: var(--text-color);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     /*min-height: 200vh;*/
     /*overflow-x: hidden;*/
     transition: all 0.7s ease-in-out;
+}
+
+/*@keyframes comeFromBottom {*/
+/*    from {*/
+/*        transform: translateY(100%);*/
+/*    }*/
+/*    to {*/
+/*        transform: translateY(0);*/
+/*    }*/
+/*}*/
+
+.customize-title {
+    overflow: hidden;
+}
+
+.customize-title span {
+    display: inline-block;
+    transform: translateY(-100%);
+    transition: transform 0.5s ease-out;
+}
+
+.customize-title.visible span {
+    transform: translateY(0);
+    transition-delay: calc(var(--i) * 0.05s);
 }

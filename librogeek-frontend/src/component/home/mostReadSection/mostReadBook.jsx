@@ -1,5 +1,5 @@
 import {Link} from "react-router-dom";
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 
 const MostReadBook = ({book_cover, book_link}) => {
     const [coverColor, setCoverColor] = useState("");
@@ -7,7 +7,49 @@ const MostReadBook = ({book_cover, book_link}) => {
     const [rotateX, setRotateX] = useState(0);
     const [rotateY, setRotateY] = useState(0);
 
+    const ref=useRef(null)
+    const [visible, setVisible] = useState(false)
+
     useEffect(() => {
+        getBookColor()
+        const observe = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setVisible(true)
+                    observe.disconnect()
+                }
+            },
+            {
+                threshold: 0.1
+            }
+        )
+        if (ref.current) observe.observe(ref.current);
+
+        return () => observe.disconnect()
+
+
+    }, [book_cover]);
+
+    const handleMouseMove = (e) => {
+
+        setRotateY(rotateY)
+        setRotateX(rotateX)
+        const rect = e.currentTarget.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const xPct = (mouseX / width) - 0.5;
+        const yPct = (mouseY / height) - 0.5;
+
+        const rotateXValue = -yPct * 45;
+        const rotateYValue = xPct * 45;
+        setRotateX(rotateXValue);
+        setRotateY(rotateYValue);
+
+    }
+
+    function getBookColor() {
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
         const img = new Image();
@@ -33,29 +75,8 @@ const MostReadBook = ({book_cover, book_link}) => {
             const brightness = (r * 299 + g * 587 + b * 114) / 1000;
             const textColor = brightness > 128 ? "black" : "white";
             setCoverTextColor(textColor);
-
-        };
-    }, [book_cover]);
-
-    const handleMouseMove = (e) => {
-
-        setRotateY(rotateY)
-        setRotateX(rotateX)
-        const rect = e.currentTarget.getBoundingClientRect();
-        const width = rect.width;
-        const height = rect.height;
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-        const xPct = (mouseX / width) - 0.5;
-        const yPct = (mouseY / height) - 0.5;
-
-        const rotateXValue = -yPct * 45;
-        const rotateYValue = xPct * 45;
-        setRotateX(rotateXValue);
-        setRotateY(rotateYValue);
-
+        }
     }
-
 
     function resetRotation() {
         setRotateX(0);
@@ -74,7 +95,7 @@ const MostReadBook = ({book_cover, book_link}) => {
         }
     }
 
-    return (<div className="book-card">
+    return (<div ref={ref} className={`book-card ${visible ? 'visible' : ''}`}>
         <Link
             to={book_link}
             onMouseEnter={() => changeBackgroundColor(true)}

@@ -5,6 +5,7 @@ export default class Particle {
         this.r = r;
         this.color = color
         this.baseY = this.y;
+        this.baseX= this.x;
         this.phase = Math.random() * Math.PI * 2
 
         this.baseR = r
@@ -17,7 +18,7 @@ export default class Particle {
         ctx.fill();
     }
 
-    update(time) {
+    update(time, mouse) {
         const speed = 1.2;
         const amplitude = 5;
         this.y = this.baseY + Math.sin(time * speed + this.phase) * amplitude;
@@ -26,5 +27,23 @@ export default class Particle {
         // const rAmplitude = 0.3;
         // this.r = this.baseR * (1 + Math.sin(time * speed + this.phase) * rAmplitude);
 
+        if (mouse.x !== null && mouse.y !== null) {
+            const dx = this.x - mouse.x;
+            const dy = this.y - mouse.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < mouse.radius) {
+                const forceDirX = dx / dist;
+                const forceDirY = dy / dist;
+                const force = (mouse.radius - dist) / mouse.radius;
+                const displacement = force * 10;
+                this.x += forceDirX * displacement;
+                this.y += forceDirY * displacement;
+            } else {
+
+                this.x += (this.baseX - this.x) * 0.05;
+                this.y += (this.baseY - this.y) * 0.05;
+            }
+        }
     }
 }

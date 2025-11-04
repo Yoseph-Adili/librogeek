@@ -30,6 +30,13 @@
     width: 60%;
     display: flex;
     gap: 1rem;
+    opacity: 0;
+    transform: translateY(50%);
+    transition: all 1s ease;
+}
+.category-book.visible{
+    opacity: 1;
+    transform: translateY(0%);
 }
 
 .category-book a {
