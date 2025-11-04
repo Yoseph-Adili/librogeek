@@ -1,15 +1,17 @@
 import {Link} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useState, useEffect} from "react";
 
-export default function TopBook({cover_link = "", book_link = "", book_title = "Book Title", book_intro = "This is a brief introduction to the book."}) {
-    const [coverColor, setCoverColor] = useState("#FFFFFF");
-    const [coverTextColor , setCoverTextColor]=useState("#000000")
+const MostReadBook = ({book_cover, book_link}) => {
+    const [coverColor, setCoverColor] = useState("");
+    const [coverTextColor, setCoverTextColor] = useState("#141414")
+    const [rotateX, setRotateX] = useState(0);
+    const [rotateY, setRotateY] = useState(0);
 
     useEffect(() => {
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
         const img = new Image();
-        img.src = cover_link;
+        img.src = book_cover;
         img.crossOrigin = "Anonymous";
         img.onload = function () {
             canvas.width = img.width;
@@ -33,11 +35,66 @@ export default function TopBook({cover_link = "", book_link = "", book_title = "
             setCoverTextColor(textColor);
 
         };
-    }, [cover_link]);
-    return (
-        <Link to={book_link} className="book-container">
-            <div className="book">
-                <img src={cover_link} alt=""/>
+    }, [book_cover]);
+
+    const handleMouseMove = (e) => {
+
+        setRotateY(rotateY)
+        setRotateX(rotateX)
+        const rect = e.currentTarget.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const xPct = (mouseX / width) - 0.5;
+        const yPct = (mouseY / height) - 0.5;
+
+        const rotateXValue = -yPct * 45;
+        const rotateYValue = xPct * 45;
+        setRotateX(rotateXValue);
+        setRotateY(rotateYValue);
+
+    }
+
+
+    function resetRotation() {
+        setRotateX(0);
+        setRotateY(0);
+    }
+
+    function changeBackgroundColor(active) {
+        const background = document.querySelector(".app");
+        if (active) {
+            background.style.backgroundColor = coverColor;
+            background.style.setProperty("--text-color", coverTextColor);
+
+        } else {
+            background.style.backgroundColor = "";
+            background.style.removeProperty("--text-color",)
+        }
+    }
+
+    return (<div className="book-card">
+        <Link
+            to={book_link}
+            onMouseEnter={() => changeBackgroundColor(true)}
+            onMouseLeave={() => {
+                changeBackgroundColor(false);
+                resetRotation();
+            }}
+            onMouseMove={handleMouseMove}
+            style={{
+                transform: `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`,
+            }}
+        >
+            <div
+                className="book-cover-background"
+                style={{
+                    background: coverColor
+                }}
+            >
+
+                <img src={book_cover} alt=""/>
                 <svg className="book-left" viewBox="0 0 58 449" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect width="100%" height="100%" fill={coverColor}/>
                     <path
@@ -56,7 +113,8 @@ export default function TopBook({cover_link = "", book_link = "", book_title = "
                     <line x1="27.5" y1="449" x2="27.5" y2="2.18557e-08" stroke="black"/>
                     <line x1="54.5" y1="449" x2="54.5" y2="2.18557e-08" stroke="black"/>
                 </svg>
-                <svg className="book-bottom" viewBox="0 0 281 59" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg className="book-bottom" viewBox="0 0 281 59" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
                     <rect width="100%" height="100%" fill="white"/>
                     <line x1="2.53526e-06" y1="0.5" x2="281" y2="0.5" stroke="black"/>
                     <line x1="2.53526e-06" y1="9.5" x2="281" y2="9.5" stroke="black"/>
@@ -77,10 +135,10 @@ export default function TopBook({cover_link = "", book_link = "", book_title = "
                     <line x1="2.53526e-06" y1="54.5" x2="281" y2="54.5" stroke="black"/>
                 </svg>
             </div>
-            <div className="book-info">
-                <h2>{book_title}</h2>
-                <p>{book_intro}</p>
-            </div>
+            <h4>→ Read</h4>
         </Link>
-    );
-}
+
+    </div>);
+};
+
+export default MostReadBook;

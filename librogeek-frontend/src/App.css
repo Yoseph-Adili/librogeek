@@ -3,5 +3,6 @@
     color: var(--text-color);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     /*min-height: 200vh;*/
-    overflow-x: hidden;
+    /*overflow-x: hidden;*/
+    transition: all 0.7s ease-in-out;
 }

@@ -6,6 +6,7 @@ import Home from "./pages/home.jsx";
 import Books from "./pages/books.jsx";
 import About from "./pages/about.jsx";
 import Contact from "./pages/contact.jsx";
+import Footer from "./component/footer/footer.jsx";
 
 function App() {
     let lightTheme;
@@ -35,6 +36,7 @@ function App() {
                    <Route path="/contact" element={<Contact/>}></Route>
                 </Routes>
             </main>
+            <Footer></Footer>
         </div>
     )
 }

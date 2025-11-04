@@ -191,23 +191,23 @@
 
     width: 15vw;
     height: 100%;
-    transform: rotateY(270deg) translateZ(7.5vw);
+    transform: rotateY(270deg) translateZ(7.5vw) translateX(-10px);
 }
 
 .book .book-right {
     width: 15vw;
     height: 100%;
-    transform: rotateY(90deg) translateZ(7.5vw);
+    transform: rotateY(90deg) translateZ(7.5vw) translateX(10px);
 }
 
 .book .book-top {
     width: 15vw;
     height: 24vw;
-    transform: rotateX(90deg) translateZ(12vw);
+    transform: rotateX(90deg) translateZ(12vw) translateY(-10px);
 }
 
 .book .book-bottom {
     width: 15vw;
     height: 24vw;
-    transform: rotateX(270deg) rotateZ(0deg) translateZ(12vw);
+    transform: rotateX(270deg) rotateZ(0deg) translateZ(12vw) translateY(10px);
 }

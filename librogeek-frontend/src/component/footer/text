@@ -1,0 +1,199 @@
+// BrainCanvas.js
+export default class BrainCanvas {
+    /**
+     * new BrainCanvas(canvasElement, imageSrc, options)
+     * options:
+     *   - sample = 4             // 采样步长（像素），值越大粒子越少
+     *   - threshold = 150        // 亮度阈值，低于此值的像素会产生粒子
+     *   - particleRadius = 1.4   // 粒子原始半径
+     *   - breathAmp = 4          // 呼吸振幅（像素偏移）
+     *   - breathSpeed = 1.2      // 呼吸速度（频率）
+     *   - maxParticles = 5000    // 限制粒子数量
+     */
+    constructor(canvas, imageSrc, options = {}) {
+        if (!canvas) throw new Error("Canvas element required");
+        this.canvas = canvas;
+        this.ctx = canvas.getContext("2d");
+        this.imageSrc = imageSrc;
+
+        this.opt = Object.assign({
+            sample: 4,
+            threshold: 140,
+            particleRadius: 1.4,
+            breathAmp: 4,
+            breathSpeed: 1.2,
+            maxParticles: 4000,
+            centerAlign: true,
+            color:"white",
+        }, options);
+
+        this.particles = [];
+        this._animId = null;
+        this._time = 0;
+        this._dpr = Math.max(1, window.devicePixelRatio || 1);
+
+        this._onResize = this._onResize.bind(this);
+        this._tick = this._tick.bind(this);
+        this._image = new Image();
+        this._image.crossOrigin = "anonymous";
+        this._imageLoaded = false;
+
+        // load image
+        this._image.onload = () => {
+            this._imageLoaded = true;
+            this._createParticlesFromImage();
+        };
+        this._image.onerror = (e) => {
+            console.error("BrainCanvas image load error:", e);
+        };
+        this._image.src = this.imageSrc;
+
+        // initial canvas sizing
+        this.resize();
+        window.addEventListener("resize", this._onResize);
+    }
+
+
+    resize() {
+        const w = this.canvas.clientWidth || this.canvas.width;
+        const h = this.canvas.clientHeight || this.canvas.height;
+        this._dpr = Math.max(1, window.devicePixelRatio || 1);
+        this.canvas.width = Math.floor(w * this._dpr);
+        this.canvas.height = Math.floor(h * this._dpr);
+        this.canvas.style.width = w + "px";
+        this.canvas.style.height = h + "px";
+        this.ctx.setTransform(this._dpr, 0, 0, this._dpr, 0, 0); // scale drawing to CSS pixels
+        // after resize we may want to recenter particles if image loaded
+        if (this._imageLoaded) this._createParticlesFromImage();
+    }
+
+    destroy() {
+        this.stop();
+        window.removeEventListener("resize", this._onResize);
+        this.particles.length = 0;
+    }
+
+    // 开始动画
+    start() {
+        if (this._animId) return;
+        this._lastFrame = performance.now();
+        this._animId = requestAnimationFrame(this._tick);
+    }
+
+    // 停止动画
+    stop() {
+        if (this._animId) {
+            cancelAnimationFrame(this._animId);
+            this._animId = null;
+        }
+    }
+
+    // 私有：窗口 resize 回调
+    _onResize() {
+        this.resize();
+    }
+
+    // 私有：把图片像素采样成粒子
+    _createParticlesFromImage() {
+        const img = this._image;
+        if (!img || !this._imageLoaded) return;
+
+        // 创建临时画布把图片绘制进去以读取像素
+        const tmp = document.createElement("canvas");
+        const tw = img.width, th = img.height;
+        tmp.width = tw;
+        tmp.height = th;
+        const tctx = tmp.getContext("2d");
+        tctx.clearRect(0, 0, tw, th);
+        tctx.drawImage(img, 0, 0, tw, th);
+
+        const imageData = tctx.getImageData(0, 0, tw, th);
+        const data = imageData.data;
+        const sample = Math.max(1, Math.floor(this.opt.sample));
+        const threshold = this.opt.threshold;
+        const maxParticles = this.opt.maxParticles;
+
+        this.particles = [];
+
+        // 计算图片在画布上的起始位置（居中对齐）
+        const canvasW = this.canvas.width / this._dpr;
+        const canvasH = this.canvas.height / this._dpr;
+        const scale = Math.min(canvasW / tw, canvasH / th) * 0.9; // 90% 填充
+        const imgDrawW = tw * scale;
+        const imgDrawH = th * scale;
+        const offsetX = this.opt.centerAlign ? (canvasW - imgDrawW) / 2 : 0;
+        const offsetY = this.opt.centerAlign ? (canvasH - imgDrawH) / 2 : 0;
+
+
+        for (let y = 0; y < th; y += sample) {
+            for (let x = 0; x < tw; x += sample) {
+                const idx = (y * tw + x) * 4;
+                const r = data[idx], g = data[idx + 1], b = data[idx + 2], a = data[idx + 3];
+
+                const brightness = (r + g + b) / 3;
+
+                if (a > 128 && brightness < threshold) {
+
+                    const bx = offsetX + x * scale;
+                    const by = offsetY + y * scale;
+
+                    this.particles.push({
+                        baseX: bx,
+                        baseY: by,
+                        x: bx,
+                        y: by,
+                        r: this.opt.particleRadius,
+                        phase: Math.random() * Math.PI * 2,
+                        seed: Math.random() * 1000
+                    });
+                    if (this.particles.length >= maxParticles) break;
+                }
+            }
+            if (this.particles.length >= maxParticles) break;
+        }
+
+        // console.log("particles created", this.particles.length);
+    }
+
+    // 动画帧主循环
+    _tick(now) {
+        this._animId = null; // clear then set below so start() works
+        // 时间累加（秒）
+        const dt = (now - (this._lastFrame || now)) / 1000;
+        this._lastFrame = now;
+        this._time += dt;
+
+        this._drawFrame(this._time);
+
+        this._animId = requestAnimationFrame(this._tick);
+    }
+
+
+    _drawFrame(timeSec) {
+        const ctx = this.ctx;
+        ctx.clearRect(0, 0, this.canvas.width / this._dpr, this.canvas.height / this._dpr);
+
+        const breathAmp = this.opt.breathAmp;
+        const breathSpeed = this.opt.breathSpeed;
+        const particles = this.particles;
+
+        for (let i = 0, len = particles.length; i < len; i++) {
+            const p = particles[i];
+
+            const phase = timeSec * breathSpeed + p.phase;
+
+            const offset = Math.sin(phase) * breathAmp * (0.5 + 0.5 * Math.sin(p.seed));
+            p.x = p.baseX;
+            p.y = p.baseY + offset;
+
+            // 可选：粒子大小随呼吸变化
+            const r = p.r * (0.8 + 0.2 * Math.cos(phase * 1.5 + p.seed));
+
+
+            ctx.beginPath();
+            ctx.fillStyle = this.opt.color; // 白色粒子（你可以改颜色/渐变）
+            ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+}
