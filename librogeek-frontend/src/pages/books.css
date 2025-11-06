@@ -1,0 +1,215 @@
+.books-page-container {
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 100px;
+    position: relative;
+    display: flex;
+}
+
+.filter-option-container {
+    width: 30%;
+    position: sticky;
+    top: 100px;
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--body-text);
+    padding: 0 4%;
+}
+@keyframes comeFromLeft {
+    from{
+        transform: translateX(30%);
+        opacity: 0;
+    }
+    to{
+        transform: translateX(0%);
+        opacity: 1;
+    }
+}
+.filter-option-container > * {
+    animation: comeFromLeft 0.7s linear forwards;
+    opacity: 0;
+    animation-delay: calc(var(--i) * 0.05s);
+}
+.filter-option-container form {
+    width: 100%;
+}
+
+.filter-option-container form input {
+    background: var(--background-color);
+    border: 1px solid var(--text-color);
+    font-size: 2rem;
+
+    padding-left: 0.5rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+
+}
+
+.filter-option-container .customize-title {
+    font-size: 6rem;
+    animation: unset;
+    opacity: 1;
+}
+
+.filter-option-container > p {
+
+    font-size: 2rem;
+    position: relative;
+    display: inline;
+    width: 100px;
+    cursor: pointer;
+}
+
+.filter-option-container > p:after {
+    content: ">>";
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+}
+
+.filter-option-container > p:hover:after {
+    right: -20px;
+}
+
+.filter-option-container > div {
+    font-size: 2rem;
+    margin-top: 3rem;
+}
+
+.filter-option-container > div p {
+    border-bottom: 1px solid var(--text-color);
+}
+
+.filter-option-container > div div {
+    padding-top: 1rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-option-container > div span {
+    border: 1px solid var(--text-color);
+    padding: 0 1rem;
+    cursor: pointer;
+    transition: all 0.3s linear;
+}
+
+.filter-option-container > div span:hover,
+.filter-option-container > div span.selected {
+    color: var(--background-color);
+    background: var(--text-color);
+}
+
+.list-book-style {
+    display: flex;
+    gap: 1rem;
+}
+
+.list-book-style svg {
+    cursor: pointer;
+}
+
+
+.books-container {
+    width: 70%;
+    margin-left: auto;
+    padding: 0 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    animation: none;
+    transition: all 0.6s ease;
+    opacity: 1;
+}
+
+
+.list-book-container {
+    width: 90%;
+    display: flex;
+    margin: 0 auto;
+    justify-content: space-between;
+    animation: comeFromBottom 0.7s linear forwards;
+    opacity: 0;
+    animation-delay: calc(var(--i) * 0.05s);
+}
+
+.list-book-container .list-book-text {
+    width: 70%;
+}
+
+.list-book-container .list-book-text h2 {
+    font-size: 2.5rem;
+    font-family: var(--title-text);
+}
+
+.list-book-container .list-book-text h2 a {
+    text-decoration: none;
+}
+
+.list-book-container .list-book-text p {
+    font-family: var(--body-text);
+    font-size: 2rem;
+}
+
+.list-book-container .list-book-cover {
+    width: 25%;
+}
+
+.list-book-container .list-book-cover a {
+    width: 100%;
+    height: 100%;
+}
+
+.list-book-container .list-book-cover a img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.books-container.block {
+
+    opacity: 1;
+}
+@keyframes comeFromBottom {
+    from{
+        transform: translateY(30%);
+        opacity: 0;
+    }
+    to{
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}
+.books-container.block .list-book-container {
+    width: 15rem;
+    height: 30rem;
+    flex-direction: column-reverse;
+    margin: 0;
+}
+
+.books-container.block .list-book-container .list-book-cover {
+    width: 100%;
+}
+
+.books-container.block .list-book-container .list-book-text {
+    width: 100%;
+}
+
+.books-container.block .list-book-container .list-book-text h2 {
+    font-size: 1.5rem;
+    font-family: var(--title-text);
+    white-space: nowrap; /* Prevents wrapping */
+    overflow: hidden; /* Hides overflowing text */
+    text-overflow: ellipsis;
+}
+
+.books-container.block .list-book-container .list-book-text p {
+    font-size: 1.5rem;
+    width: 100%;
+    white-space: nowrap; /* Prevents wrapping */
+    overflow: hidden; /* Hides overflowing text */
+    text-overflow: ellipsis;
+}

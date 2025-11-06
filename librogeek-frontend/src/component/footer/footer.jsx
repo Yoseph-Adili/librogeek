@@ -5,7 +5,7 @@ import Logo from "../logo.jsx";
 const Footer = () => {
     return (
 
-        <footer>
+        <footer id="footer">
             <BrainCanvas></BrainCanvas>
             <div className="footer-in">
                 <div className="footer-left-menu">

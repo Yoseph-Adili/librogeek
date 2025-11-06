@@ -3,7 +3,7 @@ import "./mostReadBook.css"
 const MostReadSection = () => {
 
     return (
-        <section className="most-read-section">
+        <section className="most-read-section" id="most-read-section">
             <h2>Most Read Books</h2>
             <div className="most-read-books-container">
                 <MostReadBook book_cover={"/book-example.png"}/>

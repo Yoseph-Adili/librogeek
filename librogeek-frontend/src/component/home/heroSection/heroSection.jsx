@@ -5,7 +5,7 @@ import TopBook from "./topbook.jsx";
 
 const HeroSection = () => {
     return (
-        <section className="hero-section">
+        <section className="hero-section" id="hero-section">
             <TopBook
                 cover_link={"/book-example2.png"}
                 book_link={"/book"}

@@ -86,11 +86,11 @@ const MostReadBook = ({book_cover, book_link}) => {
     function changeBackgroundColor(active) {
         const background = document.querySelector(".app");
         if (active) {
-            background.style.backgroundColor = coverColor;
+            background.style.setProperty("--background-color", coverColor);
             background.style.setProperty("--text-color", coverTextColor);
 
         } else {
-            background.style.backgroundColor = "";
+            background.style.removeProperty("--background-color",)
             background.style.removeProperty("--text-color",)
         }
     }

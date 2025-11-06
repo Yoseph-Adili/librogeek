@@ -12,6 +12,17 @@ const IntroSection = () => {
     const [rightVisible, setRightVisible] = useState(false);
 
     useEffect(() => {
+
+        const handleScroll = () => {
+            if (logoRef.current) {
+                const rect = logoRef.current.getBoundingClientRect();
+
+                if (!active && rect.top < 0) {
+                    setActive(true);
+                }
+            }
+        };
+
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach(entry => {
@@ -21,6 +32,14 @@ const IntroSection = () => {
                     if (entry.target === rightRef.current) {
                         if (entry.isIntersecting) setRightVisible(true);
                     }
+                    if (entry.target === logoRef.current) {
+                        if (entry.isIntersecting) {
+                            setActive(true)
+                        } else {
+                            setActive(false)
+                        }
+
+                    }
                 });
             },
             {threshold: 0.2}
@@ -28,12 +47,14 @@ const IntroSection = () => {
 
         if (leftRef.current) observer.observe(leftRef.current);
         if (rightRef.current) observer.observe(rightRef.current);
+        if (logoRef.current) observer.observe(logoRef.current);
 
+        window.addEventListener('scroll', handleScroll);
         return () => observer.disconnect();
     }, []);
 
     return (
-        <section className="intro-section">
+        <section className="intro-section" id="intro-section">
             <div className="intro-container">
                 <div ref={leftRef} className={`intro-text-left ${leftVisible ? "visible" : ""}`}>
                     <h2><span></span>Libro</h2>
@@ -46,7 +67,7 @@ const IntroSection = () => {
                     <p>We build a reading platform so intuitive that engagement grows naturally — readers stay longer,
                         explore more titles, and turn one session into a lasting reading habit.</p>
                     <p>“Once you learn
-                    to read, you will be forever free.” — Frederick Douglass</p>
+                        to read, you will be forever free.” — Frederick Douglass</p>
                     <h2>Geek<span></span></h2>
                 </div>
             </div>

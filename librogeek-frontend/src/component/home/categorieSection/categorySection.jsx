@@ -3,7 +3,7 @@ import Category from "./category.jsx";
 
 const CategorySection = () => {
     return (
-        <section className="category-section">
+        <section className="category-section" id="category-section">
             <Category category_tag={"books"}></Category>
             <Category category_tag={"books"}></Category>
         </section>

@@ -31,7 +31,7 @@ const CanvasSection = () => {
         return () => canvasEngine.stop();
     }, []);
     return (
-        <section className="canvas-section">
+        <section className="canvas-section" id="canvas-section">
             <canvas
                 ref={canvasRef}
                 width={window.innerWidth}

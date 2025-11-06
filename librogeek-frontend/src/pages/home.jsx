@@ -4,11 +4,12 @@ import "./home.css"
 import MostReadSection from "../component/home/mostReadSection/mostReadSection.jsx";
 import CategorySection from "../component/home/categorieSection/categorySection.jsx";
 import CanvasSection from "../component/home/canvasSection/canvasSection.jsx";
+import HomeSectionLinks from "../component/home/homeSectionLinks.jsx";
 
 const Home = () => {
     return (
         <div>
-
+            <HomeSectionLinks></HomeSectionLinks>
             <HeroSection></HeroSection>
             <IntroSection></IntroSection>
             <MostReadSection></MostReadSection>
