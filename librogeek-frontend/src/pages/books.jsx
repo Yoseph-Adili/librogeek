@@ -1,4 +1,4 @@
-import './books.css'
+import './css/books.css'
 import CustomizeTitle from "../component/cuntomizeTitle.jsx";
 import {useEffect, useState} from "react";
 import ListBook from "../component/books/listBook.jsx";
@@ -13,24 +13,28 @@ const Books = () => {
 
     const list_books = [
         {
+            book_id:1,
             book_link: "/book",
             book_info: "fgdgdf",
             book_title: "Book 1",
             book_cover: "/book-example.png",
         },
         {
+            book_id:2,
             book_link: "/book2",
             book_info: "Another intro Another intro Another intro Another intro Another intro",
             book_title: "Book 2 Another intro Another intro Another",
             book_cover: "/book-example2.png",
         },
         {
+            book_id:3,
             book_link: "/book3",
             book_info: "Third book intro",
             book_title: "Book 3",
             book_cover: "/book-example3.png",
         },
         {
+            book_id:4,
             book_link: "/book3",
             book_info: "Third book intro",
             book_title: "Book 3",
@@ -145,7 +149,8 @@ const Books = () => {
                 {
                     list_books.map((option, index) => (
                         <ListBook
-                            book_link={option.book_link} book_cover={option.book_cover}
+                            key={option.book_id}
+                            book_id={option.book_id} book_cover={option.book_cover}
                             book_title={option.book_title} book_info={option.book_info}
                             index={index}
                         >

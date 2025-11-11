@@ -2,19 +2,19 @@ import Particle from "./particle.js";
 import './footer.css'
 
 export default class BrainCANVAS {
-    constructor(canvas) {
+    constructor(canvas, image, sample = 2) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.particles = []
 
-        this.mouse={
-            x:null,
-            y:null,
-            radius:100
+        this.mouse = {
+            x: null,
+            y: null,
+            radius: 100
         }
-
+        this.sample=sample;
         this.image = new Image();
-        this.image.src = 'brain.jpg'
+        this.image.src = image
         this.imageLoaded = false;
 
         this.image.onload = () => {
@@ -46,8 +46,8 @@ export default class BrainCANVAS {
         const time = performance.now() / 1000
 
         this.particles.forEach((p) => {
-            p.color=color;
-            p.update(time,this.mouse)
+            p.color = color;
+            p.update(time, this.mouse)
             p.draw(this.ctx)
         })
 
@@ -76,7 +76,7 @@ export default class BrainCANVAS {
 
         const imageData = tmpCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
         const data = imageData.data;
-        const sample = 2;
+        const sample = this.sample;
         const threshold = 200;
 
         this.particles = [];

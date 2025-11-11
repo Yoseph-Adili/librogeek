@@ -1,4 +1,4 @@
-import './about.css'
+import './css/about.css'
 import CustomizeTitle from "../component/cuntomizeTitle.jsx";
 
 const About = () => {

@@ -1,6 +1,6 @@
 import HeroSection from "../component/home/heroSection/heroSection.jsx";
 import IntroSection from "../component/home/introSection/introSection.jsx";
-import "./home.css"
+import "./css/home.css"
 import MostReadSection from "../component/home/mostReadSection/mostReadSection.jsx";
 import CategorySection from "../component/home/categorieSection/categorySection.jsx";
 import CanvasSection from "../component/home/canvasSection/canvasSection.jsx";
@@ -18,5 +18,9 @@ const Home = () => {
         </div>
     );
 };
+
+import { API_URL } from "../config/api";
+fetch(`${API_URL}/users`).then(response => response.json()).then(data => console.log(data))
+console.log(API_URL)
 
 export default Home;

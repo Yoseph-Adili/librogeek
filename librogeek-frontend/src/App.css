@@ -1,7 +1,7 @@
 .app {
     background-color: var(--background-color);
     color: var(--text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
     /*min-height: 200vh;*/
     /*overflow-x: hidden;*/
     transition: all 0.7s ease-in-out;
@@ -21,6 +21,7 @@ main{
 
 .customize-title {
     overflow: hidden;
+
 }
 
 .customize-title span {
@@ -52,14 +53,14 @@ main{
 .animated-background.about{
     top: -100%;
     height: 300%;
-    width: 60%;
+    width: 70%;
     right: -30%;
     transform: rotateZ(-45deg);
 }
 .animated-background.contact{
     top: -35%;
     height: 300%;
-    width: 60%;
+    width: 70%;
     right: -10%;
     transform: rotateZ(45deg);
 }

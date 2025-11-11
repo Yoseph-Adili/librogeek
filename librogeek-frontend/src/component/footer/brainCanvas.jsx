@@ -10,7 +10,7 @@ const CanvasSection = () => {
         const canvasElement = ref.current;
         if (!canvasElement) return;
 
-        const engine = new BrainCanvas(canvasElement);
+        const engine = new BrainCanvas(canvasElement ,'brain.jpg');
         engineRef.current = engine;
         engine.resize();
 

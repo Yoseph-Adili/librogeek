@@ -1,4 +1,4 @@
-import './contact.css'
+import './css/contact.css'
 import CustomizeTitle from "../component/cuntomizeTitle.jsx";
 const Contact = () => {
     return (

@@ -1,7 +1,7 @@
 import {Link} from "react-router-dom";
 import {useState, useEffect, useRef} from "react";
 
-const MostReadBook = ({book_cover, book_link}) => {
+const MostReadBook = ({book_cover, book_id}) => {
     const [coverColor, setCoverColor] = useState("");
     const [coverTextColor, setCoverTextColor] = useState("#141414")
     const [rotateX, setRotateX] = useState(0);
@@ -97,7 +97,7 @@ const MostReadBook = ({book_cover, book_link}) => {
 
     return (<div ref={ref} className={`book-card ${visible ? 'visible' : ''}`}>
         <Link
-            to={book_link}
+            to={`books/${book_id}`}
             onMouseEnter={() => changeBackgroundColor(true)}
             onMouseLeave={() => {
                 changeBackgroundColor(false);

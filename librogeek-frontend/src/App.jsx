@@ -1,14 +1,17 @@
-import {useState,useEffect} from 'react'
+import {useState, useEffect} from 'react'
 import './App.css'
-import Navbar from "./component/navbar/nav.jsx";
-import {Routes, Route,useLocation } from "react-router-dom";
+
+import {Routes, Route, useLocation} from "react-router-dom";
 import Home from "./pages/home.jsx";
 import Books from "./pages/books.jsx";
 import About from "./pages/about.jsx";
 import Contact from "./pages/contact.jsx";
-import Footer from "./component/footer/footer.jsx";
-import AnimatedBackground from "./component/animatedBackground.jsx";
+
 import Profile from "./pages/profile.jsx";
+import Book from "./pages/book.jsx";
+import Login from "./pages/login.jsx";
+import MainLayout from "./layout/mainLayout.jsx";
+import SignUp from "./pages/signup.jsx";
 
 function App() {
     let lightTheme;
@@ -30,19 +33,22 @@ function App() {
 
     return (
         <div className={`app ${theme() ? ' light-theme' : ''}`}>
-            <ScrollToTop></ScrollToTop>
-            <Navbar></Navbar>
-            <main>
-                <Routes>
-                    <Route path="/" element={<Home/>}></Route>
-                    <Route path="/books" element={<Books/>}></Route>
-                    <Route path="/about" element={<About/>}></Route>
-                    <Route path="/contact" element={<Contact/>}></Route>
-                    <Route path="/profile" element={<Profile/>}></Route>
-                </Routes>
-            </main>
-            <AnimatedBackground></AnimatedBackground>
-            <Footer></Footer>
+            <ScrollToTop/>
+            <Routes>
+
+                <Route element={<MainLayout/>}>
+                    <Route path="/" element={<Home/>}/>
+                    <Route path="/books" element={<Books/>}/>
+                    <Route path="/books/:bookId" element={<Book/>}/>
+                    <Route path="/about" element={<About/>}/>
+                    <Route path="/contact" element={<Contact/>}/>
+                    <Route path="/profile/:id" element={<Profile/>}/>
+                </Route>
+
+
+                <Route path="/login" element={<Login/>}/>
+                <Route path="/signup" element={<SignUp/>}/>
+            </Routes>
 
         </div>
     )
@@ -53,6 +59,9 @@ const ScrollToTop = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        const background = document.querySelector(".app");
+        background.style.removeProperty("--background-color",)
+        background.style.removeProperty("--text-color",)
     }, [pathname]);
 
     return null;
