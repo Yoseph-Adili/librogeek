@@ -1,18 +1,25 @@
 import './css/profile.css'
 import {Link} from "react-router-dom";
-import {useState} from "react";
+import {useContext, useState} from "react";
+import {UserContext} from "../App.jsx";
 
 const Profile = () => {
     const [showOption, setShowOption] = useState("Bookshelf")
+    const { loginUser } = useContext(UserContext);
+
+    if (!loginUser) {
+        return <div className="profile-page-container">Loading...</div>;
+    }
+
     return (<div className={"profile-page-container"}>
         <div className="user-info-container">
             <div className="profile-photo">
                 <img src="/book-example.png" alt=""/>
             </div>
             <div className="user-info">
-                <h2>name</h2>
-                <p>@userName</p>
-                <p>email@mail.com</p>
+                <h2>{loginUser.name}</h2>
+                <p>@{loginUser.username}</p>
+                <p>{loginUser.email}</p>
                 <Link to={"/setting"}>Edit Profile Info</Link>
             </div>
         </div>

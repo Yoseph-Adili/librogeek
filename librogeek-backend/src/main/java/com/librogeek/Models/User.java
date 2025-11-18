@@ -16,6 +16,7 @@ public class User {
     private Integer user_id;
     @NotEmpty
     private String username;
+    private String profile_photo;
     private String name;
     @NotEmpty
     private String password;
@@ -28,9 +29,10 @@ public class User {
     public User() {
     }
 
-    public User(Integer user_id, String username, String name, String password, Role role, String email) {
+    public User(Integer user_id, String username, String profile_photo, String name, String password, Role role, String email) {
         this.user_id = user_id;
         this.username = username;
+        this.profile_photo = profile_photo;
         this.name = name;
         this.password = password;
         this.role = role;
@@ -59,6 +61,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getProfile_photo() {
+        return profile_photo;
+    }
+
+    public void setProfile_photo(String profile_photo) {
+        this.profile_photo = profile_photo;
     }
 
     public String getPassword() {

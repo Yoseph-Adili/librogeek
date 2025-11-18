@@ -1,5 +1,6 @@
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {Link} from "react-router-dom";
+import {UserContext} from "../../App.jsx";
 
 export default function ChangeThemeContainer() {
     let currentTheme = false;
@@ -45,20 +46,32 @@ export default function ChangeThemeContainer() {
     };
 
     const [menuOpen, setMenuOpen] = useState(false);
+    // const [user, setUser] = useState(null);
+    const { loginUser } = useContext(UserContext);
+
 
     function toggleMenu() {
         if (menuOpen) {
             setMenuOpen(false);
-        }
-        else {
+        } else {
             setMenuOpen(true);
         }
         console.log(menuOpen);
 
     }
 
+    function logout() {
+        fetch("/api/auth/logout", {
+            method: "POST",
+            credentials: "include"
+        }).then(() => {
+
+            window.location.href = "/";
+        });
+    }
+
     return (
-        <div  className="change-theme-container">
+        <div className="change-theme-container">
             <div className="change-theme-button" onClick={changeTheme}>
 
                 <svg className={`sun ${themeIcon ? '' : 'active'}`} viewBox="0 0 31 32"
@@ -92,14 +105,27 @@ export default function ChangeThemeContainer() {
                 </svg>
 
             </div>
-            <div className={`menu ${menuOpen ? 'active' : ''}`}>
-            <ul>
-                <li><Link to="/profile">Profile</Link></li>
-                <li><Link to="/setting">Settings</Link></li>
-                <li><Link to="/logout">Logout</Link></li>
-            </ul>
-            </div>
+            {loginUser ? (
+                <div className={`menu ${menuOpen ? 'active' : ''}`}>
+                    <ul>
+                        <li><Link to={`/profile/${loginUser.username}`}>Profile</Link></li>
+                        <li><Link to="/setting">Settings</Link></li>
+                        <li><Link to="/logout" onClick={logout}>Logout</Link></li>
+                    </ul>
+                </div>
+            ) : (
+                <div className={`menu ${menuOpen ? 'active' : ''}`}>
+                    <ul>
+                        <li><Link to="/login">Login</Link></li>
+                        <li><Link to="/register">Register</Link></li>
+
+                    </ul>
+                </div>
+            )
+
+            }
         </div>
     )
 }
+
 

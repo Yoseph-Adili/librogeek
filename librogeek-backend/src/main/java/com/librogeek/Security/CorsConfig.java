@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsConfig {
 
+
     @Bean
     public WebMvcConfigurer corsConfigurer(Dotenv dotenv) {
         String frontendHost = dotenv.get("HOST") +":"+ dotenv.get("FRONTEND_PORT");
@@ -23,4 +24,5 @@ public class CorsConfig {
             }
         };
     }
+
 }
