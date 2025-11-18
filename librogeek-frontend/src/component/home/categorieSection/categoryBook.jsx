@@ -1,5 +1,6 @@
 import {Link} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
+import {STATIC_URL} from "../../../config/api.js";
 
 const CategoryBook = ({book_cover, book_link, book_title, book_intro}) => {
     const ref = useRef(null);
@@ -22,7 +23,7 @@ const CategoryBook = ({book_cover, book_link, book_title, book_intro}) => {
     return (
         <div ref={ref} className={`category-book ${visible ? "visible" : ""}`}>
             <Link to={book_link}>
-                <img src={book_cover} alt=""/>
+                <img src={STATIC_URL+"/"+book_cover} alt={book_title}/>
             </Link>
             <div className="category-book-info">
                 <h2>{book_title}</h2>

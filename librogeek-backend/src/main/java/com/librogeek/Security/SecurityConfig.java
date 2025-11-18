@@ -32,7 +32,16 @@ public class SecurityConfig {
             "/api/books/mostRead",
             "/api/books/all",
             "/api/books/{category}",
-            "/api/books/getMostReadCategory}",
+            "/api/books/getMostReadCategory",
+//            "/api/debug/cover/{fileName}"
+
+
+
+
+
+            "/covers/**",
+            "/pdf/**"
+
     };
     public SecurityConfig() {
         Dotenv dotenv = Dotenv.load();

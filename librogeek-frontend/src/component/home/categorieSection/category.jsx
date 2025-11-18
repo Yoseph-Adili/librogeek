@@ -2,30 +2,25 @@ import {Link} from "react-router-dom";
 import CategoryBook from "./categoryBook.jsx";
 import CustomizeTitle from "../../cuntomizeTitle.jsx";
 
-const Category = ({category_tag, category_link}) => {
+const Category = (books) => {
+
+    const books_list = books.books;
+    console.log(books_list[0])
+
     return (
         <div className="category">
             <div className="category-books">
-                <CategoryBook book_link={"/book"} book_intro={"fgdgdf"} book_title={"book"}
-                              book_cover={"/book-example.png"}></CategoryBook>
-                <CategoryBook book_link={"/book"} book_intro={"fgdgdf"} book_title={"book"}
-                              book_cover={"/book-example.png"}></CategoryBook>
-                <CategoryBook book_link={"/book"} book_intro={"fgdgdf"} book_title={"book"}
-                              book_cover={"/book-example.png"}></CategoryBook>
-                <CategoryBook book_link={"/book"} book_intro={"fgdgdf"} book_title={"book"}
-                              book_cover={"/book-example.png"}></CategoryBook>
-                <CategoryBook book_link={"/book"} book_intro={"fgdgdf"} book_title={"book"}
-                              book_cover={"/book-example.png"}></CategoryBook>
-                <CategoryBook book_link={"/book"} book_intro={"fgdgdf"} book_title={"book"}
-                              book_cover={"/book-example.png"}></CategoryBook>
 
+                {books_list?.map((b, i) => (
+                    <CategoryBook book_link={`/books/${b.book_id}`} book_intro={b.description} book_title={b.title}
+                              book_cover={b.cover_image}></CategoryBook>
+                ))}
 
             </div>
             <div className="category-tag-container">
                 <div className="category-tag">
-                    <CustomizeTitle title={category_tag}></CustomizeTitle>
-
-                    <Link to={category_link}>SEE MORE</Link>
+                    <CustomizeTitle title={books_list[0].category}></CustomizeTitle>
+                    <Link to={`/books/category/${books_list[0].category}`}>SEE MORE</Link>
                 </div>
             </div>
         </div>

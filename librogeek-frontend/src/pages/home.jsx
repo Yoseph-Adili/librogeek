@@ -8,7 +8,7 @@ import HomeSectionLinks from "../component/home/homeSectionLinks.jsx";
 import {API_URL} from "../config/api.js";
 
 const Home = () => {
-    fetch(`${API_URL}/books/getMostReadCategory`,
+    fetch(`${API_URL}/debug/cover/book-example.png`,
         {
             credentials: "include",
             headers: {
