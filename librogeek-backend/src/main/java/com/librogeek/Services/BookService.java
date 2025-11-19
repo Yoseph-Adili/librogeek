@@ -46,6 +46,13 @@ public class BookService {
         }
         return ServiceResult.success(books, "Books retrieved successfully");
     }
+    public ServiceResult<List<Book>> getMostDownloadedBooks() {
+        List<Book> books = bookRepository.findAllByOrderByDownloadsDesc(PageRequest.of(0, 2));
+        if (books.isEmpty()) return ServiceResult.failure("No books found");
+
+        return ServiceResult.success(books, "Books retrieved successfully");
+
+    }
 
     public ServiceResult<List<Book>> getBookByCategory(String category) {
         List<Book> books = bookRepository.findByCategory(category);

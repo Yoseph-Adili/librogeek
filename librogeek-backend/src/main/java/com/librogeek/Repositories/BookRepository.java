@@ -20,6 +20,8 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     List<Book> findByCategory(String category);
     List<Book> findTop6ByCategoryOrderByViewsDesc(String category);
 
+    List<Book> findAllByOrderByDownloadsDesc(Pageable pageable);
+
 
     @Query(value = "SELECT b.category FROM books b GROUP BY b.category ORDER BY SUM(b.views) DESC LIMIT 2", nativeQuery = true)
     List<String> findTop2CategoriesByTotalViews();

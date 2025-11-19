@@ -2,6 +2,7 @@ import './css/books.css'
 import CustomizeTitle from "../component/cuntomizeTitle.jsx";
 import {useEffect, useState} from "react";
 import ListBook from "../component/books/listBook.jsx";
+import {API_URL, STATIC_URL} from "../config/api.js";
 
 const Books = () => {
     const [categoryTitle, setCategoryTitle] = useState("All")
@@ -10,37 +11,7 @@ const Books = () => {
 
     const type_options = ['All', 'PDF', 'E-Book']
     const sort_options = ['All', 'PDF', 'E-Book']
-
-    const list_books = [
-        {
-            book_id:1,
-            book_link: "/book",
-            book_info: "fgdgdf",
-            book_title: "Book 1",
-            book_cover: "/book-example.png",
-        },
-        {
-            book_id:2,
-            book_link: "/book2",
-            book_info: "Another intro Another intro Another intro Another intro Another intro",
-            book_title: "Book 2 Another intro Another intro Another",
-            book_cover: "/book-example2.png",
-        },
-        {
-            book_id:3,
-            book_link: "/book3",
-            book_info: "Third book intro",
-            book_title: "Book 3",
-            book_cover: "/book-example3.png",
-        },
-        {
-            book_id:4,
-            book_link: "/book3",
-            book_info: "Third book intro",
-            book_title: "Book 3",
-            book_cover: "/book-example3.png",
-        },
-    ];
+    const [list_books, setListBooks] = useState([])
 
 
     const [fade, setFade] = useState(false);
@@ -70,10 +41,16 @@ const Books = () => {
         const savedLayout = localStorage.getItem("listBookStyle");
         if (savedLayout !== null) {
             setListBookStyle(JSON.parse(savedLayout));
-
         }
-        console.log(savedLayout)
+        fetch(`${API_URL}/books/all`)
+            .then(res => res.json())
+            .then(data => {
+                setListBooks(data.data); // make sure backend returns
+            })
+            .catch(err => console.error(err));
     }, []);
+
+
     return (
         <div className={"books-page-container"}>
             <div className="filter-option-container">
@@ -150,8 +127,8 @@ const Books = () => {
                     list_books.map((option, index) => (
                         <ListBook
                             key={option.book_id}
-                            book_id={option.book_id} book_cover={option.book_cover}
-                            book_title={option.book_title} book_info={option.book_info}
+                            book_id={option.book_id} book_cover={STATIC_URL + "/" + option.cover_image}
+                            book_title={option.title} book_info={option.description}
                             index={index}
                         >
 

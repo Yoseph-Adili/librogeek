@@ -72,25 +72,19 @@ public class UserController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
-        if (refreshToken == null || !tokenManager.isTokenValid(refreshToken)) {
+    public ResponseEntity<ApiResponse> refreshToken(@RequestHeader(name = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiResponse.error("Invalid refresh token"));
+                    .body(ApiResponse.error("No token provided"));
         }
 
-        String newAccessToken = tokenManager.refreshAccessToken(refreshToken);
-
-
-        ResponseCookie cookie = ResponseCookie.from("accessToken", newAccessToken)
-                .httpOnly(true)
-                .path("/")
-                .maxAge(15 * 60)
-                .build();
+        String token = authHeader.substring(7);
+        String newAccessToken = tokenManager.refreshAccessToken(token);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(ApiResponse.success(newAccessToken, "Access token refreshed"));
     }
+
 
     @GetMapping("/status")
     public ResponseEntity<ApiResponse> status(@RequestHeader(name = "Authorization", required = false) String authHeader) {

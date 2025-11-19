@@ -35,49 +35,49 @@ function App() {
             return lightTheme;
         }
     }
-    const fetchWithRefresh = async (url, options = {}) => {
-        try {
-            let res = await fetch(url, options);
+    useEffect(() => {
+        const refreshToken = async () => {
+            const token = localStorage.getItem("token");
+            console.log("Refreshing token...", token);
+            if (!token) return;
 
-
-            if (res.status === 401) {
-                const refreshRes = await fetch(`${API_URL}/auth/refresh`, {
+            try {
+                const res = await fetch(`${API_URL}/users/refresh`, {
                     method: "POST",
-                    credentials: "include",
+                    headers: { Authorization: "Bearer " + token }
                 });
-                if (refreshRes.ok) {
-                    const newData = await refreshRes.json();
-                    const newToken = newData.data;
-                    localStorage.setItem("token", newToken);
 
-
-                    res = await fetch(url, {
-                        ...options,
-                        headers: { ...options.headers, Authorization: "Bearer " + newToken }
-                    });
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem("token", data.data);
+                    console.log("Token refreshed");
+                } else {
+                    console.warn("Refresh failed:", res.status);
                 }
+            } catch (err) {
+                console.error("Refresh error:", err);
             }
+        };
 
-            if (res.ok) return res.json();
-            else {
-                const errData = await res.json().catch(() => null);
-                return { success: false, error: errData };
-            }
+        refreshToken();
 
-        } catch (err) {
-            console.error("Fetch error:", err);
-            return { success: false, error: err };
-        }
-    };
+        const interval = setInterval(refreshToken, 14 * 60 * 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
 
     useEffect(() => {
-        fetchWithRefresh(`${API_URL}/users/status`, {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        fetch(`${API_URL}/users/status`, {
             credentials: "include",
-            headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
-        }).then(data => {
-            if (data?.success) setLoginUser(data.data);
-            else setLoginUser(null);
-        });
+            headers: { Authorization: "Bearer " + token }
+        })
+            .then(res => res.json())
+            .then(data => setLoginUser(data?.success ? data.data : null))
+            .catch(() => setLoginUser(null));
     }, []);
 
 

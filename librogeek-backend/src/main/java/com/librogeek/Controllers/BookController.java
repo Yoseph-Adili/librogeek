@@ -41,5 +41,11 @@ public class BookController {
         ServiceResult<List<List<Book>>> result = bookService.getBookByMostReadCategory();
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
+    @GetMapping("/getMostDownloaded" )
+    public ResponseEntity<ApiResponse> mostDownloaded() {
+        ServiceResult<List<Book>> result = bookService.getMostDownloadedBooks();
+        System.out.println("books:"+result);
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+    }
 
 }

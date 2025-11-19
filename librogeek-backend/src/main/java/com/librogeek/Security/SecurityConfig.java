@@ -26,6 +26,7 @@ public class SecurityConfig {
             "/api/users/register",
             "/api/users/login",
             "/api/users/status",
+            "/api/users/refresh",
             "/api/users/logout",
 
 
@@ -34,6 +35,7 @@ public class SecurityConfig {
             "/api/books/all",
             "/api/books/{category}",
             "/api/books/getMostReadCategory",
+            "/api/books/getMostDownloaded",
 //            "/api/debug/cover/{fileName}"
 
 
