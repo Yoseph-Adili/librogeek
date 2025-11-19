@@ -21,7 +21,6 @@ const CategorySection = () => {
             })
             .then(data => {
                 if (data?.success) {
-                    console.log("book  in:", data.data);
                     setBooks(data.data)
 
                 } else {

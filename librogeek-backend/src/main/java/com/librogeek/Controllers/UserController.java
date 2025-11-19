@@ -1,5 +1,6 @@
 package com.librogeek.Controllers;
 
+import com.librogeek.Component.TokenBlacklist;
 import com.librogeek.Component.TokenManager;
 import com.librogeek.DTO.UserDTO;
 import com.librogeek.Repositories.UserRepository;
@@ -10,7 +11,9 @@ import com.librogeek.Utils.ApiResponse;
 import com.librogeek.Models.User;
 import com.librogeek.Utils.ServiceResult;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,11 +51,11 @@ public class UserController {
         }
 
         User user = result.getData();
-        String token = tokenManager.generateToken(user.getUsername()); // 生成 JWT
+        String token = tokenManager.generateToken(user.getUsername(), user.getRole());
         return ResponseEntity.ok(ApiResponse.success(token, "Logged in successfully"));
     }
 
-    // ✅ 注册，直接返回用户信息，不用 session
+
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(
             @Valid @RequestBody RegisterRequest request) {
@@ -64,10 +67,30 @@ public class UserController {
         }
 
         User user = serviceResult.getData();
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(user, "User created successfully"));
+        String token = tokenManager.generateToken(user.getUsername(), user.getRole());
+        return ResponseEntity.ok(ApiResponse.success(token, "Logged in successfully"));
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
+        if (refreshToken == null || !tokenManager.isTokenValid(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid refresh token"));
+        }
+
+        String newAccessToken = tokenManager.refreshAccessToken(refreshToken);
+
+
+        ResponseCookie cookie = ResponseCookie.from("accessToken", newAccessToken)
+                .httpOnly(true)
+                .path("/")
+                .maxAge(15 * 60)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(ApiResponse.success(newAccessToken, "Access token refreshed"));
+    }
 
     @GetMapping("/status")
     public ResponseEntity<ApiResponse> status(@RequestHeader(name = "Authorization", required = false) String authHeader) {
@@ -92,5 +115,22 @@ public class UserController {
 
 
         return ResponseEntity.ok(ApiResponse.success(dto, "Logged in"));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse> logout(@RequestHeader(name = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid or expired token"));
+        }
+        tokenManager.addTokenToBlackList(token);
+
+
+        return ResponseEntity.ok(ApiResponse.success(null, "User logout successfully"));
     }
 }

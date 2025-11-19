@@ -17,7 +17,6 @@ public class StaticResourceConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        System.out.println("Covers path = " + coversPath);
 
         registry.addResourceHandler("/covers/**")
                 .addResourceLocations("file:" + coversPath);

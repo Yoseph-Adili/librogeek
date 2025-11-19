@@ -26,6 +26,7 @@ public class SecurityConfig {
             "/api/users/register",
             "/api/users/login",
             "/api/users/status",
+            "/api/users/logout",
 
 
 
@@ -72,11 +73,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .logout(logout -> logout
-                        .logoutUrl("/api/users/logout")
-                        .logoutSuccessUrl("/")
-                        .permitAll()
-                )
+                .logout(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )

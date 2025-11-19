@@ -15,21 +15,21 @@ const Login = () => {
         const password = formData.get("password")
 
 
-        // if (username.trim() === "") {
-        //     document.querySelector("#username").style.borderColor = "red"
-        //     alert("username must be fulled")
-        //     return
-        // }
-        //
-        // if (password.trim() === "") {
-        //     document.querySelector("#password").style.borderColor = "red"
-        //     alert("password must be fulled")
-        //     return
-        // }else if(password.length < 8){
-        //     document.querySelector("#password").style.borderColor = "red"
-        //     alert("password must be at least 8 characters long")
-        //     return
-        // }
+        if (username.trim() === "") {
+            document.querySelector("#username").style.borderColor = "red"
+            alert("username must be fulled")
+            return
+        }
+
+        if (password.trim() === "") {
+            document.querySelector("#password").style.borderColor = "red"
+            alert("password must be fulled")
+            return
+        }else if(password.length < 8){
+            document.querySelector("#password").style.borderColor = "red"
+            alert("password must be at least 8 characters long")
+            return
+        }
 
 
         const user = {
@@ -50,7 +50,7 @@ const Login = () => {
 
             if (res.ok) {
                 localStorage.setItem("token", data.data);
-                // window.location.href = "/"
+                window.location.href = "/"
                 alert("successfully logged in");
             } else {
                 alert("login failed" + data.message);
@@ -97,10 +97,10 @@ const Login = () => {
     return (
 
         <main className={"login-main"}>
-            <div>
+            <Link to={"/"}>
                 <Logo className={"logo-tag"}></Logo>
                 <span>ibroGeek</span>
-            </div>
+            </Link>
             <form action="" onSubmit={loginForm}>
 
                 <label htmlFor="username">User Name</label>

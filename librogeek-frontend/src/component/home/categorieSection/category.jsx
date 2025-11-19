@@ -5,14 +5,14 @@ import CustomizeTitle from "../../cuntomizeTitle.jsx";
 const Category = (books) => {
 
     const books_list = books.books;
-    console.log(books_list[0])
+    // console.log(books_list[0])
 
     return (
         <div className="category">
             <div className="category-books">
 
                 {books_list?.map((b, i) => (
-                    <CategoryBook book_link={`/books/${b.book_id}`} book_intro={b.description} book_title={b.title}
+                    <CategoryBook key={i} book_link={`/books/${b.book_id}`} book_intro={b.description} book_title={b.title}
                               book_cover={b.cover_image}></CategoryBook>
                 ))}
 

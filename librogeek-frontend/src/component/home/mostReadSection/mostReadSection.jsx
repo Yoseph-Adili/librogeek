@@ -1,16 +1,29 @@
 import MostReadBook from "./mostReadBook.jsx";
 import "./mostReadBook.css"
-const MostReadSection = () => {
+import {useEffect, useState} from "react";
+import book from "../../../pages/book.jsx";
+import {API_URL} from "../../../config/api.js";
 
+const MostReadSection = () => {
+    const [books, setBooks] = useState([])
+    useEffect(() => {
+        fetch(`${API_URL}/books/mostRead`)
+            .then(res => res.json())
+            .then(data => {
+                    setBooks(data.data)
+
+                }
+            )
+
+
+    }, []);
     return (
         <section className="most-read-section" id="most-read-section">
             <h2>Most Read Books</h2>
             <div className="most-read-books-container">
-                <MostReadBook book_cover={"/book-example.png"}/>
-                <MostReadBook book_cover={"/book-example.png"}/>
-                <MostReadBook book_cover={"/book-example2.png"}/>
-                <MostReadBook book_cover={"/book-example3.png"}/>
-                <MostReadBook book_cover={"/book-example.png"}/>
+                {books?.map((b, i) => (
+                <MostReadBook key={i} book_id={b.book_id} book_cover={b.cover_image}/>
+                ))}
             </div>
         </section>
     );

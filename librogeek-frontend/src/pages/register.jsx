@@ -82,10 +82,10 @@ const Register = () => {
 
 
         <main className={"login-main"}>
-            <div>
+            <Link to={"/"}>
                 <Logo className={"logo-tag"}></Logo>
                 <span>ibroGeek</span>
-            </div>
+            </Link>
             <form action="" onSubmit={registerForm}>
 
                 <label htmlFor="name">Name</label>

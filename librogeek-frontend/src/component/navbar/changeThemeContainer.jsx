@@ -60,15 +60,7 @@ export default function ChangeThemeContainer() {
 
     }
 
-    function logout() {
-        fetch("/api/auth/logout", {
-            method: "POST",
-            credentials: "include"
-        }).then(() => {
 
-            window.location.href = "/";
-        });
-    }
 
     return (
         <div className="change-theme-container">
@@ -110,7 +102,7 @@ export default function ChangeThemeContainer() {
                     <ul>
                         <li><Link to={`/profile/${loginUser.username}`}>Profile</Link></li>
                         <li><Link to="/setting">Settings</Link></li>
-                        <li><Link to="/logout" onClick={logout}>Logout</Link></li>
+                        <li><Link to="/logout">Logout</Link></li>
                     </ul>
                 </div>
             ) : (

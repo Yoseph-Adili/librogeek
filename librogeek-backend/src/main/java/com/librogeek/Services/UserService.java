@@ -57,7 +57,11 @@ public class UserService {
         return ServiceResult.success(user, "Login successful");
     }
 
+    public ServiceResult<User> logout() {
 
+        return ServiceResult.success(null, "Logout successful");
+
+    }
 
     public ServiceResult<User> register(RegisterRequest request) {
 

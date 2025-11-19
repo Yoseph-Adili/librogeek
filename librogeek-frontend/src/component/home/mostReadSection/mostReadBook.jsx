@@ -1,5 +1,6 @@
 import {Link} from "react-router-dom";
 import {useState, useEffect, useRef} from "react";
+import {STATIC_URL} from "../../../config/api.js";
 
 const MostReadBook = ({book_cover, book_id}) => {
     const [coverColor, setCoverColor] = useState("");
@@ -7,7 +8,7 @@ const MostReadBook = ({book_cover, book_id}) => {
     const [rotateX, setRotateX] = useState(0);
     const [rotateY, setRotateY] = useState(0);
 
-    const ref=useRef(null)
+    const ref = useRef(null)
     const [visible, setVisible] = useState(false)
 
     useEffect(() => {
@@ -53,7 +54,7 @@ const MostReadBook = ({book_cover, book_id}) => {
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
         const img = new Image();
-        img.src = book_cover;
+        img.src = STATIC_URL + "/" + book_cover;
         img.crossOrigin = "Anonymous";
         img.onload = function () {
             canvas.width = img.width;
@@ -115,7 +116,7 @@ const MostReadBook = ({book_cover, book_id}) => {
                 }}
             >
 
-                <img src={book_cover} alt=""/>
+                <img src={STATIC_URL + "/" + book_cover}/>
                 <svg className="book-left" viewBox="0 0 58 449" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect width="100%" height="100%" fill={coverColor}/>
                     <path

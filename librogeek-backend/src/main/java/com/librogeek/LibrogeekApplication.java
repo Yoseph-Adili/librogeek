@@ -17,7 +17,7 @@ public class LibrogeekApplication {
     public static void main(String[] args) {
 
         Dotenv dotenv = Dotenv.configure().directory("./").load();
-        System.out.println(System.getProperty("user.dir"));
+
 
 
 

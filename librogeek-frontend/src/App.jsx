@@ -13,6 +13,7 @@ import Login from "./pages/login.jsx";
 import MainLayout from "./layout/mainLayout.jsx";
 import Register from "./pages/register.jsx";
 import {API_URL} from "./config/api.js";
+import Logout from "./pages/logout.jsx";
 
 
 const UserContext = createContext();
@@ -34,38 +35,51 @@ function App() {
             return lightTheme;
         }
     }
+    const fetchWithRefresh = async (url, options = {}) => {
+        try {
+            let res = await fetch(url, options);
+
+
+            if (res.status === 401) {
+                const refreshRes = await fetch(`${API_URL}/auth/refresh`, {
+                    method: "POST",
+                    credentials: "include",
+                });
+                if (refreshRes.ok) {
+                    const newData = await refreshRes.json();
+                    const newToken = newData.data;
+                    localStorage.setItem("token", newToken);
+
+
+                    res = await fetch(url, {
+                        ...options,
+                        headers: { ...options.headers, Authorization: "Bearer " + newToken }
+                    });
+                }
+            }
+
+            if (res.ok) return res.json();
+            else {
+                const errData = await res.json().catch(() => null);
+                return { success: false, error: errData };
+            }
+
+        } catch (err) {
+            console.error("Fetch error:", err);
+            return { success: false, error: err };
+        }
+    };
+
     useEffect(() => {
-        fetch(`${API_URL}/users/status`,
-            {
-                credentials: "include",
-                headers: {
-                    "Authorization": "Bearer " + localStorage.getItem("token")
-                }
-            })
-            .then(async res => {
-                console.log("HTTP status:", res.status);
-                if (res.ok) return res.json();
-                else {
-                    const errData = await res.json().catch(() => null);
-                    console.log("Error response:", errData);
-                    return null;
-                }
-            })
-            .then(data => {
-                if (data?.success) {
-                    console.log("User logged in:", data.data);
-                    setLoginUser(data.data);
-                } else {
-                    setLoginUser(null);
-                    console.log("User not logged in");
-                }
-            })
-            .catch(err => {
-                console.error("Fetch error:", err);
-            });
-
-
+        fetchWithRefresh(`${API_URL}/users/status`, {
+            credentials: "include",
+            headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+        }).then(data => {
+            if (data?.success) setLoginUser(data.data);
+            else setLoginUser(null);
+        });
     }, []);
+
 
     return (
         <UserContext.Provider value={{loginUser, setLoginUser}}>
@@ -85,6 +99,7 @@ function App() {
 
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/register" element={<Register/>}/>
+                    <Route path="/logout" element={<Logout/>}/>
                 </Routes>
 
             </div>

@@ -20,7 +20,6 @@ public class CorsConfig {
                         .allowedOrigins(frontendHost)
                         .allowedMethods("*");
 
-                System.out.println("Cors configured for: " + frontendHost);
             }
         };
     }
