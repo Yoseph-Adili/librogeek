@@ -2,22 +2,24 @@ import './css/profile.css'
 import {Link} from "react-router-dom";
 import {useContext, useState} from "react";
 import {UserContext} from "../App.jsx";
+import {STATIC_URL} from "../config/api.js";
 
 const Profile = () => {
     const [showOption, setShowOption] = useState("Bookshelf")
-    const { loginUser } = useContext(UserContext);
-
-    const token = localStorage.getItem("token");
-    if (!token) window.location.href = "/"
+    const {loginUser} = useContext(UserContext);
+    if (!loginUser) window.location.href = "/"
 
     if (!loginUser) {
         return <div className="profile-page-container">Loading...</div>;
     }
 
+    let profile_photo = loginUser.profile_photo != null ? loginUser.profile_photo : "profile/unknown.png";
+
+    let userImage = STATIC_URL + "/" + profile_photo;
     return (<div className={"profile-page-container"}>
         <div className="user-info-container">
             <div className="profile-photo">
-                <img src="/book-example.png" alt=""/>
+                <img src={userImage} alt=""/>
             </div>
             <div className="user-info">
                 <h2>{loginUser.name}</h2>

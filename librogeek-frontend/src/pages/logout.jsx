@@ -1,12 +1,13 @@
-import {useEffect} from "react";
+import {useContext, useEffect} from "react";
 import './css/login.css'
 import Logo from "../component/logo.jsx";
 import {Link} from "react-router-dom";
 import {API_URL} from "../config/api.js";
+import {UserContext} from "../App.jsx";
 
 const Logout = () => {
-    const token = localStorage.getItem("token");
-    if (!token) window.location.href = "/"
+    const {loginUser} = useContext(UserContext);
+    if (!loginUser) window.location.href = "/"
     useEffect(() => {
         const logout = async () => {
             try {

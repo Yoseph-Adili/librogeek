@@ -3,11 +3,12 @@ import Logo from "../component/logo.jsx";
 import {Link} from "react-router-dom";
 import alert from "../config/utils.js";
 import {API_URL} from "../config/api.js";
-import {useEffect} from "react";
+import {useContext, useEffect} from "react";
+import {UserContext} from "../App.jsx";
 
 const Login = () => {
-    const token = localStorage.getItem("token");
-    if (token) window.location.href = "/"
+    const {loginUser} = useContext(UserContext);
+    if (loginUser) window.location.href = "/"
     async function loginForm(e) {
         e.preventDefault();
         const formData = new FormData(e.target);

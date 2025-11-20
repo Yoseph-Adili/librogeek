@@ -3,11 +3,13 @@ import Logo from "../component/logo.jsx";
 import {Link} from "react-router-dom";
 import {API_URL} from "../config/api.js";
 import alert from "../config/utils.js";
+import {useContext} from "react";
+import {UserContext} from "../App.jsx";
 
 const Register = () => {
 
-    const token = localStorage.getItem("token");
-    if (token) window.location.href = "/"
+    const {loginUser} = useContext(UserContext);
+    if (loginUser) window.location.href = "/"
 
     async function registerForm(e) {
         e.preventDefault();
