@@ -7,15 +7,36 @@
     gap: 1rem;
     list-style: none;
     z-index: 999;
+
+
 }
 
 .home-section-links li {
     width: 50px;
     height: 50px;
     border: 2px solid var(--background-color);
-
+    background-color: var(--background-color);
     border-radius: 50%;
     transition: all 0.5s ease;
+}
+
+.home-section-links.active li {
+    transform: translateY(130%);
+}
+.home-section-links li:nth-child(1){
+    transition-delay: 0.1s;
+}
+.home-section-links li:nth-child(2){
+    transition-delay: 0.2s;
+}
+.home-section-links li:nth-child(3){
+    transition-delay: 0.3s;
+}
+.home-section-links li:nth-child(4){
+    transition-delay: 0.4s;
+}
+.home-section-links li:nth-child(5){
+    transition-delay: 0.5s;
 }
 
 .home-section-links li:hover {

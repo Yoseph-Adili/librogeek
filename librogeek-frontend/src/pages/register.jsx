@@ -5,7 +5,9 @@ import {API_URL} from "../config/api.js";
 import alert from "../config/utils.js";
 
 const Register = () => {
-    console.log(API_URL)
+
+    const token = localStorage.getItem("token");
+    if (token) window.location.href = "/"
 
     async function registerForm(e) {
         e.preventDefault();

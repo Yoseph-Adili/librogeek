@@ -7,6 +7,9 @@ const Profile = () => {
     const [showOption, setShowOption] = useState("Bookshelf")
     const { loginUser } = useContext(UserContext);
 
+    const token = localStorage.getItem("token");
+    if (!token) window.location.href = "/"
+
     if (!loginUser) {
         return <div className="profile-page-container">Loading...</div>;
     }

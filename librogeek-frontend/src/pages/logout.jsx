@@ -5,6 +5,8 @@ import {Link} from "react-router-dom";
 import {API_URL} from "../config/api.js";
 
 const Logout = () => {
+    const token = localStorage.getItem("token");
+    if (!token) window.location.href = "/"
     useEffect(() => {
         const logout = async () => {
             try {

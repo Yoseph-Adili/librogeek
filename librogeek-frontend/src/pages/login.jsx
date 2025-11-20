@@ -6,6 +6,8 @@ import {API_URL} from "../config/api.js";
 import {useEffect} from "react";
 
 const Login = () => {
+    const token = localStorage.getItem("token");
+    if (token) window.location.href = "/"
     async function loginForm(e) {
         e.preventDefault();
         const formData = new FormData(e.target);

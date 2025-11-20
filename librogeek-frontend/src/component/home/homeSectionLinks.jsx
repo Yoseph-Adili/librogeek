@@ -1,9 +1,32 @@
 import {Link} from "react-router-dom";
+import {useEffect, useRef, useState} from "react";
 
 const HomeSectionLinks = () => {
 
-    return (<ul className="home-section-links">
-        <li >
+
+    const [active, setActive] = useState(false);
+
+    useEffect(() => {
+        setActive(true);
+    }, []);
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollBottom = document.body.scrollHeight - (window.scrollY + window.innerHeight);
+
+
+            if (scrollBottom <= window.innerHeight) {
+                setActive(false);
+            } else {
+                setActive(true);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    return (<ul className={`home-section-links ${active ? "" : "active"}`}>
+        <li>
             <a href="#hero-section">
 
                 <svg viewBox="0 0 590 476" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -14,7 +37,7 @@ const HomeSectionLinks = () => {
 
             </a>
         </li>
-        <li >
+        <li>
             <a href="#intro-section">
 
 
@@ -27,7 +50,7 @@ const HomeSectionLinks = () => {
             </a>
         </li>
 
-        <li >
+        <li>
             <a href="#most-read-section">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -37,7 +60,7 @@ const HomeSectionLinks = () => {
                 </svg>
             </a>
         </li>
-        <li >
+        <li>
             <a href="#category-section">
 
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,7 +84,7 @@ const HomeSectionLinks = () => {
                         strokeLinejoin="round"/>
                 </svg>
             </a></li>
-        <li >
+        <li>
             <a href="#footer">
 
 
