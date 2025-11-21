@@ -43,7 +43,8 @@ public class SecurityConfig {
 
 
             "/covers/**",
-            "/pdf/**"
+            "/pdf/**",
+            "/profile/**"
 
     };
     public SecurityConfig() {

@@ -3,14 +3,26 @@ import CustomizeTitle from "../component/cuntomizeTitle.jsx";
 import {useEffect, useState} from "react";
 import ListBook from "../component/books/listBook.jsx";
 import {API_URL, STATIC_URL} from "../config/api.js";
+import {Link, useParams} from "react-router-dom";
 
 const Books = () => {
-    const [categoryTitle, setCategoryTitle] = useState("All")
+    const {category} = useParams()
+    const [categoriesContainer, setCategoriesContainer] = useState(false)
+    const [categoryTitle,setCategoryTitle] = useState('All')
+    useEffect(() => {
+        if (category) setCategoryTitle(category);
+        else setCategoryTitle("All");
+    }, [category]);
+    const [sortedBy, setSortedBy] = useState("Date")
+
+    const [categories, setCategories] = useState([])
+
 
     const [listBookStyle, setListBookStyle] = useState(false)
 
-    const type_options = ['All', 'PDF', 'E-Book']
-    const sort_options = ['All', 'PDF', 'E-Book']
+    const [type_options, setType_options] = useState(['All', 'PDF', 'E-Book'])
+
+    const sort_options = ['Date', 'Downloads', 'Views']
     const [list_books, setListBooks] = useState([])
 
 
@@ -32,33 +44,95 @@ const Books = () => {
         }, 500);
 
         setTimeout(() => {
-
             setFade(false);
             localStorage.setItem("listBookStyle", JSON.stringify(trueOrFalse));
         }, 600);
     };
+
     useEffect(() => {
         const savedLayout = localStorage.getItem("listBookStyle");
         if (savedLayout !== null) {
             setListBookStyle(JSON.parse(savedLayout));
         }
-        fetch(`${API_URL}/books/all`)
+
+        fetch(`${API_URL}/books/getCategories`)
             .then(res => res.json())
             .then(data => {
-                setListBooks(data.data); // make sure backend returns
+
+                const getCategories=[];
+                getCategories.push("All");
+                getCategories.push(...data.data);
+                setCategories(getCategories);
             })
             .catch(err => console.error(err));
+
     }, []);
+    useEffect(() => {
+
+        let url = "";
+
+        if (category && category !== "All") {
+            url = `${API_URL}/books/${encodeURIComponent(category)}`;
+        } else {
+            url = `${API_URL}/books/all`;
+        }
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                setListBooks(data.data);
+            })
+            .catch(err => console.error(err));
+
+    }, [category]);
+    useEffect(() => {
+        let sorted = [...list_books];
+
+        switch (sortedBy) {
+            case "Downloads":
+                sorted.sort((a, b) => b.downloads - a.downloads);
+                break;
+            case "Views":
+                sorted.sort((a, b) => b.views - a.views);
+                break;
+            case "Date":
+                sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                break;
+            default:
+                break;
+        }
+
+        // setFade(true);
+        setListBooks(sorted)
+        // setTimeout(() => setFade(false), 600);
+
+    }, [sortedBy]);
 
 
     return (
         <div className={"books-page-container"}>
+            <div className={`categories-container ${categoriesContainer ? "active" : ""}`}>
+                <div className={"categories-container-close"}
+                     onClick={() => {
+                         setCategoriesContainer(false);
+                     }}
+                >
+                    ✕
+                </div>
+                {categories.map((category, index) => (
+                    <Link key={index} to={`/books/category/${category}`}>{category}</Link>
+                ))}
+
+            </div>
             <div className="filter-option-container">
                 <form style={{'--i': 0}} action="">
                     <input type="text" name="name"/>
                 </form>
                 <CustomizeTitle title={categoryTitle}></CustomizeTitle>
-                <p style={{'--i': 1}}>Category</p>
+                <p style={{'--i': 1}} onClick={() => {
+                    setCategoriesContainer(true);
+                }}
+                >Category</p>
                 <div style={{'--i': 2}} className="type-sections">
                     <p>Type</p>
                     <div className="type-options">
@@ -76,7 +150,10 @@ const Books = () => {
 
                         {
                             sort_options.map((option, index) => (
-                                <span key={index} className={option === "All" ? "selected" : ""}>{option}</span>
+
+                                <span key={index} className={option === sortedBy ? "selected" : ""}
+                                      onClick={() => setSortedBy(option)}
+                                >{option}</span>
                             ))
                         }
                     </div>
@@ -119,6 +196,7 @@ const Books = () => {
             <div className={
                 `books-container 
             ${listBookStyle ? "block" : ""}
+           
             `}
                  style={{opacity: fade ? 0 : 1}}
 

@@ -7,13 +7,17 @@ import {STATIC_URL} from "../config/api.js";
 const Profile = () => {
     const [showOption, setShowOption] = useState("Bookshelf")
     const {loginUser} = useContext(UserContext);
-    if (!loginUser) window.location.href = "/"
+
+
+
 
     if (!loginUser) {
         return <div className="profile-page-container">Loading...</div>;
     }
+    if (!loginUser) window.location.href = "/"
 
-    let profile_photo = loginUser.profile_photo != null ? loginUser.profile_photo : "profile/unknown.png";
+
+    let profile_photo = loginUser.profile_photo != null ? loginUser.profile_photo : "profile/unknown.jpg";
 
     let userImage = STATIC_URL + "/" + profile_photo;
     return (<div className={"profile-page-container"}>

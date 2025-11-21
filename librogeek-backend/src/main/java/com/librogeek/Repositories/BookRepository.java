@@ -26,4 +26,9 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     @Query(value = "SELECT b.category FROM books b GROUP BY b.category ORDER BY SUM(b.views) DESC LIMIT 2", nativeQuery = true)
     List<String> findTop2CategoriesByTotalViews();
 
+    @Query("SELECT DISTINCT b.category FROM Book b")
+    List<String> getBookCategories();
+
+
+
 }

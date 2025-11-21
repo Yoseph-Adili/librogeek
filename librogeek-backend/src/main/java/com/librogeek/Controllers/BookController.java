@@ -31,6 +31,7 @@ public class BookController {
         ServiceResult<List<Book>> result = bookService.getAllBooks();
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
+
     @GetMapping("/{category}")
     public ResponseEntity<ApiResponse> findBooksByCategory(@PathVariable String category) {
         ServiceResult<List<Book>> result = bookService.getBookByCategory(category);
@@ -45,6 +46,11 @@ public class BookController {
     public ResponseEntity<ApiResponse> mostDownloaded() {
         ServiceResult<List<Book>> result = bookService.getMostDownloadedBooks();
         System.out.println("books:"+result);
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+    }
+    @GetMapping("/getCategories" )
+    public ResponseEntity<ApiResponse> getCategories() {
+        ServiceResult<List<String>> result = bookService.getCategories();
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
 

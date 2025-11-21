@@ -1,0 +1,102 @@
+.setting-page {
+    padding-top: 20vh;
+    min-height: 100vh;
+    width: 90%;
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.profile-photo-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+section {
+    padding-bottom: 2rem;
+
+    /*border-bottom: 1px solid var(--text-color);*/
+
+    margin-bottom: 2rem;
+}
+
+.setting-profile-photo{
+    height: 14rem;
+    width: 8.8rem;
+    position: relative;
+}
+
+.setting-profile-photo img {
+    height: 100%;
+}
+
+.setting-profile-photo svg {
+    opacity: 0;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.setting-profile-photo svg:hover {
+    opacity: 1;
+}
+
+.profile-delete {
+    /*background-color: var(--second-color);*/
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--text-color);
+    cursor: pointer;
+}
+
+section > form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border: 1px solid var(--text-color);
+    padding: 1rem;
+}
+
+form button {
+
+    padding: 0.25rem 1rem;
+    margin-left: auto;
+    color: var(--background-color);
+    border: 1px solid var(--text-color);
+    cursor: pointer;
+    font-family: var(--body-text);
+    background-color: var(--text-color);
+    font-size: 2rem;
+    transition: all 0.3s linear;
+
+}
+form button:hover{
+    background-color: var(--second-color);
+    color: var(--text-color);
+}
+
+form label {
+    color: var(--text-color);
+    font-size: 2rem;
+    font-family: var(--body-text);
+}
+
+form input,
+form textarea {
+    background: var(--background-color);
+    border: 1px solid var(--text-color);
+    font-size: 2rem;
+    font-family: var(--body-text);
+    padding-left: 0.5rem;
+    margin-bottom: 0.5rem;
+
+}
+section:nth-last-of-type(1) button{
+    margin-left: 0;
+    margin-right: auto;
+}

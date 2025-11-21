@@ -14,6 +14,7 @@ import MainLayout from "./layout/mainLayout.jsx";
 import Register from "./pages/register.jsx";
 import {API_URL} from "./config/api.js";
 import Logout from "./pages/logout.jsx";
+import Setting from "./pages/setting.jsx";
 
 
 const UserContext = createContext();
@@ -38,7 +39,7 @@ function App() {
     useEffect(() => {
         const refreshToken = async () => {
             const token = localStorage.getItem("token");
-            console.log("Refreshing token...", token);
+            // console.log("Refreshing token...", token);
             if (!token) return;
 
             try {
@@ -90,8 +91,10 @@ function App() {
                     <Route element={<MainLayout/>}>
                         <Route path="/" element={<Home/>}/>
                         <Route path="/books" element={<Books/>}/>
-                        <Route path="/books/:bookId" element={<Book/>}/>
+                        <Route path="/books/category/:category" element={<Books />} />
+                        <Route path="/book/:bookId" element={<Book/>}/>
                         <Route path="/about" element={<About/>}/>
+                        <Route path="/setting" element={<Setting/>}/>
                         <Route path="/contact" element={<Contact/>}/>
                         <Route path="/profile/:id" element={<Profile/>}/>
                     </Route>

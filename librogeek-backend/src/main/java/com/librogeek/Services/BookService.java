@@ -63,6 +63,14 @@ public class BookService {
     }
 
 
+    public ServiceResult<List<String>> getCategories() {
+        List<String> categories = bookRepository.getBookCategories();
+        if (categories.isEmpty()) {
+            return ServiceResult.failure("No categories found");
+        }
+        return ServiceResult.success(categories, "Books retrieved successfully");
+    }
+
     public ServiceResult<List<List<Book>>> getBookByMostReadCategory() {
 
         List<String> topCategories = bookRepository.findTop2CategoriesByTotalViews();

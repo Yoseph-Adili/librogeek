@@ -8,8 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class StaticResourceConfig implements WebMvcConfigurer {
 
-    @Value("${file.pdfs.path}")
-    private String progilePath;
+    @Value("${file.profile.path}")
+    private String profilesPath;
 
     @Value("${file.covers.path}")
     private String coversPath;
@@ -17,10 +17,12 @@ public class StaticResourceConfig implements WebMvcConfigurer {
     @Value("${file.pdfs.path}")
     private String pdfsPath;
 
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/profile/**")
-                .addResourceLocations("file:" + progilePath);
+                .addResourceLocations("file:" + profilesPath);
+
 
         registry.addResourceHandler("/covers/**")
                 .addResourceLocations("file:" + coversPath);
