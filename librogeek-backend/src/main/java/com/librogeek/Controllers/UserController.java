@@ -4,6 +4,7 @@ import com.librogeek.Component.TokenBlacklist;
 import com.librogeek.Component.TokenManager;
 import com.librogeek.DTO.UserDTO;
 import com.librogeek.Repositories.UserRepository;
+import com.librogeek.Requests.ChangeNamesRequest;
 import com.librogeek.Requests.LoginRequest;
 import com.librogeek.Requests.RegisterRequest;
 import com.librogeek.Services.UserService;
@@ -41,7 +42,7 @@ public class UserController {
                 .body(response);
     }
 
-    // ✅ 登录，返回 JWT
+
     @PostMapping("/login")
     public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest request) {
         ServiceResult<User> result = userService.login(request);
@@ -126,5 +127,27 @@ public class UserController {
 
 
         return ResponseEntity.ok(ApiResponse.success(null, "User logout successfully"));
+    }
+
+    @PatchMapping("/changeUserNames/{user_id}")
+    public ResponseEntity<ApiResponse> changeUserNames(@PathVariable Integer user_id,@Valid @RequestBody ChangeNamesRequest request, @RequestHeader(name = "Authorization", required = false) String authHeader) {
+        System.out.println("this is user:" + request.getUsername());
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid or expired token"));
+        }
+        ServiceResult<User> result = userService.changeUserNames(user_id,request);
+
+        if (!result.isSuccess()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(result.getMessage()));
+        }
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+
     }
 }

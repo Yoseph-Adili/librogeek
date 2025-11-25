@@ -1,6 +1,6 @@
 import './css/profile.css'
 import {Link} from "react-router-dom";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {UserContext} from "../App.jsx";
 import {STATIC_URL} from "../config/api.js";
 
@@ -9,12 +9,16 @@ const Profile = () => {
     const {loginUser} = useContext(UserContext);
 
 
+    useEffect(() => {
+        if (loginUser === null) {
 
+            window.location.href = "/";
+        }
+    }, [loginUser]);
 
     if (!loginUser) {
         return <div className="profile-page-container">Loading...</div>;
     }
-    if (!loginUser) window.location.href = "/"
 
 
     let profile_photo = loginUser.profile_photo != null ? loginUser.profile_photo : "profile/unknown.jpg";
@@ -23,7 +27,7 @@ const Profile = () => {
     return (<div className={"profile-page-container"}>
         <div className="user-info-container">
             <div className="profile-photo">
-                <img src={userImage} alt=""/>
+                <img src={userImage} alt="profile"/>
             </div>
             <div className="user-info">
                 <h2>{loginUser.name}</h2>

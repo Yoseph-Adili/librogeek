@@ -3,10 +3,12 @@ package com.librogeek.Services;
 import com.librogeek.Models.User;
 import com.librogeek.Repositories.UserRepository;
 
+import com.librogeek.Requests.ChangeNamesRequest;
 import com.librogeek.Requests.LoginRequest;
 import com.librogeek.Requests.RegisterRequest;
 import com.librogeek.Utils.ServiceResult;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -83,12 +85,32 @@ public class UserService {
         return ServiceResult.success(savedUser, "User created successfully");
 
     }
+
     public ServiceResult<User> getUserByUsername(String username) {
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isEmpty()) {
             return ServiceResult.failure("User not found");
         }
         return ServiceResult.success(user.get(), "User found successfully");
+    }
+
+    public ServiceResult<User> changeUserNames(Integer user_id, @Valid ChangeNamesRequest request) {
+        if (request.getUsername() == null || request.getUsername().isEmpty()) {
+            return ServiceResult.failure("Username is required");
+        }
+        User user = userRepository.findById(user_id)
+                .orElse(null);
+        if (user == null) {
+            return ServiceResult.failure("User not found");
+        }
+        if (userRepository.existsByUsername(request.getUsername()) && !user.getUsername().equals(request.getUsername())) {
+            return ServiceResult.failure("Username already exists");
+        }
+        System.out.println("this is user:" + user);
+        user.setName(request.getName());
+        user.setUsername(request.getUsername());
+        userRepository.save(user);
+        return ServiceResult.success(user, "User names changed successfully");
     }
 
 

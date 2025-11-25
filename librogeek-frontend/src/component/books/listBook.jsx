@@ -7,11 +7,11 @@ const ListBook = ({book_title, book_info, book_id, book_cover, index}) => {
             style={{'--i': index}}
         >
             <div className="list-book-text">
-                <h2><Link to={`/books/${book_id}`}>{book_title}</Link></h2>
+                <h2><Link to={`/book/${book_id}`}>{book_title}</Link></h2>
                 <p>{book_info}</p>
             </div>
             <div className="list-book-cover">
-                <Link to={`/books/${book_id}`}>
+                <Link to={`/book/${book_id}`}>
                     <img src={book_cover} alt=""/>
                 </Link>
             </div>

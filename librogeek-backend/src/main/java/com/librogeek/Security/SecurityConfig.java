@@ -1,6 +1,7 @@
 package com.librogeek.Security;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,9 @@ import java.util.List;
 public class SecurityConfig {
 
     private final String frontendUrl;
+    @Autowired
+    private JwtAuthFilter jwtAuthFilter;
+
 
     private static final String[] WHITELIST = {
             "/api/users/register",
@@ -30,16 +34,13 @@ public class SecurityConfig {
             "/api/users/logout",
 
 
-
             "/api/books/mostRead",
             "/api/books/all",
             "/api/books/{category}",
             "/api/books/getMostReadCategory",
             "/api/books/getMostDownloaded",
 //            "/api/debug/cover/{fileName}"
-
-
-
+//            "/api/users/changeUserNames/{user_id}",
 
 
             "/covers/**",
@@ -47,6 +48,7 @@ public class SecurityConfig {
             "/profile/**"
 
     };
+
     public SecurityConfig() {
         Dotenv dotenv = Dotenv.load();
         String host = dotenv.get("HOST", "http://localhost");
@@ -58,15 +60,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of(frontendUrl));
-                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    config.setAllowedOrigins(List.of(this.frontendUrl));
+                    config.setAllowedMethods(List.of("GET", "POST", "DELETE", "PATCH", "OPTIONS"));
                     config.setAllowCredentials(true);
 
-                    config.setAllowedHeaders(List.of("*"));
-                    config.addExposedHeader("Set-Cookie");
+                    config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
+                    config.addExposedHeader("Authorization");
                     return config;
                 }))
                 .authorizeHttpRequests(auth -> auth
@@ -78,10 +81,11 @@ public class SecurityConfig {
                 )
                 .logout(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
                 .httpBasic(AbstractHttpConfigurer::disable);
+        http.addFilterBefore(jwtAuthFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
