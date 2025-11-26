@@ -5,6 +5,7 @@ import com.librogeek.Component.TokenManager;
 import com.librogeek.DTO.UserDTO;
 import com.librogeek.Repositories.UserRepository;
 import com.librogeek.Requests.ChangeNamesRequest;
+import com.librogeek.Requests.ChangePasswordRequest;
 import com.librogeek.Requests.LoginRequest;
 import com.librogeek.Requests.RegisterRequest;
 import com.librogeek.Services.UserService;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/users")
@@ -52,7 +54,7 @@ public class UserController {
         }
 
         User user = result.getData();
-        String token = tokenManager.generateToken(user.getUsername(), user.getRole());
+        String token = tokenManager.generateToken(user.getUser_id(),user.getUsername(), user.getRole());
         return ResponseEntity.ok(ApiResponse.success(token, "Logged in successfully"));
     }
 
@@ -68,7 +70,7 @@ public class UserController {
         }
 
         User user = serviceResult.getData();
-        String token = tokenManager.generateToken(user.getUsername(), user.getRole());
+        String token = tokenManager.generateToken(user.getUser_id(),user.getUsername(), user.getRole());
         return ResponseEntity.ok(ApiResponse.success(token, "Logged in successfully"));
     }
 
@@ -128,7 +130,35 @@ public class UserController {
 
         return ResponseEntity.ok(ApiResponse.success(null, "User logout successfully"));
     }
+    @PostMapping("/uploadPhoto/{user_id}")
+    public ResponseEntity<ApiResponse> uploadPhoto(@PathVariable Integer user_id, @Valid @RequestPart MultipartFile imageFile, @RequestHeader(name = "Authorization", required = false) String authHeader) {
+        System.out.println("this is user:" + user_id);
+        System.out.println("this is image:"+imageFile);
 
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid or expired token"));
+        }
+        Integer tokenUserId = tokenManager.getUserId(token);
+
+        if (!tokenUserId.equals(user_id)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("You cannot modify another user's account"));
+        }
+        ServiceResult<User> result = userService.uploadPhoto(user_id,imageFile);
+
+        if (!result.isSuccess()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(result.getMessage()));
+        }
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+
+    }
     @PatchMapping("/changeUserNames/{user_id}")
     public ResponseEntity<ApiResponse> changeUserNames(@PathVariable Integer user_id,@Valid @RequestBody ChangeNamesRequest request, @RequestHeader(name = "Authorization", required = false) String authHeader) {
         System.out.println("this is user:" + request.getUsername());
@@ -141,6 +171,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error("Invalid or expired token"));
         }
+        Integer tokenUserId = tokenManager.getUserId(token);
+
+        if (!tokenUserId.equals(user_id)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("You cannot modify another user's account"));
+        }
         ServiceResult<User> result = userService.changeUserNames(user_id,request);
 
         if (!result.isSuccess()) {
@@ -150,4 +186,40 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
 
     }
+    @PatchMapping("/changeUserPassword/{user_id}")
+    public ResponseEntity<ApiResponse> changeUserPassword(
+            @PathVariable Integer user_id,
+            @Valid @RequestBody ChangePasswordRequest request,
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+
+        String token = authHeader.substring(7);
+
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid or expired token"));
+        }
+
+        // *** FIX: extract user id from token ***
+        Integer tokenUserId = tokenManager.getUserId(token);
+
+        if (!tokenUserId.equals(user_id)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("You cannot modify another user's account"));
+        }
+
+        ServiceResult<User> result = userService.changeUserPassword(user_id, request);
+
+        if (!result.isSuccess()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(result.getMessage()));
+        }
+
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+    }
+
 }

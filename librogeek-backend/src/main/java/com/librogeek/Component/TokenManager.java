@@ -17,8 +17,9 @@ public class TokenManager {
     private final TokenBlacklist tokenBlacklist = new TokenBlacklist();
 
 
-    public String generateToken(String username, Role role) {
+    public String generateToken(Integer userId,String username, Role role) {
         return JWT.create()
+                .withClaim("userId", userId)
                 .withSubject(username)
                 .withClaim("role", role.name())
                 .withIssuer("librogeek")
@@ -52,6 +53,18 @@ public class TokenManager {
         return decodedJWT.getSubject();
     }
 
+    public Role getRole(String token) {
+        DecodedJWT decodedJWT = JWT.decode(token);
+        return Role.valueOf(decodedJWT.getClaim("role").asString());
+    }
+    public Integer getUserId(String token) {
+        DecodedJWT decoded = JWT.require(Algorithm.HMAC256(SECRET))
+                .build()
+                .verify(token);
+
+        return decoded.getClaim("userId").asInt();
+    }
+
     public void addTokenToBlackList(String token) {
         tokenBlacklist.addTokenToBlackList(token);
 
@@ -64,8 +77,10 @@ public class TokenManager {
         tokenBlacklist.addTokenToBlackList(refreshToken);
 
         String username = getUsername(refreshToken);
+        Integer userId = getUserId(refreshToken);
+        Role role = getRole(refreshToken);
 
-        return generateToken(username, Role.USER);
+        return generateToken(userId,username,role);
     }
 
 }

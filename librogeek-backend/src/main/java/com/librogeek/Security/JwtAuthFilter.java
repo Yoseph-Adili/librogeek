@@ -23,10 +23,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/api/users/refresh",
             "/api/users/logout",
             "/api/books/mostRead",
-            "/api/books/all",
+            "/api/books/",
             "/api/books/getCategories",
             "/api/books/getMostReadCategory",
             "/api/books/getMostDownloaded",
+            "/api/users/uploadPhoto/",
             "/covers/",
             "/pdf/",
             "/profile/"
@@ -41,7 +42,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        System.out.println("this is the filter");
         if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
             filterChain.doFilter(request, response);
             return;

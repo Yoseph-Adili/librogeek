@@ -39,6 +39,7 @@ public class SecurityConfig {
             "/api/books/{category}",
             "/api/books/getMostReadCategory",
             "/api/books/getMostDownloaded",
+            "/api/users/uploadPhoto/{user_id}",
 //            "/api/debug/cover/{fileName}"
 //            "/api/users/changeUserNames/{user_id}",
 
@@ -67,6 +68,10 @@ public class SecurityConfig {
                     config.setAllowedOrigins(List.of(this.frontendUrl));
                     config.setAllowedMethods(List.of("GET", "POST", "DELETE", "PATCH", "OPTIONS"));
                     config.setAllowCredentials(true);
+
+
+
+
 
                     config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
                     config.addExposedHeader("Authorization");

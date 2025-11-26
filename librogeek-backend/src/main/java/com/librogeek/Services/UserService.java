@@ -4,6 +4,7 @@ import com.librogeek.Models.User;
 import com.librogeek.Repositories.UserRepository;
 
 import com.librogeek.Requests.ChangeNamesRequest;
+import com.librogeek.Requests.ChangePasswordRequest;
 import com.librogeek.Requests.LoginRequest;
 import com.librogeek.Requests.RegisterRequest;
 import com.librogeek.Utils.ServiceResult;
@@ -13,7 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -103,6 +112,9 @@ public class UserService {
         if (user == null) {
             return ServiceResult.failure("User not found");
         }
+        if (user_id != user.getUser_id()) {
+          return ServiceResult.failure("Unauthorized");
+        }
         if (userRepository.existsByUsername(request.getUsername()) && !user.getUsername().equals(request.getUsername())) {
             return ServiceResult.failure("Username already exists");
         }
@@ -113,6 +125,81 @@ public class UserService {
         return ServiceResult.success(user, "User names changed successfully");
     }
 
+    public ServiceResult<User> changeUserPassword(Integer user_id, @Valid ChangePasswordRequest request) {
+        User user = userRepository.findById(user_id)
+                .orElse(null);
+        if (user == null) {
+            return ServiceResult.failure("User not found");
+        }
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            return ServiceResult.failure("Current password is incorrect");
+        }
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            return ServiceResult.failure("New passwords do not match");
+        }
 
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        return ServiceResult.success(user, "User passwords changed successfully");
+    }
+
+    public ServiceResult<User> uploadPhoto(Integer user_id,  @Valid MultipartFile imageFile) {
+
+        User user = userRepository.findById(user_id)
+                .orElse(null);
+        if (user == null) {
+            return ServiceResult.failure("User not found");
+        }
+        if (imageFile.isEmpty()) {
+            return ServiceResult.failure("No image file provided");
+        }
+        if (!imageFile.getContentType().startsWith("image/")) {
+            return ServiceResult.failure("Invalid image file type");
+        }
+        try {
+
+            try {
+                if (user.getProfile_photo() != null && !user.getProfile_photo().isEmpty()) {
+                    Path oldFile = Paths.get("librogeek-backend/uploads/profiles/")
+                            .resolve(user.getProfile_photo().replace("profile/", ""));
+                    Files.deleteIfExists(oldFile);
+                }
+            } catch (Exception err) {
+                System.out.println("Failed to delete old file: " + err.getMessage());
+            }
+
+
+            String filename = "profile_" + user_id + "_" + System.currentTimeMillis() + imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf("."));
+
+
+            Path uploadPath = Paths.get("librogeek-backend/uploads/profiles/");
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+                System.out.println("Created directory: " + uploadPath.toAbsolutePath());
+            }
+            Path filePath = uploadPath.resolve(filename);
+
+
+            try (InputStream input = imageFile.getInputStream()) {
+                Files.copy(input, filePath, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("COPY SUCCESS: " + filePath.toAbsolutePath());
+            } catch (Exception e) {
+                System.out.println("COPY FAILED: " + e.getMessage());
+                e.printStackTrace();
+            }
+
+            System.out.println("Saving to path: " + filePath.toAbsolutePath());
+
+
+            user.setProfile_photo("profile/" + filename);
+            userRepository.save(user);
+
+            return ServiceResult.success(user, "Profile photo updated successfully");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ServiceResult.failure("Failed to save image: " + e.getMessage());
+        }
+    }
 }
 
