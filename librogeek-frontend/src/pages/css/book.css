@@ -45,34 +45,119 @@
     font-family: var(--body-text);
     font-size: 1.7rem;
 }
-.book-info>p{
+
+.book-info > p {
     margin-bottom: 2rem;
 }
-.type-container{
+
+.type-container {
     display: flex;
     gap: 1rem;
     margin-bottom: 1rem;
 }
-.type-container>div{
+
+.type-container > div {
     width: 50%;
 }
-.book-info>div p{
+
+.book-info > div p {
     border-bottom: 1px solid var(--text-color);
     margin-bottom: 1rem;
 }
-.book-info>div>div a{
+
+.book-info > div > div a {
     padding: 0.25rem 1rem;
     border: 1px solid var(--text-color);
     margin-right: 1rem;
 }
-.tag-container{
+
+.tag-container {
     margin-bottom: 2rem;
 }
-.add-to-bookshelf{
+
+.buttons-container {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.read-book-btn {
     padding: 0.25rem 1rem;
     color: var(--background-color);
     background: var(--text-color);
     font-size: 2rem;
     font-family: var(--body-text);
     cursor: pointer;
+}
+
+.add-to-bookshelf-btn {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+}
+
+.add-to-bookshelf-btn svg {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    user-select: none;
+    transition: fill 0.3s ease;
+}
+
+.comments-container {
+    width: 100%;
+    max-width: 850px;
+}
+
+.comments-container > h1 {
+    margin-top: 2rem;
+
+    border-bottom: 1px solid var(--text-color);
+    font-family: var(--body-text);
+    font-size: 3rem;
+}
+
+.comment-container {
+    margin-top: 1rem;
+    width: 100%;
+    display: flex;
+    /*justify-content: space-between;*/
+    gap: 1rem;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--text-color);
+}
+
+.comment-user-profile {
+    width: 50px;
+
+}
+
+.comment-user-profile img {
+    width: 100%;
+
+
+}
+
+.comment-info {
+    flex-grow: 1;
+}
+
+.comment-info h5 {
+    font-weight: normal;
+    margin-bottom: 0.5rem;
+}
+
+.comment-info p {
+
+
+}
+
+.time-container {
+    margin-left: auto;
+}
+.time-container p{
+    /*font-size: 0.8rem;*/
+    color: var(--text-color);
+    font-family: var(--body-text);
+
 }

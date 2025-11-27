@@ -1,5 +1,6 @@
 package com.librogeek.Controllers;
 
+import com.librogeek.DTO.BookDTO;
 import com.librogeek.Models.Book;
 import com.librogeek.Services.BookService;
 import com.librogeek.Utils.ApiResponse;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/books")
@@ -51,6 +53,11 @@ public class BookController {
     @GetMapping("/getCategories" )
     public ResponseEntity<ApiResponse> getCategories() {
         ServiceResult<List<String>> result = bookService.getCategories();
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+    }
+    @GetMapping("/book/{book_id}" )
+    public ResponseEntity<ApiResponse> getBookById(@PathVariable Integer book_id) {
+        ServiceResult<BookDTO> result = bookService.getBookById(book_id);
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
 

@@ -32,14 +32,14 @@ public class SecurityConfig {
             "/api/users/status",
             "/api/users/refresh",
             "/api/users/logout",
-
+            "/api/users/uploadPhoto/{user_id}",
 
             "/api/books/mostRead",
             "/api/books/all",
             "/api/books/{category}",
             "/api/books/getMostReadCategory",
             "/api/books/getMostDownloaded",
-            "/api/users/uploadPhoto/{user_id}",
+            "/api/books/book/{bookId}",
 //            "/api/debug/cover/{fileName}"
 //            "/api/users/changeUserNames/{user_id}",
 
