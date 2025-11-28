@@ -61,7 +61,7 @@ const Register = () => {
         const user = {
             name: name, username: username, password: password, confirmPassword: passwordConfirm, email: email,
         };
-        // console.log(user)
+
 
         try {
             const res = await fetch(`${API_URL}/users/register`, {
@@ -69,7 +69,7 @@ const Register = () => {
             });
 
             const data = await res.json();
-            console.log(data);
+
 
             if (res.ok) {
                 window.location.href = "/"

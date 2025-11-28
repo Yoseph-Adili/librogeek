@@ -24,7 +24,7 @@ const Setting = () => {
     const [croppedImage, setCroppedImage] = useState(null);
 
 
-    console.log(loginUser.name)
+
     const token = localStorage.getItem("token");
 
     function selectPhoto(e) {
@@ -36,7 +36,7 @@ const Setting = () => {
 
         };
         reader.readAsDataURL(file);
-        console.log(file)
+
     }
 
     async function uploadCroppedPhoto() {

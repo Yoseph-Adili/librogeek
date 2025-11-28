@@ -8,6 +8,7 @@ import Comment from "../component/book/comment.jsx";
 
 const Book = () => {
     const {bookId} = useParams()
+    const token = localStorage.getItem("token");
 
     if (!bookId) return (
         <div>Loading...</div>
@@ -15,10 +16,12 @@ const Book = () => {
     const [book, setBook] = useState([])
     const [comments, setComments] = useState([]);
     useEffect(() => {
-        fetch(`${API_URL}/books/book/${bookId}`)
+        fetch(`${API_URL}/books/book/${bookId}`,{
+            headers: {Authorization: `Bearer ${token}`},
+        })
             .then(res => res.json())
             .then(data => {
-                console.log(data)
+
                 setBook(data.data)
                 setComments(data.data.userComments);
             })
@@ -28,7 +31,7 @@ const Book = () => {
 
     }, [bookId])
     // setComments(book.userComments);
-    console.log(comments)
+
     return (
         <div className={"book-page-container"}>
             <BookInfo book={book}></BookInfo>

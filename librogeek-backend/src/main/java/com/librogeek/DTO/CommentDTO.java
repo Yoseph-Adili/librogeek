@@ -2,7 +2,7 @@ package com.librogeek.DTO;
 
 import java.time.LocalDateTime;
 
-public record CommendDTO(
+public record CommentDTO(
         Integer user_id,
         String profile_photo,
         String username,

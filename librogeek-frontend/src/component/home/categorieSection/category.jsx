@@ -5,7 +5,7 @@ import CustomizeTitle from "../../cuntomizeTitle.jsx";
 const Category = (books) => {
 
     const books_list = books.books;
-    // console.log(books_list[0])
+
 
     return (
         <div className="category">

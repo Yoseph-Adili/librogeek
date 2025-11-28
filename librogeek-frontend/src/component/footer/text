@@ -88,17 +88,16 @@ export default class BrainCanvas {
         }
     }
 
-    // 私有：窗口 resize 回调
+
     _onResize() {
         this.resize();
     }
 
-    // 私有：把图片像素采样成粒子
     _createParticlesFromImage() {
         const img = this._image;
         if (!img || !this._imageLoaded) return;
 
-        // 创建临时画布把图片绘制进去以读取像素
+
         const tmp = document.createElement("canvas");
         const tw = img.width, th = img.height;
         tmp.width = tw;

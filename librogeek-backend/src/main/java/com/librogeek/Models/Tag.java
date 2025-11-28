@@ -14,7 +14,8 @@ public class Tag {
 
     @Column(name = "tag")
     private String tag;
-
+    @Column(name = "tag_votes")
+    private Integer tagVotes;
     public Tag() {
     }
     public Tag(Integer tagId, Integer bookId, String tag) {
@@ -37,5 +38,13 @@ public class Tag {
     }
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    public Integer getTagVotes() {
+        return tagVotes;
+    }
+
+    public void setTagVotes(Integer tagVotes) {
+        this.tagVotes = tagVotes;
     }
 }

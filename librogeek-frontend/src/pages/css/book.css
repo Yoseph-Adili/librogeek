@@ -73,12 +73,40 @@
 
 .tag-container {
     margin-bottom: 2rem;
+
+}
+.tag-options{
+    height: 40px;
+
+}
+.tag-option{
+    padding: 0.25rem 1rem;
+    border: 1px solid var(--text-color);
+    margin-right: 1rem;
+    cursor: pointer;
+}
+.tag-option.selected{
+    background: var(--text-color);
+    color: var(--background-color);
 }
 
+.tag-vote-container{
+    display: flex;
+    overflow: hidden;
+    transition: all 0.5s ease;
+
+}
+.tag-vote{
+    padding: 0.25rem 1rem;
+    border: 1px solid var(--text-color);
+    margin-right: 1rem;
+    cursor: pointer;
+}
 .buttons-container {
     display: flex;
     gap: 1rem;
     align-items: center;
+
 }
 
 .read-book-btn {

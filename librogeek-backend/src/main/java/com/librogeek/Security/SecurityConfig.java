@@ -40,6 +40,10 @@ public class SecurityConfig {
             "/api/books/getMostReadCategory",
             "/api/books/getMostDownloaded",
             "/api/books/book/{bookId}",
+            "/api/books/book/bookshelf/{bookId}",
+            "/api/books/book/tag/add/{tagId}",
+            "/api/books/book/tag/subtract/{tagId}",
+
 //            "/api/debug/cover/{fileName}"
 //            "/api/users/changeUserNames/{user_id}",
 

@@ -20,13 +20,13 @@ const HeroSection = () => {
     const firstBook = books?.[0] ?? null;
     const secondBook = books?.[1] ?? null;
 
-    console.log(books)
+
     return (
         <section className="hero-section" id="hero-section">
             {firstBook && (
                 <TopBook
                     cover_link={STATIC_URL + "/" + firstBook.cover_image}
-                    book_link={"/books/" + firstBook.book_id}
+                    book_link={"/book/" + firstBook.book_id}
                     book_title={firstBook.title}
                     book_intro={firstBook.description}
                 />
@@ -46,7 +46,7 @@ const HeroSection = () => {
             {secondBook && (
                 <TopBook
                     cover_link={STATIC_URL + "/" + secondBook.cover_image}
-                    book_link={"/books/" + secondBook.book_id}
+                    book_link={"/book/" + secondBook.book_id}
                     book_title={secondBook.title}
                     book_intro={secondBook.description}
                 />)}

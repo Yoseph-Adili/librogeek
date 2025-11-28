@@ -39,7 +39,7 @@ function App() {
     useEffect(() => {
         const refreshToken = async () => {
             const token = localStorage.getItem("token");
-            // console.log("Refreshing token...", token);
+
             if (!token) return;
 
             try {

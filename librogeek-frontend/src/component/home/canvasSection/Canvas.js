@@ -44,7 +44,7 @@ export default class Canvas {
 
 
             book.drawAtCenter(this.ctx, rotation, scale);
-            console.log(book.position)
+
         });
 
 

@@ -132,8 +132,7 @@ public class UserController {
     }
     @PostMapping("/uploadPhoto/{user_id}")
     public ResponseEntity<ApiResponse> uploadPhoto(@PathVariable Integer user_id, @Valid @RequestPart MultipartFile imageFile, @RequestHeader(name = "Authorization", required = false) String authHeader) {
-        System.out.println("this is user:" + user_id);
-        System.out.println("this is image:"+imageFile);
+
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

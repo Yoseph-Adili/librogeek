@@ -38,7 +38,7 @@ const Login = () => {
         const user = {
             username: username, password: password,
         };
-        console.log(user)
+
 
         try {
             const res = await fetch(`${API_URL}/users/login`, {
@@ -49,7 +49,7 @@ const Login = () => {
             });
 
             const data = await res.json();
-            console.log(data);
+
 
             if (res.ok) {
                 localStorage.setItem("token", data.data);

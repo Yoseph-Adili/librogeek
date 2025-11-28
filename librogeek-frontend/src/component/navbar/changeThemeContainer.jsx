@@ -56,7 +56,7 @@ export default function ChangeThemeContainer() {
         } else {
             setMenuOpen(true);
         }
-        console.log(menuOpen);
+
 
     }
 
