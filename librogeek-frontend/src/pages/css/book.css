@@ -75,33 +75,38 @@
     margin-bottom: 2rem;
 
 }
-.tag-options{
+
+.tag-options {
     height: 40px;
 
 }
-.tag-option{
+
+.tag-option {
     padding: 0.25rem 1rem;
     border: 1px solid var(--text-color);
     margin-right: 1rem;
     cursor: pointer;
 }
-.tag-option.selected{
+
+.tag-option.selected {
     background: var(--text-color);
     color: var(--background-color);
 }
 
-.tag-vote-container{
+.tag-vote-container {
     display: flex;
     overflow: hidden;
     transition: all 0.5s ease;
 
 }
-.tag-vote{
+
+.tag-vote {
     padding: 0.25rem 1rem;
     border: 1px solid var(--text-color);
     margin-right: 1rem;
     cursor: pointer;
 }
+
 .buttons-container {
     display: flex;
     gap: 1rem;
@@ -145,6 +150,28 @@
     font-size: 3rem;
 }
 
+.new-comment-container {
+    width: 100%;
+    margin: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid var(--text-color);
+    padding-bottom: 1rem;
+
+}
+
+.new-comment-textarea {
+
+    width: 100%;
+    /*height: 100px;*/
+    background: var(--background-color);
+    border: 1px solid var(--text-color);
+    font-size: 2rem;
+    font-family: var(--body-text);
+    padding-left: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
 .comment-container {
     margin-top: 1rem;
     width: 100%;
@@ -183,7 +210,8 @@
 .time-container {
     margin-left: auto;
 }
-.time-container p{
+
+.time-container p {
     /*font-size: 0.8rem;*/
     color: var(--text-color);
     font-family: var(--body-text);

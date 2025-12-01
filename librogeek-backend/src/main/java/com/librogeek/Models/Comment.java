@@ -22,7 +22,8 @@ public class Comment {
     @NotEmpty
     private String content;
 
-    @Column(updatable = false)
+
+    @Column(name = "created_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;
 
     // getters & setters

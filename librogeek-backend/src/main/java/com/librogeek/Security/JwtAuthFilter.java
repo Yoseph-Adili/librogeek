@@ -28,6 +28,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/api/books/getCategories",
             "/api/books/getMostReadCategory",
             "/api/books/getMostDownloaded",
+            "/api/books/book/",
             "/api/books/book/bookshelf/",
             "/covers/",
             "/pdf/",
@@ -58,7 +59,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            filterChain.doFilter(request, response);
             return;
         }
 

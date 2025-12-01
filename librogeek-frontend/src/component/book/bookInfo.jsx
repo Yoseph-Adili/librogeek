@@ -45,8 +45,7 @@ const BookInfo = ({book}) => {
                 if (data.success) {
                     window.location.reload()
                     alert(data.message)
-
-                }
+                }else alert(data.message)
             })
     }
 

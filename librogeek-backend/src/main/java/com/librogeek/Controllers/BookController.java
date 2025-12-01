@@ -65,9 +65,12 @@ public class BookController {
     public ResponseEntity<ApiResponse> getBookById(@PathVariable Integer book_id, @RequestHeader(name = "Authorization", required = false) String authHeader) {
         String token = null;
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
-            if (!tokenManager.isTokenValid(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Invalid or expired token"));
+            token = authHeader.substring(7).trim();
+            if (token.isEmpty() || token.equalsIgnoreCase("null")) {
+                token = null;
+            } else if (!tokenManager.isTokenValid(token)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ApiResponse.error("Invalid or expired token"));
             }
         }
         System.out.println("token:" + token);
@@ -91,7 +94,7 @@ public class BookController {
 
         String token = authHeader.substring(7);
         if (!tokenManager.isTokenValid(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Invalid or expired token"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Please login first"));
         }
         ServiceResult<BookDTO> result = bookService.addTagVote(tag_id, token);
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
