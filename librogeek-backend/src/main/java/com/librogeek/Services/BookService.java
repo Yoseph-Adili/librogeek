@@ -6,10 +6,7 @@ import com.librogeek.DTO.BookDTO;
 import com.librogeek.DTO.CommentDTO;
 import com.librogeek.Models.*;
 
-import com.librogeek.Repositories.BookRepository;
-import com.librogeek.Repositories.BookShelfRepository;
-import com.librogeek.Repositories.CommentRepository;
-import com.librogeek.Repositories.TagRepository;
+import com.librogeek.Repositories.*;
 import com.librogeek.Utils.ServiceResult;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,8 +26,9 @@ public class BookService {
     private final BookShelfRepository bookShelfRepository;
     private final UserService userService;
     private final TokenManager tokenManager;
+    private final PurchasedBookRepository purchasedBookRepository;
 
-    public BookService(BookRepository bookRepository, CommentRepository commentRepository, UserService userService, TagRepository tagRepository, BookShelfRepository bookShelfRepository, TokenManager tokenManager) {
+    public BookService(BookRepository bookRepository, CommentRepository commentRepository, UserService userService, TagRepository tagRepository, BookShelfRepository bookShelfRepository, TokenManager tokenManager, PurchasedBookRepository purchasedBookRepository) {
 
         this.bookRepository = bookRepository;
         this.commentRepository = commentRepository;
@@ -38,6 +36,7 @@ public class BookService {
         this.tagRepository = tagRepository;
         this.bookShelfRepository = bookShelfRepository;
         this.tokenManager = tokenManager;
+        this.purchasedBookRepository = purchasedBookRepository;
     }
 
 
@@ -227,4 +226,27 @@ public class BookService {
         return ServiceResult.success(result, "Books retrieved successfully");
     }
 
-}
+    public ServiceResult<String> getBookPdfById(Integer book_id, String token) {
+
+        Optional<Book> book = bookRepository.findById(book_id);
+
+
+        if (book.isEmpty()) {
+            return ServiceResult.failure("No book found");
+        }
+        Float price = book.get().getPrice();
+        if (price != null && price > 0) {
+            Integer userId = tokenManager.getUserId(token);
+            ServiceResult<User> user=userService.getUserById(userId);
+            if (token == null || token.isEmpty() || user.getData() == null) {
+                return ServiceResult.failure("Book is paid. Please login to access.");
+            }
+            Optional<PurchasedBook>purchasedBook = purchasedBookRepository.findByBookIdAndUserId(book_id, userId);
+            if (purchasedBook.isEmpty()) {
+                return ServiceResult.failure("please purchase the book to access the pdf.");
+            }
+        }
+        return ServiceResult.success(book.get().getFile_path(), "Book retrieved successfully");
+
+    }
+    }

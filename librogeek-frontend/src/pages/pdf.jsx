@@ -5,10 +5,15 @@ import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import Logo from "../component/logo.jsx";
 import LogoContainer from "../component/navbar/logoContainer.jsx";
 import ChangeThemeContainer from "../component/navbar/changeThemeContainer.jsx";
+import {API_URL} from "../config/api.js";
+import {useParams} from "react-router-dom";
+import alert from "../config/utils.js";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
 const Pdf = () => {
+    const {bookId} = useParams()
+    console.log(bookId)
     const [pdfDoc, setPdfDoc] = useState(null);
     const [pageNum, setPageNum] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
@@ -65,47 +70,88 @@ const Pdf = () => {
 
         ctx.putImageData(imgData, 0, 0);
     };
-    // const handleFile = async () => {
-    //     try {
-    //         const res = await fetch("http://localhost:8080/files/高性能JavaScript-中文版.pdf");
-    //         const data = await res.json();
-    //
-    //         const loadingTask = pdfjsLib.getDocument(data.pdfUrl);
-    //         const pdf = await loadingTask.promise;
-    //
-    //         setPdfDoc(pdf);
-    //         setTotalPages(pdf.numPages);
-    //         setPageNum(1);
-    //
-    //     } catch (err) {
-    //         console.error("Error loading PDF:", err);
-    //         alert("Error loading PDF");
-    //     }
-    // };
-
-    const handleFile = (e) => {
-        const file = e.target.files[0];
-        if (!file || file.type !== 'application/pdf') {
-            alert('Please select a valid PDF file');
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = async (event) => {
+    useEffect(() => {
+        const loadPdf = async () => {
+            const token = localStorage.getItem("token") || null;
             try {
-                const typedArray = new Uint8Array(event.target.result);
+
+                const res = await fetch(`${API_URL}/books/book/pdf/${bookId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                if (!res.ok) {
+                    alert("Failed to fetch PDF")
+                }
+
+
+
+                const blob = await res.blob();
+                const buffer = await blob.arrayBuffer();
+                const typedArray = new Uint8Array(buffer);
+
+
                 const loadingTask = pdfjsLib.getDocument(typedArray);
                 const pdf = await loadingTask.promise;
+
+
                 setPdfDoc(pdf);
                 setTotalPages(pdf.numPages);
                 setPageNum(1);
+
             } catch (err) {
-                console.error('Error loading PDF:', err);
-                alert('Failed to load PDF');
+                console.error("Error loading PDF:", err);
+                alert("Failed to load PDF");
             }
         };
-        reader.readAsArrayBuffer(file);
-    };
+
+        loadPdf();
+    }, [bookId]); // 当 bookId 或 token 变化时重新加载
+
+
+    // const handleFile = (e) => {
+    //     fetch(`${API_URL}/books/book/pdf/test.pdf`)
+    //         .then(res => res.blob())
+    //         .then(blob => {
+    //             const reader = new FileReader();
+    //             reader.onload = async (event) => {
+    //                 try {
+    //                     const typedArray = new Uint8Array(event.target.result);
+    //                     const loadingTask = pdfjsLib.getDocument(typedArray);
+    //                     const pdf = await loadingTask.promise;
+    //                     setPdfDoc(pdf);
+    //                     setTotalPages(pdf.numPages);
+    //                     setPageNum(1);
+    //                 } catch (err) {
+    //                     console.error('Error loading PDF:', err);
+    //                     alert('Failed to load PDF');
+    //                 }
+    //             };
+    //             reader.readAsArrayBuffer(blob);
+    //         });
+    //     const file = e.target.files[0];
+    //     if (!file || file.type !== 'application/pdf') {
+    //         alert('Please select a valid PDF file');
+    //         return;
+    //     }
+    //
+    //     const reader = new FileReader();
+    //     reader.onload = async (event) => {
+    //         try {
+    //             const typedArray = new Uint8Array(event.target.result);
+    //             const loadingTask = pdfjsLib.getDocument(typedArray);
+    //             const pdf = await loadingTask.promise;
+    //             setPdfDoc(pdf);
+    //             setTotalPages(pdf.numPages);
+    //             setPageNum(1);
+    //         } catch (err) {
+    //             console.error('Error loading PDF:', err);
+    //             alert('Failed to load PDF');
+    //         }
+    //     };
+    //     reader.readAsArrayBuffer(file);
+    // };
 
 
     const goPrevPage = () => setPageNum((p) => Math.max(p - 1, 1));
@@ -118,6 +164,25 @@ const Pdf = () => {
     useEffect(() => {
         if (pdfDoc) renderPage(pageNum);
     }, [pdfDoc, pageNum, scale]);
+    useEffect(() => {
+        const handleWheel = (e) => {
+            if (e.ctrlKey) {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    zoomIn();
+                } else {
+                    zoomOut();
+                }
+            }
+        };
+
+        window.addEventListener("wheel", handleWheel, {passive: false});
+
+        return () => {
+            window.removeEventListener("wheel", handleWheel);
+        };
+    }, []);
+
 
     return (<div className="pdf-viewer">
         <div className="pdf-header">
@@ -127,23 +192,33 @@ const Pdf = () => {
                 <LogoContainer text="ibroGeek"></LogoContainer>
 
                 <div className={"pdf-nav-right"}>
-                    <input type="file" accept="application/pdf" onChange={handleFile}/>
+                    {/*<input type="file" accept="application/pdf" onChange={handleFile}/>*/}
                     <div className="page-controls">
                         <button onClick={goPrevPage} disabled={pageNum <= 1}>
 
                             <svg viewBox="0 0 517 450" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M25 25V425M491.667 425V25L158.333 225L380.556 358.333" stroke="var(--text-color)"
+                                <path d="M25 25V425M491.667 425V25L158.333 225L380.556 358.333"
+                                      stroke="var(--text-color)"
                                       strokeWidth="50" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
 
                         </button>
                         <span>
-                                <input type="number" value={pageNum}/>/ {totalPages}
+                                <input
+                                    type="number"
+                                    value={pageNum}
+                                    onChange={(e) => setPageNum(Number(e.target.value))}
+                                    min={1}
+                                    max={totalPages}
+                                />
+/ {totalPages}
+
                             </span>
                         <button onClick={goNextPage} disabled={pageNum >= totalPages}>
 
                             <svg viewBox="0 0 517 450" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M491.667 25V425M25 425V25L358.333 225L136.111 358.333" stroke="var(--text-color)"
+                                <path d="M491.667 25V425M25 425V25L358.333 225L136.111 358.333"
+                                      stroke="var(--text-color)"
                                       strokeWidth="50" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
 
@@ -189,7 +264,8 @@ const Pdf = () => {
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M20 20L14.9497 14.9498M14.9497 14.9498C16.2165 13.683 17 11.933 17 10C17 6.13401 13.866 3 10 3C6.13401 3 3 6.13401 3 10C3 13.866 6.13401 17 10 17C11.933 17 13.683 16.2165 14.9497 14.9498ZM7 10H13"
-                                stroke="var(--text-color)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                stroke="var(--text-color)" strokeWidth="1.5" strokeLinecap="round"
+                                strokeLinejoin="round"/>
                         </svg>
                     </button>
                     <span>{Math.round(scale * 100)}%</span>

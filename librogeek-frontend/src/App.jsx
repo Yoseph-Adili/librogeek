@@ -101,7 +101,7 @@ function App() {
 
                     </Route>
 
-                    <Route path="/book/pdf/:id" element={<Pdf/>}/>
+                    <Route path="/book/pdf/:bookId" element={<Pdf/>}/>
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/register" element={<Register/>}/>
                     <Route path="/logout" element={<Logout/>}/>

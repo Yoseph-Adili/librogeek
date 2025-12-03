@@ -19,7 +19,7 @@ main {
     align-items: center;
     height: 70px;
     color: var(--text-color);
-    font-size: 1.5rem;
+    font-size: 1rem;
 
 }
 
@@ -53,6 +53,10 @@ main {
     border-radius: 5px;
     z-index: 999;
     transition: transform 0.3s ease-in-out;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+    align-items: center;
+
 }
 .controls.active {
     transform: translateX(-50%) translateY(0);
@@ -74,8 +78,8 @@ main {
 .controls button svg,
 .pdf-nav-right button svg
 {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.25rem;
+    height: 1.25rem;
     /*fill: var(--text-color);*/
 }
 .pdf-container {
@@ -106,20 +110,32 @@ main {
     height: 100%;
 }
 .page-controls input{
-    width: 3rem;
+    width: 2rem;
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1rem;
     padding: 0.25rem;
     margin: 0 0.5rem;
     -webkit-align-self: unset;
+    background: var(--background-color);
+    color: var(--text-color);
+    border: 1px solid var(--text-color);
 
+}
+.zoom-controls{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-    /* display: none; <- Crashes Chrome on hover */
     -webkit-appearance: none;
-    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+    margin: 0;
 }
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
 .pdf-container canvas {
     position: absolute;
 }

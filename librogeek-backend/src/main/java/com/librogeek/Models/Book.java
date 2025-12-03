@@ -3,6 +3,7 @@ package com.librogeek.Models;
 import com.librogeek.Enums.BookType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+
 @Entity
 @Table(name = "books")
 public class Book {
@@ -25,10 +26,13 @@ public class Book {
     private Integer uploaded_by;
     private Integer views;
     private Integer downloads;
+    private Float price;
     private String created_at;
 
-    public Book() {}
-    public Book(Integer book_id, String title, String author, String description, String file_path, String cover_image, String category, BookType book_type, Integer uploaded_by, Integer views, Integer downloads, String created_at) {
+    public Book() {
+    }
+
+    public Book(Integer book_id, String title, String author, String description, String file_path, String cover_image, String category, BookType book_type, Integer uploaded_by, Integer views, Integer downloads, Float price, String created_at) {
         this.book_id = book_id;
         this.title = title;
         this.author = author;
@@ -40,6 +44,7 @@ public class Book {
         this.uploaded_by = uploaded_by;
         this.views = views;
         this.downloads = downloads;
+        this.price = price;
         this.created_at = created_at;
     }
 
@@ -131,6 +136,14 @@ public class Book {
         this.downloads = downloads;
     }
 
+    public Float getPrice() {
+        return price;
+    }
+
+    public void setPrice(Float price) {
+        this.price = price;
+    }
+
     public String getCreated_at() {
         return created_at;
     }
@@ -138,8 +151,6 @@ public class Book {
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
     }
-
-
 
 
 }

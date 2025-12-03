@@ -7,10 +7,17 @@ import com.librogeek.Requests.AddTagRequest;
 import com.librogeek.Services.BookService;
 import com.librogeek.Utils.ApiResponse;
 import com.librogeek.Utils.ServiceResult;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +26,8 @@ import java.util.Optional;
 public class BookController {
     private final BookService bookService;
     private final TokenManager tokenManager;
+    @Value("${file.pdfs.path}")
+    private String pdfsPath;
 
     public BookController(BookService bookService, TokenManager tokenManager) {
         this.bookService = bookService;
@@ -68,7 +77,7 @@ public class BookController {
         System.out.println("authHeader:" + authHeader);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7).trim();
-            if (token.isEmpty() || token.equalsIgnoreCase("null")|| !tokenManager.isTokenValid(token)) {
+            if (token.isEmpty() || token.equalsIgnoreCase("null") || !tokenManager.isTokenValid(token)) {
                 token = null;
             }
         }
@@ -98,6 +107,7 @@ public class BookController {
         ServiceResult<BookDTO> result = bookService.addTagVote(tag_id, token);
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
+
     @PatchMapping("/book/tag/subtract/{tag_id}")
     public ResponseEntity<ApiResponse> subtractTagVote(@PathVariable Integer tag_id, @RequestHeader(name = "Authorization", required = false) String authHeader) {
         System.out.println("authHeader:" + authHeader + "this is bookshelf");
@@ -109,6 +119,7 @@ public class BookController {
         ServiceResult<BookDTO> result = bookService.subtractTagVote(tag_id, token);
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
+
     @PostMapping("/book/tag/{book_id}")
     public ResponseEntity<ApiResponse> addTag(@PathVariable Integer book_id, @RequestHeader(name = "Authorization", required = false) String authHeader, @RequestBody AddTagRequest request) {
 
@@ -118,8 +129,48 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Please login first"));
         }
         String tag = request.getTag();
-        ServiceResult<BookDTO> result = bookService.addTag(book_id, token,tag);
+        ServiceResult<BookDTO> result = bookService.addTag(book_id, token, tag);
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
+
+    @GetMapping("/book/pdf/{book_id}")
+    public ResponseEntity<Resource> getBookPdfById(
+            @PathVariable Integer book_id,
+            @RequestHeader(name = "Authorization", required = false) String authHeader) throws IOException {
+
+
+        String token = null;
+        if (authHeader != null && authHeader.startsWith("Bearer ") && !authHeader.equalsIgnoreCase("Bearer null")) {
+            token = authHeader.substring(7).trim();
+            if (token.isEmpty() || token.equalsIgnoreCase("null") || !tokenManager.isTokenValid(token)) {
+                token = null;
+            }
+        }
+
+
+        ServiceResult<String> result = bookService.getBookPdfById(book_id, token);
+
+        if (!result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        System.out.println("pdf failed:" + result.getMessage());
+        System.out.println("pdf file name:" + result.getData());
+        File file = new File(pdfsPath + result.getData());
+
+        if (!file.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .contentLength(file.length())
+                .body(resource);
+    }
+
+
 
 }
