@@ -1,15 +1,16 @@
 import './css/book.css'
 import {Link, useParams} from "react-router-dom";
 import BookInfo from "../component/book/bookInfo.jsx";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {API_URL} from "../config/api.js";
 import Comment from "../component/book/comment.jsx";
 import alert from "../config/utils.js";
+import {UserContext} from "../App.jsx";
 
 const Book = () => {
     const {bookId} = useParams()
-    const token = localStorage.getItem("token");
-
+    const token = localStorage.getItem("token") || null;
+    const {loginUser} = useContext(UserContext);
     if (!bookId) return (
         <div>Loading...</div>
     )
@@ -21,6 +22,12 @@ const Book = () => {
 
     function sendComment(e) {
         e.preventDefault();
+        const token = localStorage.getItem("token") || null;
+        if (!token || !loginUser){
+            alert("You must be logged in to comment");
+            return;
+        }
+
         const formData = new FormData(e.target);
         const comment = formData.get("new-comment");
 
@@ -63,7 +70,7 @@ const Book = () => {
 
     return (
         <div className={"book-page-container"}>
-            <BookInfo book={book}></BookInfo>
+            <BookInfo book={book} fetchComments={fetchComments} />
             <div className="comments-container">
                 <h1>Comments</h1>
 

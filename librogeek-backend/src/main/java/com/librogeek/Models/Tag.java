@@ -32,7 +32,9 @@ public class Tag {
     public Integer getBook_id() {
         return bookId;
     }
-    public void setBook_id(Integer bookId) {}
+    public void setBook_id(Integer bookId) {
+        this.bookId = bookId;
+    }
     public String getTag() {
         return tag;
     }

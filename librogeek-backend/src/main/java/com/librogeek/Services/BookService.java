@@ -30,7 +30,7 @@ public class BookService {
     private final UserService userService;
     private final TokenManager tokenManager;
 
-    public BookService(BookRepository bookRepository, CommentRepository commentRepository, UserService userService, TagRepository tagRepository , BookShelfRepository bookShelfRepository, TokenManager tokenManager) {
+    public BookService(BookRepository bookRepository, CommentRepository commentRepository, UserService userService, TagRepository tagRepository, BookShelfRepository bookShelfRepository, TokenManager tokenManager) {
 
         this.bookRepository = bookRepository;
         this.commentRepository = commentRepository;
@@ -86,7 +86,7 @@ public class BookService {
         return ServiceResult.success(categories, "Books retrieved successfully");
     }
 
-    public ServiceResult<BookDTO> getBookById(Integer book_id,String token) {
+    public ServiceResult<BookDTO> getBookById(Integer book_id, String token) {
         Optional<Book> book = bookRepository.findById(book_id);
 
         if (book.isEmpty()) {
@@ -103,7 +103,7 @@ public class BookService {
             CommentDTO commentDTO = new CommentDTO(user.getUser_id(), user.getProfile_photo(), user.getUsername(), user.getName(), c.getContent(), c.getCreatedAt());
             commentDTOS.add(commentDTO);
         }
-        boolean inBookshelf=false;
+        boolean inBookshelf = false;
         System.out.println("service token:" + token);
 
         if (token != null && !token.isEmpty()) {
@@ -117,7 +117,7 @@ public class BookService {
         }
 
         List<Tag> tags = tagRepository.findByBookId(book_id);
-        BookDTO bookDTO = new BookDTO(book.get(), commentDTOS, tags,inBookshelf);
+        BookDTO bookDTO = new BookDTO(book.get(), commentDTOS, tags, inBookshelf);
 
         return ServiceResult.success(bookDTO, "Books retrieved successfully");
     }
@@ -147,18 +147,20 @@ public class BookService {
 
         return ServiceResult.success(null, "Bookshelf updated successfully");
     }
+
     public ServiceResult<BookDTO> addTagVote(Integer tag_id, String token) {
         if (token == null || token.isEmpty()) {
             return ServiceResult.failure("User not logged in");
         }
 
         Optional<Tag> tag = tagRepository.findByTagId(tag_id);
-        tag.get().setTagVotes(tag.get().getTagVotes()+1);
+        tag.get().setTagVotes(tag.get().getTagVotes() + 1);
         tagRepository.save(tag.get());
 
 
         return ServiceResult.success(null, "Bookshelf updated successfully");
     }
+
     public ServiceResult<BookDTO> subtractTagVote(Integer tag_id, String token) {
         if (token == null || token.isEmpty()) {
             return ServiceResult.failure("User not logged in");
@@ -167,16 +169,40 @@ public class BookService {
         Optional<Tag> tag = tagRepository.findByTagId(tag_id);
 
         if (tag.get().getTagVotes() < 1) {
-            tag.get().setTagVotes(tag.get().getTagVotes()-1);
+            tag.get().setTagVotes(tag.get().getTagVotes() - 1);
             tagRepository.save(tag.get());
-        }else {
+        } else {
             tagRepository.delete(tag.get());
         }
 
 
-
         return ServiceResult.success(null, "Bookshelf updated successfully");
     }
+
+    public ServiceResult<BookDTO> addTag(Integer book_id, String token, String tag) {
+        if (token == null || token.isEmpty()) {
+            return ServiceResult.failure("User not logged in");
+        }
+
+        Optional<Book> book = bookRepository.findById(book_id);
+        if (book.isEmpty()) {
+            return ServiceResult.failure("Book not found");
+        }
+        Optional<Tag> existTag = tagRepository.findByTagAndBookId(tag, book_id);
+        if (existTag.isPresent()) {
+            existTag.get().setTagVotes(existTag.get().getTagVotes() + 1);
+            tagRepository.save(existTag.get());
+        } else {
+            Tag newTag = new Tag();
+            newTag.setBook_id(book_id);
+            newTag.setTag(tag);
+            newTag.setTagVotes(1);
+            tagRepository.save(newTag);
+        }
+
+        return ServiceResult.success(null, "Tag added successfully");
+    }
+
     public ServiceResult<List<List<Book>>> getBookByMostReadCategory() {
 
         List<String> topCategories = bookRepository.findTop2CategoriesByTotalViews();

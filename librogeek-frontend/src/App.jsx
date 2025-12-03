@@ -15,6 +15,7 @@ import Register from "./pages/register.jsx";
 import {API_URL} from "./config/api.js";
 import Logout from "./pages/logout.jsx";
 import Setting from "./pages/setting.jsx";
+import Pdf from "./pages/pdf.jsx";
 
 
 const UserContext = createContext();
@@ -97,9 +98,10 @@ function App() {
                         <Route path="/setting" element={<Setting/>}/>
                         <Route path="/contact" element={<Contact/>}/>
                         <Route path="/profile/:id" element={<Profile/>}/>
+
                     </Route>
 
-
+                    <Route path="/book/pdf/:id" element={<Pdf/>}/>
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/register" element={<Register/>}/>
                     <Route path="/logout" element={<Logout/>}/>

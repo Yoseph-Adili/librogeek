@@ -1,0 +1,125 @@
+main {
+    min-height: 100vh;
+    padding: 0;
+    overflow: hidden;
+}
+
+.pdf-viewer {
+    width: 100%;
+    height: 100vh;
+}
+
+.pdf-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70px;
+    color: var(--text-color);
+    font-size: 1.5rem;
+
+}
+
+.pdf-navbar {
+    width: 90%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.controls-container {
+    display: flex;
+    gap: 1rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 999;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(150%);
+    background-color:var(--second-color);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    z-index: 999;
+    transition: transform 0.3s ease-in-out;
+}
+.controls.active {
+    transform: translateX(-50%) translateY(0);
+
+}
+.controls button,
+.pdf-nav-right button
+{
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+}
+.controls button svg,
+.pdf-nav-right button svg
+{
+    width: 1.5rem;
+    height: 1.5rem;
+    /*fill: var(--text-color);*/
+}
+.pdf-container {
+    width: 100%;
+    /*height: calc(100vh - 70px);*/
+    height: 100vh;
+    display: flex;
+    padding-top: 70px;
+    justify-content: center;
+    overflow: auto;
+    position: relative;
+    background: var(--second-color);
+}
+.pdf-nav-right{
+    display: flex;
+    gap: 1rem;
+}
+.pdf-nav-right span{
+    display: block;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+.page-controls{
+   display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+.page-controls input{
+    width: 3rem;
+    text-align: center;
+    font-size: 1.5rem;
+    padding: 0.25rem;
+    margin: 0 0.5rem;
+    -webkit-align-self: unset;
+
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+.pdf-container canvas {
+    position: absolute;
+}
