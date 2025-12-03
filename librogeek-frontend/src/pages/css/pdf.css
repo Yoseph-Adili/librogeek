@@ -102,6 +102,7 @@ main {
     align-items: center;
     justify-content: center;
     height: 100%;
+    margin: 0 1rem;
 }
 .page-controls{
    display: flex;
@@ -114,7 +115,7 @@ main {
     text-align: center;
     font-size: 1rem;
     padding: 0.25rem;
-    margin: 0 0.5rem;
+    margin-right:  0.5rem;
     -webkit-align-self: unset;
     background: var(--background-color);
     color: var(--text-color);

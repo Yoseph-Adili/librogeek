@@ -1,7 +1,8 @@
 package com.librogeek.Models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "history")
@@ -9,10 +10,11 @@ public class History {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer historyId;
-    @NotEmpty
+    @NotNull(message = "bookId cannot be null")
     private Integer bookId;
-    @NotEmpty
+    @NotNull(message = "userId cannot be null")
     private Integer userId;
+
     private Integer page;
     private String createdAt;
 

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -140,7 +141,7 @@ public class BookController {
 
 
         String token = null;
-        if (authHeader != null && authHeader.startsWith("Bearer ") && !authHeader.equalsIgnoreCase("Bearer null")) {
+        if (authHeader != null || !authHeader.startsWith("Bearer ") || authHeader.equalsIgnoreCase("Bearer null")) {
             token = authHeader.substring(7).trim();
             if (token.isEmpty() || token.equalsIgnoreCase("null") || !tokenManager.isTokenValid(token)) {
                 token = null;
@@ -171,6 +172,57 @@ public class BookController {
                 .body(resource);
     }
 
+    @GetMapping("/book/bookPage/{book_id}")
+    public ResponseEntity<ApiResponse> getBookPage(
+            @PathVariable Integer book_id,
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
 
+        if (authHeader == null
+                || !authHeader.startsWith("Bearer ")
+                || authHeader.equalsIgnoreCase("Bearer null")) {
+            System.out.println("no auth header");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Please login first"));
+        }
+        String token = authHeader.substring(7).trim();
+        if (token.isEmpty() || !tokenManager.isTokenValid(token)) {
+            System.out.println("invalid token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Please login first"));
 
+        }
+        ServiceResult<Integer> result = bookService.getBookPageAccess(book_id, token);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(result.getData(), result.getMessage())
+        );
+    }
+
+    @PatchMapping("/book/bookPage/{book_id}")
+    public ResponseEntity<ApiResponse> changeBookPage(
+            @PathVariable Integer book_id,
+            @RequestHeader(name = "Authorization", required = false) String authHeader,
+            @RequestBody Map<String, Integer> body
+    ) {
+        Integer pageNumber = body.get("page");
+        if (authHeader == null
+                || !authHeader.startsWith("Bearer ")
+                || authHeader.equalsIgnoreCase("Bearer null")) {
+            System.out.println("no auth header");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Please login first"));
+        }
+        String token = authHeader.substring(7).trim();
+        if (token.isEmpty() || !tokenManager.isTokenValid(token)) {
+            System.out.println("invalid token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Please login first"));
+
+        }
+        ServiceResult<Integer> result = bookService.setBookPageAccess(book_id, token, pageNumber);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(result.getData(), result.getMessage())
+        );
+    }
 }

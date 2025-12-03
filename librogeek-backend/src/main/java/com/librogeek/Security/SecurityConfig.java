@@ -46,6 +46,7 @@ public class SecurityConfig {
             "/api/books/book/tag/{tagId}",
             "/api/books/book/comment/{book_id}",
             "/api/books/book/pdf/{bookId}",
+            "/api/books/book/bookPage/{book_id}",
 //            "/api/debug/cover/{fileName}"
 //            "/api/users/changeUserNames/{user_id}",
 

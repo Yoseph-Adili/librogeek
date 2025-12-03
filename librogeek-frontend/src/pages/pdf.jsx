@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useContext} from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import './css/pdf.css';
 import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -8,20 +8,55 @@ import ChangeThemeContainer from "../component/navbar/changeThemeContainer.jsx";
 import {API_URL} from "../config/api.js";
 import {useParams} from "react-router-dom";
 import alert from "../config/utils.js";
+import {UserContext} from "../App.jsx";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
 const Pdf = () => {
     const {bookId} = useParams()
-    console.log(bookId)
     const [pdfDoc, setPdfDoc] = useState(null);
-    const [pageNum, setPageNum] = useState(1);
+    const [pageNum, setPageNum] = useState(null);
     const [totalPages, setTotalPages] = useState(0);
     const [scale, setScale] = useState(1.5);
     const canvasRef = useRef(null);
 
     const [controllerActive, setControllerActive] = useState(false);
+    const {loginUser} = useContext(UserContext);
+    useEffect(() => {
+        if (!loginUser) return;
+        const token = localStorage.getItem("token") || null;
+        fetch(`${API_URL}/books/book/bookPage/${bookId}`, {
+            headers: {Authorization: `Bearer ${token}`}
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    setPageNum(data.data);
+                }
+            })
+            .catch(err => {
+                console.error("Failed to fetch last read page:", err);
+            });
 
+    }, [loginUser, bookId]);
+
+    function saveCurrentPage(num) {
+        if (!loginUser) return;
+        const token = localStorage.getItem("token") || null;
+        fetch(`${API_URL}/books/book/bookPage/${bookId}`, {
+            method: "PATCH",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({page: num})
+        })
+            .then(res => res.json())
+
+            .catch(err => {
+                console.error("Failed to fetch last read page:", err);
+            });
+    }
 
     const renderPage = async (num) => {
         if (!pdfDoc) return;
@@ -86,7 +121,6 @@ const Pdf = () => {
                 }
 
 
-
                 const blob = await res.blob();
                 const buffer = await blob.arrayBuffer();
                 const typedArray = new Uint8Array(buffer);
@@ -98,7 +132,6 @@ const Pdf = () => {
 
                 setPdfDoc(pdf);
                 setTotalPages(pdf.numPages);
-                setPageNum(1);
 
             } catch (err) {
                 console.error("Error loading PDF:", err);
@@ -107,55 +140,17 @@ const Pdf = () => {
         };
 
         loadPdf();
-    }, [bookId]); // 当 bookId 或 token 变化时重新加载
+    }, [bookId]);
 
 
-    // const handleFile = (e) => {
-    //     fetch(`${API_URL}/books/book/pdf/test.pdf`)
-    //         .then(res => res.blob())
-    //         .then(blob => {
-    //             const reader = new FileReader();
-    //             reader.onload = async (event) => {
-    //                 try {
-    //                     const typedArray = new Uint8Array(event.target.result);
-    //                     const loadingTask = pdfjsLib.getDocument(typedArray);
-    //                     const pdf = await loadingTask.promise;
-    //                     setPdfDoc(pdf);
-    //                     setTotalPages(pdf.numPages);
-    //                     setPageNum(1);
-    //                 } catch (err) {
-    //                     console.error('Error loading PDF:', err);
-    //                     alert('Failed to load PDF');
-    //                 }
-    //             };
-    //             reader.readAsArrayBuffer(blob);
-    //         });
-    //     const file = e.target.files[0];
-    //     if (!file || file.type !== 'application/pdf') {
-    //         alert('Please select a valid PDF file');
-    //         return;
-    //     }
-    //
-    //     const reader = new FileReader();
-    //     reader.onload = async (event) => {
-    //         try {
-    //             const typedArray = new Uint8Array(event.target.result);
-    //             const loadingTask = pdfjsLib.getDocument(typedArray);
-    //             const pdf = await loadingTask.promise;
-    //             setPdfDoc(pdf);
-    //             setTotalPages(pdf.numPages);
-    //             setPageNum(1);
-    //         } catch (err) {
-    //             console.error('Error loading PDF:', err);
-    //             alert('Failed to load PDF');
-    //         }
-    //     };
-    //     reader.readAsArrayBuffer(file);
-    // };
-
-
-    const goPrevPage = () => setPageNum((p) => Math.max(p - 1, 1));
-    const goNextPage = () => setPageNum((p) => Math.min(p + 1, totalPages));
+    const goPrevPage = () => {
+        setPageNum((p) => Math.max(p - 1, 1))
+        saveCurrentPage(pageNum)
+    };
+    const goNextPage = () => {
+        setPageNum((p) => Math.min(p + 1, totalPages))
+        saveCurrentPage(pageNum)
+    };
 
 
     const zoomIn = () => setScale((s) => Math.min(s + 0.2, 3));
@@ -192,7 +187,6 @@ const Pdf = () => {
                 <LogoContainer text="ibroGeek"></LogoContainer>
 
                 <div className={"pdf-nav-right"}>
-                    {/*<input type="file" accept="application/pdf" onChange={handleFile}/>*/}
                     <div className="page-controls">
                         <button onClick={goPrevPage} disabled={pageNum <= 1}>
 
@@ -237,27 +231,6 @@ const Pdf = () => {
             onMouseLeave={() => setControllerActive(false)}
         >
             <div className={`controls ${controllerActive ? "active" : ""}`}>
-                {/*<div className="page-controls">*/}
-                {/*    <button onClick={goPrevPage} disabled={pageNum <= 1}>*/}
-
-                {/*        <svg viewBox="0 0 517 450" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
-                {/*            <path d="M25 25V425M491.667 425V25L158.333 225L380.556 358.333" stroke="var(--text-color)"*/}
-                {/*                  strokeWidth="50" strokeLinecap="round" strokeLinejoin="round"/>*/}
-                {/*        </svg>*/}
-
-                {/*    </button>*/}
-                {/*    <span>*/}
-                {/*                <input type="number" value={pageNum}/>/ {totalPages}*/}
-                {/*            </span>*/}
-                {/*    <button onClick={goNextPage} disabled={pageNum >= totalPages}>*/}
-
-                {/*        <svg viewBox="0 0 517 450" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
-                {/*            <path d="M491.667 25V425M25 425V25L358.333 225L136.111 358.333" stroke="var(--text-color)"*/}
-                {/*                  strokeWidth="50" strokeLinecap="round" strokeLinejoin="round"/>*/}
-                {/*        </svg>*/}
-
-                {/*    </button>*/}
-                {/*</div>*/}
 
                 <div className="zoom-controls">
                     <button onClick={zoomOut}>

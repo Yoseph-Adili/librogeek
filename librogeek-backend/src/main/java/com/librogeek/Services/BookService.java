@@ -27,8 +27,9 @@ public class BookService {
     private final UserService userService;
     private final TokenManager tokenManager;
     private final PurchasedBookRepository purchasedBookRepository;
+    private final HistoryRepository historyRepository;
 
-    public BookService(BookRepository bookRepository, CommentRepository commentRepository, UserService userService, TagRepository tagRepository, BookShelfRepository bookShelfRepository, TokenManager tokenManager, PurchasedBookRepository purchasedBookRepository) {
+    public BookService(BookRepository bookRepository, CommentRepository commentRepository, UserService userService, TagRepository tagRepository, BookShelfRepository bookShelfRepository, TokenManager tokenManager, PurchasedBookRepository purchasedBookRepository, HistoryRepository historyRepository) {
 
         this.bookRepository = bookRepository;
         this.commentRepository = commentRepository;
@@ -37,6 +38,7 @@ public class BookService {
         this.bookShelfRepository = bookShelfRepository;
         this.tokenManager = tokenManager;
         this.purchasedBookRepository = purchasedBookRepository;
+        this.historyRepository = historyRepository;
     }
 
 
@@ -237,16 +239,77 @@ public class BookService {
         Float price = book.get().getPrice();
         if (price != null && price > 0) {
             Integer userId = tokenManager.getUserId(token);
-            ServiceResult<User> user=userService.getUserById(userId);
+            ServiceResult<User> user = userService.getUserById(userId);
             if (token == null || token.isEmpty() || user.getData() == null) {
                 return ServiceResult.failure("Book is paid. Please login to access.");
             }
-            Optional<PurchasedBook>purchasedBook = purchasedBookRepository.findByBookIdAndUserId(book_id, userId);
+            Optional<PurchasedBook> purchasedBook = purchasedBookRepository.findByBookIdAndUserId(book_id, userId);
             if (purchasedBook.isEmpty()) {
                 return ServiceResult.failure("please purchase the book to access the pdf.");
             }
         }
+        if (token != null && !token.isEmpty() && tokenManager.isTokenValid(token)) {
+            Integer userId = tokenManager.getUserId(token);
+
+            Optional<History> existingHistory =
+                    historyRepository.findByBookIdAndUserId(book_id, userId);
+
+            if (existingHistory.isEmpty()) {
+                History history = new History();
+                history.setBookId(book_id);
+                history.setUserId(userId);
+                history.setPage(1);
+                historyRepository.save(history);
+            }
+        }
+
         return ServiceResult.success(book.get().getFile_path(), "Book retrieved successfully");
 
     }
+
+    public ServiceResult<Integer> getBookPageAccess(Integer book_id, String token) {
+
+        Integer userId = tokenManager.getUserId(token);
+        ServiceResult<User> user = userService.getUserById(userId);
+        Optional<Book> book = bookRepository.findById(book_id);
+        if (book.isEmpty()) {
+            return ServiceResult.failure("No book found");
+        }
+        if (user.getData() == null) {
+            return ServiceResult.failure("User not found");
+        }
+        Optional<History> history = historyRepository.findByBookIdAndUserId(book_id, userId);
+        if (history.isPresent()) {
+            return ServiceResult.success(history.get().getPage(), "User has access to the book");
+        } else {
+            return ServiceResult.success(1, "User does not have access to the book");
+        }
     }
+    public ServiceResult<Integer> setBookPageAccess(Integer book_id, String token,Integer page) {
+
+        Integer userId = tokenManager.getUserId(token);
+        ServiceResult<User> user = userService.getUserById(userId);
+        Optional<Book> book = bookRepository.findById(book_id);
+        if (book.isEmpty()) {
+            return ServiceResult.failure("No book found");
+        }
+        if (user.getData() == null) {
+            return ServiceResult.failure("User not found");
+        }
+        Optional<History> history = historyRepository.findByBookIdAndUserId(book_id, userId);
+        if (history.isPresent()) {
+            History existingHistory = history.get();
+            existingHistory.setPage(page);
+            historyRepository.save(existingHistory);
+        } else {
+            History newHistory = new History();
+            newHistory.setBookId(book_id);
+            newHistory.setUserId(userId);
+            newHistory.setPage(page);
+            historyRepository.save(newHistory);
+        }
+
+            return ServiceResult.success(null, "User does not have access to the book");
+
+    }
+}

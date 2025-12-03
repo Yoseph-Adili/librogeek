@@ -31,6 +31,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/api/books/book/",
             "/api/books/book/bookshelf/",
             "/api/books/book/pdf/",
+            "/api/books/book/bookPage/",
             "/covers/",
             "/profile/"
     );
