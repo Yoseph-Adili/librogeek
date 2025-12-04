@@ -77,12 +77,13 @@
 }
 
 .tag-options {
-    height: 40px;
+
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 1rem;
     height: auto;
+    max-width: 500px;
 }
 
 .tag-option {

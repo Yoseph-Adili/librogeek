@@ -98,7 +98,7 @@ const MostReadBook = ({book_cover, book_id}) => {
 
     return (<div ref={ref} className={`book-card ${visible ? 'visible' : ''}`}>
         <Link
-            to={`books/${book_id}`}
+            to={`book/${book_id}`}
             onMouseEnter={() => changeBackgroundColor(true)}
             onMouseLeave={() => {
                 changeBackgroundColor(false);

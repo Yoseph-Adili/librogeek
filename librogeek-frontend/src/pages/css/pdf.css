@@ -139,4 +139,8 @@ input[type="number"] {
 
 .pdf-container canvas {
     position: absolute;
+    filter: invert(1) grayscale(1) brightness(0.85);
+}
+.light-theme .pdf-container canvas {
+    filter: invert(0) grayscale(0) brightness(1);
 }
