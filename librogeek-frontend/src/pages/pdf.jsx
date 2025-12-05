@@ -18,8 +18,17 @@ const Pdf = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [scale, setScale] = useState(1.5);
     const canvasRef = useRef(null);
-    const [controllerActive, setControllerActive] = useState(false);
+    const [controllerActive, setControllerActive] = useState(true);
     const {loginUser} = useContext(UserContext);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setControllerActive(false);
+        }, 2000);
+
+        return () => clearTimeout(timer);
+    }, []);
+
 
     useEffect(() => {
         if (!loginUser) return;

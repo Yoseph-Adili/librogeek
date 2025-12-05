@@ -116,7 +116,7 @@ const BookInfo = ({book, fetchComments}) => {
                 <div className="tag-options">
 
                     {tags.map((option, index) => (
-                        <sapn key={index}
+                        <spann key={index}
                               className={`tag-option ${tagSelected && tagId === option.tag_id ? "selected" : ""}`}
                               onClick={() => {
                                   if (tagSelected && tagId === option.tag_id) {
@@ -127,7 +127,7 @@ const BookInfo = ({book, fetchComments}) => {
                                   setTagId(option.tag_id)
                               }}>
                             {option.tag}
-                        </sapn>))}
+                        </spann>))}
                     {addTag ? (
                         <form className="add-tag-form" onSubmit={addTagToBook}>
                             <input type="text" name={"add-tag"} placeholder="Add tag" />
