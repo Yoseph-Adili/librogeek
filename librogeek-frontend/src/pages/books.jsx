@@ -204,7 +204,7 @@ const Books = () => {
                 {
                     list_books.map((option, index) => (
                         <ListBook
-                            key={option.book_id}
+                            key={option.book_id + '-' + sortedBy}
                             book_id={option.book_id} book_cover={STATIC_URL + "/" + option.cover_image}
                             book_title={option.title} book_info={option.description}
                             index={index}

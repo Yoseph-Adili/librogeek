@@ -12,7 +12,6 @@ const BookInfo = ({book, fetchComments}) => {
     const tags = book.tags || [];
     const [addTag, setAddTag] = useState(false)
     const {loginUser} = useContext(UserContext);
-
     useEffect(() => {
         setBookInBookshelf(book.inBookShelf)
     }, [book])
@@ -59,6 +58,7 @@ const BookInfo = ({book, fetchComments}) => {
                 } else alert(data.message)
             })
     }
+
     function addTagToBook(e) {
         e.preventDefault();
         if (!loginUser) {
@@ -86,16 +86,20 @@ const BookInfo = ({book, fetchComments}) => {
             })
     }
 
+    if (!book.cover_image) {
+        return <div className={"book-info-container"}>Loading...</div>
+    }
+
     return (<div className="book-info-container">
         <div className="book-cover">
 
             <img src={STATIC_URL + "/" + book.cover_image} alt=""/>
         </div>
         <div className="book-info">
-            <h1>{book.title}</h1>
-            <a href="">{book.author}</a>
-            <p>{book.description}</p>
-            <div style={{'--i': 2}} className="type-container">
+            <h1 style={{'--i': 0}}>{book.title}</h1>
+            <Link to="/books" style={{'--i': 1}}>{book.author}</Link>
+            <p style={{'--i': 2}}>{book.description}</p>
+            <div style={{'--i': 3}} className="type-container">
 
                 <div className="type">
                     <p>Category</p>
@@ -111,12 +115,12 @@ const BookInfo = ({book, fetchComments}) => {
 
                 </div>
             </div>
-            <div style={{'--i': 2}} className="tag-container">
+            <div style={{'--i': 4}} className="tag-container">
                 <p>Tag</p>
                 <div className="tag-options">
 
                     {tags.map((option, index) => (
-                        <spann key={index}
+                        <span key={index}
                               className={`tag-option ${tagSelected && tagId === option.tag_id ? "selected" : ""}`}
                               onClick={() => {
                                   if (tagSelected && tagId === option.tag_id) {
@@ -127,10 +131,10 @@ const BookInfo = ({book, fetchComments}) => {
                                   setTagId(option.tag_id)
                               }}>
                             {option.tag}
-                        </spann>))}
+                        </span>))}
                     {addTag ? (
                         <form className="add-tag-form" onSubmit={addTagToBook}>
-                            <input type="text" name={"add-tag"} placeholder="Add tag" />
+                            <input type="text" name={"add-tag"} placeholder="Add tag"/>
                             <button>Add</button>
                         </form>
                     ) : (
@@ -139,29 +143,34 @@ const BookInfo = ({book, fetchComments}) => {
 
 
                 </div>
-            <div style={tagSelected ? {height: "30px"} : {height: "0px"}} className={"tag-vote-container"}>
+                <div style={tagSelected ? {height: "30px"} : {height: "0px"}} className={"tag-vote-container"}>
 
                     <span className={"tag-vote"} onClick={() => {
                         updateTagVotes(true)
                     }}>vote +1</span>
-                <span className={"tag-vote"} onClick={() => {
-                    updateTagVotes(false)
-                }}>vote -1</span>
+                    <span className={"tag-vote"} onClick={() => {
+                        updateTagVotes(false)
+                    }}>vote -1</span>
+                </div>
             </div>
-        </div>
-        <div className="price-container"></div>
-        <div className={"buttons-container"}>
+            <div className="price-container"></div>
+            <div className={"buttons-container"}>
 
-            <Link to={`/book/pdf/${book.book_id}`} className={"read-book-btn"}>Read</Link>
-            <span className={"add-to-bookshelf-btn"} onClick={() => addToBookshelf()}>
+                {book.readable ?
+
+                    <Link to={`/book/pdf/${book.book_id}`} className={"read-book-btn"}>Read</Link>
+                    :
+                    <Link to={`/book/order/${book.book_id}`} className={"read-book-btn"}>Order {book.price} €</Link>
+                }
+                <span className={"add-to-bookshelf-btn"} onClick={() => addToBookshelf()}>
 
 <svg viewBox="0 0 491 686" fill={bookInBookshelf ? "var(--text-color)" : "none"} xmlns="http://www.w3.org/2000/svg">
 <path d="M465.5 25H25V625L242 467.5L465.5 635.5V25Z" stroke="var(--text-color)" strokeWidth="50"/>
 </svg>
 
                     </span>
+            </div>
         </div>
-    </div>
-</div>)
+    </div>)
 }
 export default BookInfo

@@ -105,20 +105,31 @@ public class BookService {
             commentDTOS.add(commentDTO);
         }
         boolean inBookshelf = false;
-        System.out.println("service token:" + token);
+        boolean ableToRead = true;
+
+        if (book.get().getPrice() > 0) {
+            ableToRead = false;
+        }
 
         if (token != null && !token.isEmpty()) {
             try {
                 Integer tokenUserId = tokenManager.getUserId(token);
                 inBookshelf = bookShelfRepository.findByBookIdAndUserId(book_id, tokenUserId).isPresent();
+                if (book.get().getPrice() > 0) {
+                    Optional<PurchasedBook> purchasedBook = purchasedBookRepository.findByBookIdAndUserId(book_id, tokenUserId);
+                    ableToRead = purchasedBook.isPresent();
+                }
+
+
             } catch (JWTDecodeException e) {
 
                 inBookshelf = false;
+                ableToRead = false;
             }
         }
-
+        System.out.println("this is "+ableToRead);
         List<Tag> tags = tagRepository.findByBookId(book_id);
-        BookDTO bookDTO = new BookDTO(book.get(), commentDTOS, tags, inBookshelf);
+        BookDTO bookDTO = new BookDTO(book.get(), commentDTOS, tags, inBookshelf, ableToRead);
 
         return ServiceResult.success(bookDTO, "Books retrieved successfully");
     }
@@ -285,7 +296,8 @@ public class BookService {
             return ServiceResult.success(1, "User does not have access to the book");
         }
     }
-    public ServiceResult<Integer> setBookPageAccess(Integer book_id, String token,Integer page) {
+
+    public ServiceResult<Integer> setBookPageAccess(Integer book_id, String token, Integer page) {
 
         Integer userId = tokenManager.getUserId(token);
         ServiceResult<User> user = userService.getUserById(userId);
@@ -309,7 +321,7 @@ public class BookService {
             historyRepository.save(newHistory);
         }
 
-            return ServiceResult.success(null, "User does not have access to the book");
+        return ServiceResult.success(null, "User does not have access to the book");
 
     }
 }

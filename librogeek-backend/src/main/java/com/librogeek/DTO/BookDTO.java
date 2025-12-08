@@ -18,13 +18,15 @@ public record BookDTO(
         Integer uploaded_by,
         Integer views,
         Integer downloads,
+        Float price,
         List<?> userComments,
         List<Tag> tags,
-        boolean inBookShelf,
+        Boolean inBookShelf,
+        Boolean readable,
         String created_at
 ) {
 
-    public BookDTO(Book book, List<?> userComments , List<Tag> tags, boolean inBookShelf) {
+    public BookDTO(Book book, List<?> userComments , List<Tag> tags, Boolean inBookShelf,Boolean readable) {
         this(
                 book.getBook_id(),
                 book.getTitle(),
@@ -37,9 +39,12 @@ public record BookDTO(
                 book.getUploaded_by(),
                 book.getViews(),
                 book.getDownloads(),
+                book.getPrice() != null ? book.getPrice() : 0.0f,
+
                 userComments,
                 tags,
                 inBookShelf,
+                readable,
                 book.getCreated_at()
         );
     }

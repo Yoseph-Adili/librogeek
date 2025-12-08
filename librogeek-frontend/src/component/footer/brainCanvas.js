@@ -76,6 +76,7 @@ export default class BrainCANVAS {
 
         const imageData = tmpCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
         const data = imageData.data;
+        console.log(data)
         const sample = this.sample;
         const threshold = 200;
 

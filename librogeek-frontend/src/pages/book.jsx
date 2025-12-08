@@ -23,7 +23,7 @@ const Book = () => {
     function sendComment(e) {
         e.preventDefault();
         const token = localStorage.getItem("token") || null;
-        if (!token || !loginUser){
+        if (!token || !loginUser) {
             alert("You must be logged in to comment");
             return;
         }
@@ -68,9 +68,12 @@ const Book = () => {
             .catch(err => console.error(err));
     }
 
+    if (book.length == 0) {
+        return <div className={"book-page-container"}>Loading...</div>
+    }
     return (
         <div className={"book-page-container"}>
-            <BookInfo book={book} fetchComments={fetchComments} />
+            <BookInfo book={book} fetchComments={fetchComments}/>
             <div className="comments-container">
                 <h1>Comments</h1>
 
@@ -79,10 +82,12 @@ const Book = () => {
                               name={"new-comment"} required/>
                     <button type={"submit"}>Send</button>
                 </form>
-                {comments?.map((c, i) => (
-                    <Comment key={c.comment_id ?? i} comment={c}/>
-                ))}
-
+                {comments.length>0?
+                    comments?.map((c, i) => (
+                        <Comment key={c.comment_id ?? i} comment={c}/>
+                    )):
+                    <p className={"no-comments"}>No comments yet. Be the first to comment!</p>
+                }
 
             </div>
         </div>

@@ -193,7 +193,7 @@
     justify-content: space-between;
     animation: comeFromBottom 0.7s linear forwards;
     opacity: 0;
-    animation-delay: calc(var(--i) * 0.05s);
+    animation-delay: calc(var(--i) * 0.15s);
 }
 
 .list-book-container .list-book-text {
