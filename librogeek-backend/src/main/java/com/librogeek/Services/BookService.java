@@ -2,8 +2,7 @@ package com.librogeek.Services;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.librogeek.Component.TokenManager;
-import com.librogeek.DTO.BookDTO;
-import com.librogeek.DTO.CommentDTO;
+import com.librogeek.DTO.*;
 import com.librogeek.Models.*;
 
 import com.librogeek.Repositories.*;
@@ -54,28 +53,45 @@ public class BookService {
     }
 
 
-    public ServiceResult<List<Book>> getAllBooks() {
+    public ServiceResult<List<BookWithLessInfoDTO>> getAllBooks() {
         List<Book> books = bookRepository.findAll();
         if (books.isEmpty()) {
             return ServiceResult.failure("No books found");
         }
-        return ServiceResult.success(books, "Books retrieved successfully");
+        List<BookWithLessInfoDTO> bookResult= new ArrayList<>();
+        books.forEach(book -> {
+            List<Tag> tags = tagRepository.findByBookId(book.getBook_id());
+            BookWithLessInfoDTO bookWithLessInfoDTO = new BookWithLessInfoDTO(book, tags);
+            bookResult.add(bookWithLessInfoDTO);
+        });
+        return ServiceResult.success(bookResult, "Books retrieved successfully");
     }
 
-    public ServiceResult<List<Book>> getMostDownloadedBooks() {
+    public ServiceResult<List<BookWithLessInfoDTO>> getMostDownloadedBooks() {
         List<Book> books = bookRepository.findAllByOrderByDownloadsDesc(PageRequest.of(0, 2));
         if (books.isEmpty()) return ServiceResult.failure("No books found");
-
-        return ServiceResult.success(books, "Books retrieved successfully");
+        List<BookWithLessInfoDTO> bookResult= new ArrayList<>();
+        books.forEach(book -> {
+            List<Tag> tags = tagRepository.findByBookId(book.getBook_id());
+            BookWithLessInfoDTO bookWithLessInfoDTO = new BookWithLessInfoDTO(book, tags);
+            bookResult.add(bookWithLessInfoDTO);
+        });
+        return ServiceResult.success(bookResult, "Books retrieved successfully");
 
     }
 
-    public ServiceResult<List<Book>> getBookByCategory(String category) {
+    public ServiceResult<List<BookWithLessInfoDTO>> getBookByCategory(String category) {
         List<Book> books = bookRepository.findByCategory(category);
         if (books.isEmpty()) {
             return ServiceResult.failure("No books found");
         }
-        return ServiceResult.success(books, "Books retrieved successfully");
+        List<BookWithLessInfoDTO> bookResult= new ArrayList<>();
+        books.forEach(book -> {
+            List<Tag> tags = tagRepository.findByBookId(book.getBook_id());
+            BookWithLessInfoDTO bookWithLessInfoDTO = new BookWithLessInfoDTO(book, tags);
+            bookResult.add(bookWithLessInfoDTO);
+        });
+        return ServiceResult.success(bookResult, "Books retrieved successfully");
     }
 
 
@@ -160,60 +176,7 @@ public class BookService {
         return ServiceResult.success(null, "Bookshelf updated successfully");
     }
 
-    public ServiceResult<BookDTO> addTagVote(Integer tag_id, String token) {
-        if (token == null || token.isEmpty()) {
-            return ServiceResult.failure("User not logged in");
-        }
 
-        Optional<Tag> tag = tagRepository.findByTagId(tag_id);
-        tag.get().setTagVotes(tag.get().getTagVotes() + 1);
-        tagRepository.save(tag.get());
-
-
-        return ServiceResult.success(null, "Bookshelf updated successfully");
-    }
-
-    public ServiceResult<BookDTO> subtractTagVote(Integer tag_id, String token) {
-        if (token == null || token.isEmpty()) {
-            return ServiceResult.failure("User not logged in");
-        }
-
-        Optional<Tag> tag = tagRepository.findByTagId(tag_id);
-
-        if (tag.get().getTagVotes() < 1) {
-            tag.get().setTagVotes(tag.get().getTagVotes() - 1);
-            tagRepository.save(tag.get());
-        } else {
-            tagRepository.delete(tag.get());
-        }
-
-
-        return ServiceResult.success(null, "Bookshelf updated successfully");
-    }
-
-    public ServiceResult<BookDTO> addTag(Integer book_id, String token, String tag) {
-        if (token == null || token.isEmpty()) {
-            return ServiceResult.failure("User not logged in");
-        }
-
-        Optional<Book> book = bookRepository.findById(book_id);
-        if (book.isEmpty()) {
-            return ServiceResult.failure("Book not found");
-        }
-        Optional<Tag> existTag = tagRepository.findByTagAndBookId(tag, book_id);
-        if (existTag.isPresent()) {
-            existTag.get().setTagVotes(existTag.get().getTagVotes() + 1);
-            tagRepository.save(existTag.get());
-        } else {
-            Tag newTag = new Tag();
-            newTag.setBook_id(book_id);
-            newTag.setTag(tag);
-            newTag.setTagVotes(1);
-            tagRepository.save(newTag);
-        }
-
-        return ServiceResult.success(null, "Tag added successfully");
-    }
 
     public ServiceResult<List<List<Book>>> getBookByMostReadCategory() {
 

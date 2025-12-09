@@ -2,6 +2,7 @@ package com.librogeek.Controllers;
 
 import com.librogeek.Component.TokenManager;
 import com.librogeek.DTO.BookDTO;
+import com.librogeek.DTO.BookWithLessInfoDTO;
 import com.librogeek.Models.Book;
 import com.librogeek.Requests.AddTagRequest;
 import com.librogeek.Services.BookService;
@@ -43,13 +44,13 @@ public class BookController {
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> allBooks() {
-        ServiceResult<List<Book>> result = bookService.getAllBooks();
+        ServiceResult<List<BookWithLessInfoDTO>> result = bookService.getAllBooks();
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
 
     @GetMapping("/{category}")
     public ResponseEntity<ApiResponse> findBooksByCategory(@PathVariable String category) {
-        ServiceResult<List<Book>> result = bookService.getBookByCategory(category);
+        ServiceResult<List<BookWithLessInfoDTO>> result = bookService.getBookByCategory(category);
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
 
@@ -61,7 +62,7 @@ public class BookController {
 
     @GetMapping("/getMostDownloaded")
     public ResponseEntity<ApiResponse> mostDownloaded() {
-        ServiceResult<List<Book>> result = bookService.getMostDownloadedBooks();
+        ServiceResult<List<BookWithLessInfoDTO>> result = bookService.getMostDownloadedBooks();
         System.out.println("books:" + result);
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
@@ -96,44 +97,6 @@ public class BookController {
         ServiceResult<BookDTO> result = bookService.addToBookshelf(book_id, token);
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
-
-    @PatchMapping("/book/tag/add/{tag_id}")
-    public ResponseEntity<ApiResponse> addTagVote(@PathVariable Integer tag_id, @RequestHeader(name = "Authorization", required = false) String authHeader) {
-        System.out.println("authHeader:" + authHeader + "this is bookshelf");
-
-        String token = authHeader.substring(7);
-        if (!tokenManager.isTokenValid(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Please login first"));
-        }
-        ServiceResult<BookDTO> result = bookService.addTagVote(tag_id, token);
-        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
-    }
-
-    @PatchMapping("/book/tag/subtract/{tag_id}")
-    public ResponseEntity<ApiResponse> subtractTagVote(@PathVariable Integer tag_id, @RequestHeader(name = "Authorization", required = false) String authHeader) {
-        System.out.println("authHeader:" + authHeader + "this is bookshelf");
-
-        String token = authHeader.substring(7);
-        if (!tokenManager.isTokenValid(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Invalid or expired token"));
-        }
-        ServiceResult<BookDTO> result = bookService.subtractTagVote(tag_id, token);
-        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
-    }
-
-    @PostMapping("/book/tag/{book_id}")
-    public ResponseEntity<ApiResponse> addTag(@PathVariable Integer book_id, @RequestHeader(name = "Authorization", required = false) String authHeader, @RequestBody AddTagRequest request) {
-
-
-        String token = authHeader.substring(7);
-        if (!tokenManager.isTokenValid(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Please login first"));
-        }
-        String tag = request.getTag();
-        ServiceResult<BookDTO> result = bookService.addTag(book_id, token, tag);
-        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
-    }
-
     @GetMapping("/book/pdf/{book_id}")
     public ResponseEntity<Resource> getBookPdfById(
             @PathVariable Integer book_id,

@@ -8,22 +8,30 @@ import {Link, useParams} from "react-router-dom";
 const Books = () => {
     const {category} = useParams()
     const [categoriesContainer, setCategoriesContainer] = useState(false)
-    const [categoryTitle,setCategoryTitle] = useState('All')
+    const [tagsContainer, setTagsContainer] = useState(false)
+    const [categoryTitle, setCategoryTitle] = useState('All')
     useEffect(() => {
-        if (category) setCategoryTitle(category);
-        else setCategoryTitle("All");
+        if (category) setCategoryTitle(category); else setCategoryTitle("All");
     }, [category]);
     const [sortedBy, setSortedBy] = useState("Date")
+    const [selectedTags, setSelectedTags] = useState([]);
+
+    const toggleTag = (tag) => {
+        if (selectedTags.includes(tag)) {
+            setSelectedTags(selectedTags.filter(t => t !== tag));
+        } else {
+            setSelectedTags([...selectedTags, tag]);
+        }
+    };
 
     const [categories, setCategories] = useState([])
-
-
+    const [list_books, setListBooks] = useState([])
     const [listBookStyle, setListBookStyle] = useState(false)
 
     const [type_options, setType_options] = useState(['All', 'PDF', 'E-Book'])
 
     const sort_options = ['Date', 'Downloads', 'Views']
-    const [list_books, setListBooks] = useState([])
+    const [tags, setTags] = useState([])
 
 
     const [fade, setFade] = useState(false);
@@ -59,7 +67,7 @@ const Books = () => {
             .then(res => res.json())
             .then(data => {
 
-                const getCategories=[];
+                const getCategories = [];
                 getCategories.push("All");
                 getCategories.push(...data.data);
                 setCategories(getCategories);
@@ -85,6 +93,19 @@ const Books = () => {
             .catch(err => console.error(err));
 
     }, [category]);
+
+    console.log(list_books)
+    useEffect(() => {
+
+        fetch(`${API_URL}/books/tags/getAllTags`)
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                setTags(data.data);
+            })
+            .catch(err => console.error(err));
+
+    }, []);
     useEffect(() => {
         let sorted = [...list_books];
 
@@ -102,15 +123,15 @@ const Books = () => {
                 break;
         }
 
-        // setFade(true);
+
         setListBooks(sorted)
-        // setTimeout(() => setFade(false), 600);
+
 
     }, [sortedBy]);
 
 
-    return (
-        <div className={"books-page-container"}>
+    return (<div className={"books-page-container"}>
+        <div className={`container-background ${categoriesContainer ? "active" : ""} ${tagsContainer ? "active" : ""}`}>
             <div className={`categories-container ${categoriesContainer ? "active" : ""}`}>
                 <div className={"categories-container-close"}
                      onClick={() => {
@@ -120,102 +141,131 @@ const Books = () => {
                     ✕
                 </div>
                 {categories.map((category, index) => (
-                    <Link key={index} to={`/books/category/${category}`}>{category}</Link>
+                    <Link key={index} to={`/books/category/${category}`}>{category}</Link>))}
+
+            </div>
+            <div className={`tags-container ${tagsContainer ? "active" : ""}`}>
+                <div className={"categories-container-close"}
+                     onClick={() => {
+                         setTagsContainer(false);
+                     }}
+                >
+                    ✕
+                </div>
+                {tags.map((tagObj, index) => (
+                    <span
+                        key={index}
+                        onClick={() => toggleTag(tagObj.tag)}
+                        className={selectedTags.includes(tagObj.tag) ? "selected" : ""}
+                    >
+        {tagObj.tag}
+    </span>
                 ))}
 
-            </div>
-            <div className="filter-option-container">
-                <form style={{'--i': 0}} action="">
-                    <input type="text" name="name"/>
-                </form>
-                <CustomizeTitle title={categoryTitle}></CustomizeTitle>
-                <p style={{'--i': 1}} onClick={() => {
-                    setCategoriesContainer(true);
-                }}
-                >Category</p>
-                <div style={{'--i': 2}} className="type-sections">
-                    <p>Type</p>
-                    <div className="type-options">
-
-                        {
-                            type_options.map((option, index) => (
-                                <span key={index} className={option === "All" ? "selected" : ""}>{option}</span>
-                            ))
-                        }
-                    </div>
-                </div>
-                <div style={{'--i': 3}} className="sort-sections">
-                    <p>Sort by</p>
-                    <div className="sort-options">
-
-                        {
-                            sort_options.map((option, index) => (
-
-                                <span key={index} className={option === sortedBy ? "selected" : ""}
-                                      onClick={() => setSortedBy(option)}
-                                >{option}</span>
-                            ))
-                        }
-                    </div>
-                </div>
-                <div style={{'--i': 4}} className="list-book-style">
-
-
-                    <svg onClick={() => toggleLayout(false)}
-                         width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="24" height="4" fill="var(--text-color)"/>
-                        <rect y="7" width="24" height="4" fill="var(--text-color)"/>
-                        <rect y="14" width="24" height="4" fill="var(--text-color)"/>
-                        <rect y="20" width="24" height="4" fill="var(--text-color)"/>
-                    </svg>
-
-                    <svg onClick={() => toggleLayout(true)}
-                         width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clipPath="url(#clip0_22_60)">
-                            <path d="M6.4 0H0V6.4H6.4V0Z" fill="var(--text-color)"/>
-                            <path d="M6.4 8.7998H0V15.1998H6.4V8.7998Z" fill="var(--text-color)"/>
-                            <path d="M6.4 17.6001H0V24.0001H6.4V17.6001Z" fill="var(--text-color)"/>
-                            <path d="M15.1998 8.7998H8.7998V15.1998H15.1998V8.7998Z" fill="var(--text-color)"/>
-                            <path d="M15.1998 0H8.7998V6.4H15.1998V0Z" fill="var(--text-color)"/>
-                            <path d="M23.9996 8.7998H17.5996V15.1998H23.9996V8.7998Z" fill="var(--text-color)"/>
-                            <path d="M15.1998 17.6001H8.7998V24.0001H15.1998V17.6001Z" fill="var(--text-color)"/>
-                            <path d="M23.9996 0H17.5996V6.4H23.9996V0Z" fill="var(--text-color)"/>
-                            <path d="M23.9996 17.6001H17.5996V24.0001H23.9996V17.6001Z" fill="var(--text-color)"/>
-                        </g>
-                        <defs>
-                            <clipPath id="clip0_22_60">
-                                <rect width="24" height="24" fill="var(--text-color)"/>
-                            </clipPath>
-                        </defs>
-                    </svg>
-                </div>
 
             </div>
+        </div>
+
+        <div className="filter-option-container">
+            <form style={{'--i': 0}} action="">
+                <input type="text" name="name"/>
+            </form>
+            <CustomizeTitle title={categoryTitle}></CustomizeTitle>
+            <p style={{'--i': 1}} onClick={() => {
+                setCategoriesContainer(true);
+            }}
+            >Category</p>
+            <div id={"selected-tags-container"}
+                 style={{
+                     '--i': 2,
+                     marginTop: selectedTags.length === 0 ? '0px' : '2rem',
+                 }}>
+                {selectedTags.map((selectedTag) => (
+                    <span className={"selected-tags"}>
+                        <b
+                            onClick={() => toggleTag(selectedTag)}
+                        >✕</b>
+                        {selectedTag}
+                    </span>
+                ))}
+            </div>
+            <div style={{'--i': 2}} className="type-sections">
+                <p>Type</p>
+                <div className="type-options">
+
+                    {type_options.map((option, index) => (
+                        <span key={index} className={option === "All" ? "selected" : ""}>{option}</span>))}
+                </div>
+            </div>
+            <div style={{'--i': 3}} className="sort-sections">
+                <p>Sort by</p>
+                <div className="sort-options">
+
+                    {sort_options.map((option, index) => (
+
+                        <span key={index} className={option === sortedBy ? "selected" : ""}
+                              onClick={() => setSortedBy(option)}
+                        >{option}</span>))}
+                </div>
+            </div>
+
+            <p style={{'--i': 4}} id="tags-sections" onClick={() => {
+                setTagsContainer(true)
+            }}>Tags</p>
 
 
-            <div className={
-                `books-container 
+            <div style={{'--i': 5}} className="list-book-style">
+
+
+                <svg onClick={() => toggleLayout(false)}
+                     width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="24" height="4" fill="var(--text-color)"/>
+                    <rect y="7" width="24" height="4" fill="var(--text-color)"/>
+                    <rect y="14" width="24" height="4" fill="var(--text-color)"/>
+                    <rect y="20" width="24" height="4" fill="var(--text-color)"/>
+                </svg>
+
+                <svg onClick={() => toggleLayout(true)}
+                     width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clipPath="url(#clip0_22_60)">
+                        <path d="M6.4 0H0V6.4H6.4V0Z" fill="var(--text-color)"/>
+                        <path d="M6.4 8.7998H0V15.1998H6.4V8.7998Z" fill="var(--text-color)"/>
+                        <path d="M6.4 17.6001H0V24.0001H6.4V17.6001Z" fill="var(--text-color)"/>
+                        <path d="M15.1998 8.7998H8.7998V15.1998H15.1998V8.7998Z" fill="var(--text-color)"/>
+                        <path d="M15.1998 0H8.7998V6.4H15.1998V0Z" fill="var(--text-color)"/>
+                        <path d="M23.9996 8.7998H17.5996V15.1998H23.9996V8.7998Z" fill="var(--text-color)"/>
+                        <path d="M15.1998 17.6001H8.7998V24.0001H15.1998V17.6001Z" fill="var(--text-color)"/>
+                        <path d="M23.9996 0H17.5996V6.4H23.9996V0Z" fill="var(--text-color)"/>
+                        <path d="M23.9996 17.6001H17.5996V24.0001H23.9996V17.6001Z" fill="var(--text-color)"/>
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_22_60">
+                            <rect width="24" height="24" fill="var(--text-color)"/>
+                        </clipPath>
+                    </defs>
+                </svg>
+            </div>
+
+        </div>
+
+
+        <div className={`books-container 
             ${listBookStyle ? "block" : ""}
            
             `}
-                 style={{opacity: fade ? 0 : 1}}
+             style={{opacity: fade ? 0 : 1}}
 
+        >
+            {list_books.map((option, index) => (<ListBook
+                key={option.book_id + '-' + sortedBy}
+                book_id={option.book_id} book_cover={STATIC_URL + "/" + option.cover_image}
+                book_title={option.title} book_info={option.description}
+                index={index}
             >
-                {
-                    list_books.map((option, index) => (
-                        <ListBook
-                            key={option.book_id + '-' + sortedBy}
-                            book_id={option.book_id} book_cover={STATIC_URL + "/" + option.cover_image}
-                            book_title={option.title} book_info={option.description}
-                            index={index}
-                        >
 
-                        </ListBook>
-                    ))
-                }
-            </div>
+            </ListBook>))}
         </div>
-    );
+    </div>);
 };
 
 export default Books;

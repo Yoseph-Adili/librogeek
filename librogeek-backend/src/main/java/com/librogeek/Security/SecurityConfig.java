@@ -44,6 +44,7 @@ public class SecurityConfig {
             "/api/books/book/tag/add/{tagId}",
             "/api/books/book/tag/subtract/{tagId}",
             "/api/books/book/tag/{tagId}",
+            "/api/books/tags/getAllTags",
             "/api/books/book/comment/{book_id}",
             "/api/books/book/pdf/{bookId}",
             "/api/books/book/bookPage/{book_id}",

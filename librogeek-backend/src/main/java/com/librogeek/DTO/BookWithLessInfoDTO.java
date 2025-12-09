@@ -2,12 +2,11 @@ package com.librogeek.DTO;
 
 import com.librogeek.Enums.BookType;
 import com.librogeek.Models.Book;
-
 import com.librogeek.Models.Tag;
 
 import java.util.List;
 
-public record BookDTO(
+public record BookWithLessInfoDTO(
         Integer book_id,
         String title,
         String author,
@@ -20,14 +19,11 @@ public record BookDTO(
         Integer views,
         Integer downloads,
         Float price,
-        List<?> userComments,
         List<Tag> tags,
-        Boolean inBookShelf,
-        Boolean readable,
         String created_at
 ) {
 
-    public BookDTO(Book book, List<?> userComments , List<Tag> tags, Boolean inBookShelf, Boolean readable) {
+    public BookWithLessInfoDTO(Book book, List<Tag> tags) {
         this(
                 book.getBook_id(),
                 book.getTitle(),
@@ -41,11 +37,7 @@ public record BookDTO(
                 book.getViews(),
                 book.getDownloads(),
                 book.getPrice() != null ? book.getPrice() : 0.0f,
-
-                userComments,
                 tags,
-                inBookShelf,
-                readable,
                 book.getCreated_at()
         );
     }
