@@ -25,14 +25,14 @@ public record BookWithLessInfoDTO(
 
     public BookWithLessInfoDTO(Book book, List<Tag> tags) {
         this(
-                book.getBook_id(),
+                book.getBookId(),
                 book.getTitle(),
                 book.getAuthor(),
                 book.getDescription(),
                 book.getFile_path(),
                 book.getCover_image(),
                 book.getCategory(),
-                book.getBook_type(),
+                book.getBookType(),
                 book.getUploaded_by(),
                 book.getViews(),
                 book.getDownloads(),

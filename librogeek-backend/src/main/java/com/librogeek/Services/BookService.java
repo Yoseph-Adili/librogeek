@@ -3,6 +3,7 @@ package com.librogeek.Services;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.librogeek.Component.TokenManager;
 import com.librogeek.DTO.*;
+import com.librogeek.Enums.BookType;
 import com.librogeek.Models.*;
 
 import com.librogeek.Repositories.*;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -58,9 +60,9 @@ public class BookService {
         if (books.isEmpty()) {
             return ServiceResult.failure("No books found");
         }
-        List<BookWithLessInfoDTO> bookResult= new ArrayList<>();
+        List<BookWithLessInfoDTO> bookResult = new ArrayList<>();
         books.forEach(book -> {
-            List<Tag> tags = tagRepository.findByBookId(book.getBook_id());
+            List<Tag> tags = tagRepository.findByBookId(book.getBookId());
             BookWithLessInfoDTO bookWithLessInfoDTO = new BookWithLessInfoDTO(book, tags);
             bookResult.add(bookWithLessInfoDTO);
         });
@@ -70,9 +72,9 @@ public class BookService {
     public ServiceResult<List<BookWithLessInfoDTO>> getMostDownloadedBooks() {
         List<Book> books = bookRepository.findAllByOrderByDownloadsDesc(PageRequest.of(0, 2));
         if (books.isEmpty()) return ServiceResult.failure("No books found");
-        List<BookWithLessInfoDTO> bookResult= new ArrayList<>();
+        List<BookWithLessInfoDTO> bookResult = new ArrayList<>();
         books.forEach(book -> {
-            List<Tag> tags = tagRepository.findByBookId(book.getBook_id());
+            List<Tag> tags = tagRepository.findByBookId(book.getBookId());
             BookWithLessInfoDTO bookWithLessInfoDTO = new BookWithLessInfoDTO(book, tags);
             bookResult.add(bookWithLessInfoDTO);
         });
@@ -80,18 +82,45 @@ public class BookService {
 
     }
 
-    public ServiceResult<List<BookWithLessInfoDTO>> getBookByCategory(String category) {
-        List<Book> books = bookRepository.findByCategory(category);
-        if (books.isEmpty()) {
-            return ServiceResult.failure("No books found");
+    public ServiceResult<List<BookWithLessInfoDTO>> getBooksByFilter(String search, String category, String type, List<String> tags) {
+        List<Book> books;
+
+
+        if (search == null || search.isEmpty()) {
+            if ((type == null || type.equalsIgnoreCase("All")) && (category == null || category.equalsIgnoreCase("All"))) {
+                books = bookRepository.findAll();
+            } else if (type == null || type.equalsIgnoreCase("All")) {
+                books = bookRepository.findBooksByCategory(category);
+            } else if (category == null || category.equalsIgnoreCase("All")) {
+                books = bookRepository.findBooksByBookType(BookType.valueOf(type));
+            } else {
+                books = bookRepository.findBooksByCategoryAndType(category, BookType.valueOf(type));
+            }
+        } else {
+
+            books = bookRepository.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(search, search)
+                    .stream()
+                    .filter(book -> (type == null || type.equalsIgnoreCase("All") || book.getBookType() == BookType.valueOf(type)))
+                    .filter(book -> (category == null || category.equalsIgnoreCase("All") || book.getCategory().equalsIgnoreCase(category)))
+                    .collect(Collectors.toList());
         }
-        List<BookWithLessInfoDTO> bookResult= new ArrayList<>();
-        books.forEach(book -> {
-            List<Tag> tags = tagRepository.findByBookId(book.getBook_id());
-            BookWithLessInfoDTO bookWithLessInfoDTO = new BookWithLessInfoDTO(book, tags);
-            bookResult.add(bookWithLessInfoDTO);
-        });
-        return ServiceResult.success(bookResult, "Books retrieved successfully");
+
+
+
+        List<BookWithLessInfoDTO> dtoList = new ArrayList<>();
+
+        for (Book book : books) {
+            List<Tag> bookTags = tagRepository.findByBookId(book.getBookId());
+
+            if (tags == null || tags.isEmpty() ||
+                    tags.stream().allMatch(tag -> bookTags.stream().anyMatch(t -> t.getTag().equals(tag)))) {
+                BookWithLessInfoDTO dto = new BookWithLessInfoDTO(book, bookTags);
+                dtoList.add(dto);
+            }
+
+        }
+
+        return ServiceResult.success(dtoList, "Books retrieved successfully");
     }
 
 
@@ -101,6 +130,14 @@ public class BookService {
             return ServiceResult.failure("No categories found");
         }
         return ServiceResult.success(categories, "Books retrieved successfully");
+    }
+
+    public ServiceResult<List<String>> getAllTypes() {
+        List<String> types = bookRepository.getAllTypes();
+        if (types.isEmpty()) {
+            return ServiceResult.failure("No types found");
+        }
+        return ServiceResult.success(types, "Books retrieved successfully");
     }
 
     public ServiceResult<BookDTO> getBookById(Integer book_id, String token) {
@@ -143,7 +180,7 @@ public class BookService {
                 ableToRead = false;
             }
         }
-        System.out.println("this is "+ableToRead);
+        System.out.println("this is " + ableToRead);
         List<Tag> tags = tagRepository.findByBookId(book_id);
         BookDTO bookDTO = new BookDTO(book.get(), commentDTOS, tags, inBookshelf, ableToRead);
 
@@ -175,7 +212,6 @@ public class BookService {
 
         return ServiceResult.success(null, "Bookshelf updated successfully");
     }
-
 
 
     public ServiceResult<List<List<Book>>> getBookByMostReadCategory() {

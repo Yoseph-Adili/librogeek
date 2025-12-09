@@ -1,9 +1,12 @@
 package com.librogeek.Repositories;
 
+import com.librogeek.DTO.BookWithLessInfoDTO;
+import com.librogeek.Enums.BookType;
 import com.librogeek.Models.Book;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import org.springframework.data.domain.Pageable;
@@ -29,6 +32,16 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     @Query("SELECT DISTINCT b.category FROM Book b")
     List<String> getBookCategories();
 
+    @Query("SELECT DISTINCT b.bookType FROM Book b")
+    List<String> getAllTypes();
 
 
+    @Query("SELECT b FROM Book b WHERE (:category IS NULL OR b.category = :category) AND (:type IS NULL OR b.bookType = :type)")
+    List<Book> findBooksByCategoryAndType(@Param("category") String category, @Param("type") BookType bookType);
+
+    List<Book> findBooksByCategory(String category);
+
+    List<Book> findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(String title, String author);
+
+    List<Book> findBooksByBookType(BookType bookType);
 }

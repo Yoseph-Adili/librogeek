@@ -19,9 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/books")
@@ -42,15 +40,25 @@ public class BookController {
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse> allBooks() {
-        ServiceResult<List<BookWithLessInfoDTO>> result = bookService.getAllBooks();
-        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
-    }
+//    @GetMapping("/all")
+//    public ResponseEntity<ApiResponse> allBooks() {
+//        ServiceResult<List<BookWithLessInfoDTO>> result = bookService.getAllBooks();
+//        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+//    }
 
-    @GetMapping("/{category}")
-    public ResponseEntity<ApiResponse> findBooksByCategory(@PathVariable String category) {
-        ServiceResult<List<BookWithLessInfoDTO>> result = bookService.getBookByCategory(category);
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse> findBooks(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String tags // tags=tag1,tag2
+    ) {
+        List<String> tagList = new ArrayList<>();
+        if (tags != null && !tags.isEmpty()) {
+            tagList = Arrays.asList(tags.split(","));
+        }
+
+        ServiceResult<List<BookWithLessInfoDTO>> result = bookService.getBooksByFilter(search, category, type, tagList);
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
 
@@ -70,6 +78,11 @@ public class BookController {
     @GetMapping("/getCategories")
     public ResponseEntity<ApiResponse> getCategories() {
         ServiceResult<List<String>> result = bookService.getCategories();
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+    }
+    @GetMapping("/getAllTypes")
+    public ResponseEntity<ApiResponse> getAllTypes() {
+        ServiceResult<List<String>> result = bookService.getAllTypes();
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
 

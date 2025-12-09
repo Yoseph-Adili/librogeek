@@ -9,7 +9,8 @@ import jakarta.validation.constraints.NotEmpty;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer book_id;
+    @Column(name = "book_id")
+    private Integer bookId;
     @NotEmpty
     private String title;
     private String author;
@@ -21,7 +22,7 @@ public class Book {
     private String category;
     @NotEmpty
     @Enumerated(EnumType.STRING)
-    private BookType book_type;
+    private BookType bookType;
     @NotEmpty
     private Integer uploaded_by;
     private Integer views;
@@ -32,15 +33,15 @@ public class Book {
     public Book() {
     }
 
-    public Book(Integer book_id, String title, String author, String description, String file_path, String cover_image, String category, BookType book_type, Integer uploaded_by, Integer views, Integer downloads, Float price, String created_at) {
-        this.book_id = book_id;
+    public Book(Integer bookId, String title, String author, String description, String file_path, String cover_image, String category, BookType bookType, Integer uploaded_by, Integer views, Integer downloads, Float price, String created_at) {
+        this.bookId = bookId;
         this.title = title;
         this.author = author;
         this.description = description;
         this.file_path = file_path;
         this.cover_image = cover_image;
         this.category = category;
-        this.book_type = book_type;
+        this.bookType = bookType;
         this.uploaded_by = uploaded_by;
         this.views = views;
         this.downloads = downloads;
@@ -48,12 +49,12 @@ public class Book {
         this.created_at = created_at;
     }
 
-    public Integer getBook_id() {
-        return book_id;
+    public Integer getBookId() {
+        return bookId;
     }
 
-    public void setBook_id(Integer book_id) {
-        this.book_id = book_id;
+    public void setBookId(Integer bookId) {
+        this.bookId = bookId;
     }
 
     public String getTitle() {
@@ -104,12 +105,12 @@ public class Book {
         this.category = category;
     }
 
-    public BookType getBook_type() {
-        return book_type;
+    public BookType getBookType() {
+        return bookType;
     }
 
-    public void setBook_type(BookType book_type) {
-        this.book_type = book_type;
+    public void setBookType(BookType bookType) {
+        this.bookType = bookType;
     }
 
     public Integer getUploaded_by() {

@@ -25,6 +25,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/api/users/uploadPhoto/",
             "/api/books/mostRead",
             "/api/books/",
+            "/api/books/getAllTypes",
             "/api/books/getCategories",
             "/api/books/getMostReadCategory",
             "/api/books/getMostDownloaded",

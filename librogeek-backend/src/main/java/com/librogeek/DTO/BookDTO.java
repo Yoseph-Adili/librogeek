@@ -8,7 +8,7 @@ import com.librogeek.Models.Tag;
 import java.util.List;
 
 public record BookDTO(
-        Integer book_id,
+        Integer bookId,
         String title,
         String author,
         String description,
@@ -29,14 +29,14 @@ public record BookDTO(
 
     public BookDTO(Book book, List<?> userComments , List<Tag> tags, Boolean inBookShelf, Boolean readable) {
         this(
-                book.getBook_id(),
+                book.getBookId(),
                 book.getTitle(),
                 book.getAuthor(),
                 book.getDescription(),
                 book.getFile_path(),
                 book.getCover_image(),
                 book.getCategory(),
-                book.getBook_type(),
+                book.getBookType(),
                 book.getUploaded_by(),
                 book.getViews(),
                 book.getDownloads(),

@@ -35,7 +35,7 @@ public class SecurityConfig {
             "/api/users/uploadPhoto/{user_id}",
 
             "/api/books/mostRead",
-            "/api/books/all",
+            "/api/books/all/**",
             "/api/books/{category}",
             "/api/books/getMostReadCategory",
             "/api/books/getMostDownloaded",
