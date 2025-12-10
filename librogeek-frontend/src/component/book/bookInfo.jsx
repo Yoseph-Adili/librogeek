@@ -22,7 +22,7 @@ const BookInfo = ({book, fetchComments}) => {
             return;
         }
         const token = localStorage.getItem("token");
-        fetch(`${API_URL}/books/book/bookshelf/${book.book_id}`, {
+        fetch(`${API_URL}/books/book/bookshelf/${book.bookId}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
@@ -68,7 +68,7 @@ const BookInfo = ({book, fetchComments}) => {
         const formData = new FormData(e.target);
         const addTag = formData.get("add-tag");
         const token = localStorage.getItem("token");
-        fetch(`${API_URL}/books/book/tag/${book.book_id}`, {
+        fetch(`${API_URL}/books/book/tag/${book.bookId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -158,9 +158,9 @@ const BookInfo = ({book, fetchComments}) => {
 
                 {book.readable ?
 
-                    <Link to={`/book/pdf/${book.book_id}`} className={"read-book-btn"}>Read</Link>
+                    <Link to={`/book/pdf/${book.bookId}`} className={"read-book-btn"}>Read</Link>
                     :
-                    <Link to={`/book/order/${book.book_id}`} className={"read-book-btn"}>Order {book.price} €</Link>
+                    <Link to={`/book/order/${book.bookId}`} className={"read-book-btn"}>Order {book.price} €</Link>
                 }
                 <span className={"add-to-bookshelf-btn"} onClick={() => addToBookshelf()}>
 

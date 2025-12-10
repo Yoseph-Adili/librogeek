@@ -12,7 +12,7 @@ const Category = (books) => {
             <div className="category-books">
 
                 {books_list?.map((b, i) => (
-                    <CategoryBook key={i} book_link={`/book/${b.book_id}`} book_intro={b.description} book_title={b.title}
+                    <CategoryBook key={i} book_link={`/book/${b.bookId}`} book_intro={b.description} book_title={b.title}
                               book_cover={b.cover_image}></CategoryBook>
                 ))}
 

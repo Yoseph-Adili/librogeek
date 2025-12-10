@@ -300,8 +300,8 @@ const Books = () => {
 
         >
             {list_books.map((option, index) => (<ListBook
-                key={option.book_id + '-' + sortedBy + '-' + index}
-                book_id={option.book_id} book_cover={STATIC_URL + "/" + option.cover_image}
+                key={option.bookId + '-' + sortedBy + '-' + index}
+                book_id={option.bookId} book_cover={STATIC_URL + "/" + option.cover_image}
                 book_title={option.title} book_info={option.description}
                 tags={option.tags}
                 index={index}

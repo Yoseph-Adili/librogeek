@@ -11,7 +11,7 @@ const MostReadSection = () => {
             .then(res => res.json())
             .then(data => {
                     setBooks(data.data)
-
+                    console.log(data.data)
                 }
             )
 
@@ -22,7 +22,7 @@ const MostReadSection = () => {
             <h2>Most Read Books</h2>
             <div className="most-read-books-container">
                 {books?.map((b, i) => (
-                <MostReadBook key={i} book_id={b.book_id} book_cover={b.cover_image}/>
+                <MostReadBook key={i} book_id={b.bookId} book_cover={b.cover_image}/>
                 ))}
             </div>
         </section>
