@@ -51,16 +51,20 @@ public class BookController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String type,
-            @RequestParam(required = false) String tags // tags=tag1,tag2
+            @RequestParam(required = false) String tags, // tags=tag1,tag2
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "20") Integer limit
     ) {
         List<String> tagList = new ArrayList<>();
         if (tags != null && !tags.isEmpty()) {
             tagList = Arrays.asList(tags.split(","));
         }
 
-        ServiceResult<List<BookWithLessInfoDTO>> result = bookService.getBooksByFilter(search, category, type, tagList);
+        ServiceResult<Map<String, Object>> result = bookService.getBooksByFilter(search, category, type, tagList, page, limit);
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
+
+
 
     @GetMapping("/getMostReadCategory")
     public ResponseEntity<ApiResponse> mostReadCategory() {

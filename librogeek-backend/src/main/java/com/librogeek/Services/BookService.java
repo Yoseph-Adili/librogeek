@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,10 +80,19 @@ public class BookService {
 
     }
 
-    public ServiceResult<List<BookWithLessInfoDTO>> getBooksByFilter(String search, String category, String type, List<String> tags) {
+    public ServiceResult<Map<String, Object>> getBooksByFilter(
+            String search,
+            String category,
+            String type,
+            List<String> tags,
+            int page,
+            int limit
+    ) {
         List<Book> books;
 
-
+        // --------------------------
+        // 先获取符合条件的书
+        // --------------------------
         if (search == null || search.isEmpty()) {
             if ((type == null || type.equalsIgnoreCase("All")) && (category == null || category.equalsIgnoreCase("All"))) {
                 books = bookRepository.findAll();
@@ -97,14 +104,12 @@ public class BookService {
                 books = bookRepository.findBooksByCategoryAndType(category, BookType.valueOf(type));
             }
         } else {
-
             books = bookRepository.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(search, search)
                     .stream()
                     .filter(book -> (type == null || type.equalsIgnoreCase("All") || book.getBookType() == BookType.valueOf(type)))
                     .filter(book -> (category == null || category.equalsIgnoreCase("All") || book.getCategory().equalsIgnoreCase(category)))
                     .collect(Collectors.toList());
         }
-
 
 
         List<BookWithLessInfoDTO> dtoList = new ArrayList<>();
@@ -114,13 +119,25 @@ public class BookService {
 
             if (tags == null || tags.isEmpty() ||
                     tags.stream().allMatch(tag -> bookTags.stream().anyMatch(t -> t.getTag().equals(tag)))) {
-                BookWithLessInfoDTO dto = new BookWithLessInfoDTO(book, bookTags);
-                dtoList.add(dto);
+                dtoList.add(new BookWithLessInfoDTO(book, bookTags));
             }
-
         }
 
-        return ServiceResult.success(dtoList, "Books retrieved successfully");
+        int total = dtoList.size();
+        int fromIndex = Math.min((page - 1) * limit, total);
+        int toIndex = Math.min(page * limit, total);
+        List<BookWithLessInfoDTO> pageList = dtoList.subList(fromIndex, toIndex);
+
+        // --------------------------
+        // 返回
+        // --------------------------
+        Map<String, Object> result = new HashMap<>();
+        result.put("data", pageList);
+        result.put("total", total);
+        result.put("page", page);
+        result.put("limit", limit);
+
+        return ServiceResult.success(result, "Books retrieved successfully");
     }
 
 

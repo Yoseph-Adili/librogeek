@@ -8,9 +8,12 @@ import {Link, useParams} from "react-router-dom";
 const Books = () => {
     const {category} = useParams();
 
-    // ------------------------
-    // UI 状态
-    // ------------------------
+    const [page, setPage] = useState(1);
+    const [total, setTotal] = useState(0);
+    const limit = 20;
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+
     const [categoriesContainer, setCategoriesContainer] = useState(false);
     const [tagsContainer, setTagsContainer] = useState(false);
     const [fade, setFade] = useState(false);
@@ -29,9 +32,8 @@ const Books = () => {
     const sort_options = ['Date', 'Downloads', 'Views'];
 
 
-    function randomIntFromInterval(min, max) { // min and max included
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    }
+
+
     useEffect(() => {
         setCategoryTitle(category ? category : "All");
     }, [category]);
@@ -63,7 +65,8 @@ const Books = () => {
 
     useEffect(() => {
         let url = `${API_URL}/books/all?`;
-        if (searchQuery && searchQuery.trim() !== "") {
+
+        if (searchQuery.trim() !== "") {
             url += `search=${encodeURIComponent(searchQuery.trim())}&`;
         }
         if (category && category !== "All") {
@@ -72,20 +75,55 @@ const Books = () => {
         if (selectedType && selectedType !== "All") {
             url += `type=${encodeURIComponent(selectedType)}&`;
         }
-
         if (selectedTags.length > 0) {
             url += `tags=${selectedTags.map(t => encodeURIComponent(t)).join(",")}&`;
         }
 
+        url += `page=${page}&limit=${limit}`;
+
+        setIsLoading(true);
         fetch(url)
             .then(res => res.json())
             .then(data => {
+                if (page === 1) {
+                    setListBooks(data.data.data);
+                } else {
+                    setListBooks(prev => [...prev, ...data.data.data]);
+                }
+                setTotal(data.total);
                 console.log(data);
-                setListBooks(data.data)
-            })
-            .catch(err => console.error(err));
+                setHasMore(data.data.data.length === limit);
 
-    }, [searchQuery,category, selectedTags, selectedType]);
+            })
+            .catch(err => console.error(err))
+            .finally(() => setIsLoading(false));
+
+
+    }, [page, searchQuery, category, selectedTags, selectedType]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (isLoading || !hasMore) return;
+
+            const scrollTop = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const fullHeight = document.documentElement.scrollHeight;
+
+            if (scrollTop + windowHeight >= windowHeight) {
+                setPage(prev => prev + 1);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [isLoading, hasMore]);
+
+
+    useEffect(() => {
+        setPage(1);
+        setListBooks([]);
+        setHasMore(true);
+    }, [searchQuery, category, selectedTags, selectedType]);
 
     useEffect(() => {
         let sorted = [...list_books];
@@ -165,8 +203,8 @@ const Books = () => {
             <form style={{'--i': 0}} action="">
                 <input type="text" name="name"
                        onChange={(e) => {
-                    setSearchQuery(e.target.value)
-                }}/>
+                           setSearchQuery(e.target.value)
+                       }}/>
             </form>
             <CustomizeTitle key={categoryTitle} title={categoryTitle}></CustomizeTitle>
             <p style={{'--i': 1}} onClick={() => {
@@ -262,9 +300,10 @@ const Books = () => {
 
         >
             {list_books.map((option, index) => (<ListBook
-                key={option.book_id + '-' + sortedBy+'-'+randomIntFromInterval(1,10000)}
+                key={option.book_id + '-' + sortedBy + '-' + index}
                 book_id={option.book_id} book_cover={STATIC_URL + "/" + option.cover_image}
                 book_title={option.title} book_info={option.description}
+                tags={option.tags}
                 index={index}
             >
 
