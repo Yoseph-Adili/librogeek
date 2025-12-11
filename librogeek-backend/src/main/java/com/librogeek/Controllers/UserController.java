@@ -312,18 +312,16 @@ public class UserController {
     }
 
     @PatchMapping("/loginUserByEmailVerify")
-    public ResponseEntity<ApiResponse> loginUserByEmailVerify(@RequestParam String code) throws MessagingException {
+    public ResponseEntity<ApiResponse> loginUserByEmailVerify(@RequestParam String code,@RequestParam String password) throws MessagingException {
 
 
-        ServiceResult<User> result = userService.loginUserByEmailVerify(code);
+        ServiceResult<User> result = userService.loginUserByEmailVerify(code,password);
 
         if (!result.isSuccess()) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.error(result.getMessage()));
         }
 
-        User user = result.getData();
-        String token = tokenManager.generateToken(user.getUser_id(), user.getUsername(), user.getRole());
-        return ResponseEntity.ok(ApiResponse.success(token, "Logged in successfully"));
+        return ResponseEntity.ok(ApiResponse.success(null, "password changed successfully"));
     }
 }

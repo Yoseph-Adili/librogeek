@@ -77,16 +77,16 @@ const ForgetPassword = () => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const code = formData.get("code");
+        const password=formData.get("password")
 
 
-        fetch(`${API_URL}/users/loginUserByEmailVerify?code=${code}`, {
+        fetch(`${API_URL}/users/loginUserByEmailVerify?code=${code}&password=${password}`, {
             method: "PATCH"
         })
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    localStorage.setItem("token", data.data);
-                    window.location.href = "/"
+                    window.location.href = "/login"
                 } else alert("failed to change " + data.message)
             })
             .catch(err => {
@@ -103,8 +103,10 @@ const ForgetPassword = () => {
             {emailSent ?
                 <form action="" onSubmit={verificationCode}>
 
-                    <label htmlFor="code">Verify Email</label>
+                    <label htmlFor="code">Verify Code</label>
                     <input type="text" name="code" id="code"/>
+                    <label htmlFor="password">New Password</label>
+                    <input type="password" name="password" id="password"/>
                     <p>you verification code has been sent, please check your email for the verification code</p>
                     <div className={"login-container"}>
                         <Link to={"/login"}>Remember password?</Link>

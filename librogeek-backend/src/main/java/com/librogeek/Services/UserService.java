@@ -155,13 +155,16 @@ public class UserService {
         if (user == null) {
             return ServiceResult.failure("User not found");
         }
+        if (userRepository.existsByEmail(email)) {
+            return ServiceResult.failure("Email is already in use");
+        }
 
         String code = verificationCodeManager.generateCode(Long.valueOf(user_id), email);
 
         emailService.sendHtmlEmail(
                 email,
                 "Verify your email",
-                user.getName(), // name 参数
+                user.getName(),
                 code
         );
 
@@ -265,16 +268,20 @@ public class UserService {
         return ServiceResult.success(null, "Verification email sent successfully");
     }
 
-    public ServiceResult<User> loginUserByEmailVerify(@RequestParam String code) {
+    public ServiceResult<User> loginUserByEmailVerify(@RequestParam String code,@RequestParam String password) {
 
         String email = verificationCodeManager.verifyCodeWith(code);
         if (email == null) {
             return ServiceResult.failure("Invalid verification code");
         }
+        if (password==null || password.isEmpty()) {
+            return ServiceResult.failure("Password required");
+        }
         User user = userRepository.getUserByEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
 
-
-        return ServiceResult.success(user, "user login successfully");
+        return ServiceResult.success(null, "user login successfully");
     }
 
 }
