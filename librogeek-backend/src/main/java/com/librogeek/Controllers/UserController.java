@@ -8,11 +8,14 @@ import com.librogeek.Requests.ChangeNamesRequest;
 import com.librogeek.Requests.ChangePasswordRequest;
 import com.librogeek.Requests.LoginRequest;
 import com.librogeek.Requests.RegisterRequest;
+import com.librogeek.Services.EmailService;
 import com.librogeek.Services.UserService;
 import com.librogeek.Utils.ApiResponse;
 import com.librogeek.Models.User;
 import com.librogeek.Utils.ServiceResult;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -28,10 +31,12 @@ public class UserController {
     private final UserRepository userRepository;
     private final TokenManager tokenManager;
 
+
     public UserController(UserService userService, UserRepository userRepository, TokenManager tokenManager) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.tokenManager = tokenManager;
+
     }
 
     @GetMapping("/{id}")
@@ -96,6 +101,8 @@ public class UserController {
                     .body(ApiResponse.error("No token provided"));
         }
 
+
+//        emailService.sendEmail("user@example.com", "测试邮件", "Hello Mailpit!");
         String token = authHeader.substring(7);
         if (!tokenManager.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -202,8 +209,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error("Invalid or expired token"));
         }
-
-        // *** FIX: extract user id from token ***
         Integer tokenUserId = tokenManager.getUserId(token);
 
         if (!tokenUserId.equals(user_id)) {
@@ -212,6 +217,73 @@ public class UserController {
         }
 
         ServiceResult<User> result = userService.changeUserPassword(user_id, request);
+
+        if (!result.isSuccess()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(result.getMessage()));
+        }
+
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+    }
+
+    @PatchMapping("/changeUserEmail/{user_id}")
+    public ResponseEntity<ApiResponse> changeUserEmail(
+            @PathVariable Integer user_id,
+            @RequestParam String email,
+            @RequestHeader(name = "Authorization", required = false) String authHeader) throws MessagingException {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+
+        String token = authHeader.substring(7);
+
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid or expired token"));
+        }
+        Integer tokenUserId = tokenManager.getUserId(token);
+
+        if (!tokenUserId.equals(user_id)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("You cannot modify another user's account"));
+        }
+
+        ServiceResult<User> result = userService.changeUserEmail(user_id, email);
+
+        if (!result.isSuccess()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(result.getMessage()));
+        }
+
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+    }
+    @PatchMapping("/verifiedEmail/{user_id}")
+    public ResponseEntity<ApiResponse> verifiedEmail(
+            @PathVariable Integer user_id,
+            @RequestParam String code,
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+
+        String token = authHeader.substring(7);
+
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid or expired token"));
+        }
+        Integer tokenUserId = tokenManager.getUserId(token);
+
+        if (!tokenUserId.equals(user_id)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("You cannot modify another user's account"));
+        }
+
+        ServiceResult<User> result = userService.verifiedEmail(user_id, code);
 
         if (!result.isSuccess()) {
             return ResponseEntity.badRequest()

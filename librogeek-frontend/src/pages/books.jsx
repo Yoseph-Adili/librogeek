@@ -127,7 +127,7 @@ const Books = () => {
 
     useEffect(() => {
         let sorted = [...list_books];
-
+console.log("Sorting by:", list_books);
         switch (sortedBy) {
             case "Downloads":
                 sorted.sort((a, b) => b.downloads - a.downloads);

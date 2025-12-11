@@ -7,7 +7,7 @@ import ImageCropper from "../component/setting/ImageCropper.jsx";
 
 const Setting = () => {
     const loginUser = useContext(UserContext).loginUser;
-
+    const [emailSent, setEmailSent] = useState(false);
     useEffect(() => {
         if (loginUser === null) {
 
@@ -19,10 +19,9 @@ const Setting = () => {
         return <div className="profile-page-container">Loading...</div>;
     }
     let profile_photo = loginUser.profile_photo != null ? loginUser.profile_photo : "profile/unknown.jpg";
-    const [userImage,setUserImage] = useState(STATIC_URL + "/" + profile_photo);
+    const [userImage, setUserImage] = useState(STATIC_URL + "/" + profile_photo);
     const [newUserImage, setNewUserImage] = useState(null);
     const [croppedImage, setCroppedImage] = useState(null);
-
 
 
     const token = localStorage.getItem("token");
@@ -48,9 +47,7 @@ const Setting = () => {
         formData.append("imageFile", blob, "profile.jpg");
 
         fetch(`${API_URL}/users/uploadPhoto/${loginUser.user_id}`, {
-            method: "POST",
-            headers: {Authorization: `Bearer ${token}`},
-            body: formData
+            method: "POST", headers: {Authorization: `Bearer ${token}`}, body: formData
         })
             .then(res => res.json())
             .then(data => {
@@ -75,13 +72,9 @@ const Setting = () => {
             return
         }
         fetch(`${API_URL}/users/changeUserNames/${loginUser.user_id}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({name: name, username: username}),
-            credentials: "include"
+            method: "PATCH", headers: {
+                "Content-Type": "application/json", "Authorization": `Bearer ${token}`
+            }, body: JSON.stringify({name: name, username: username}), credentials: "include"
         })
             .then(res => res.json())
             .then(data => {
@@ -125,16 +118,63 @@ const Setting = () => {
             return
         }
         fetch(`${API_URL}/users/changeUserPassword/${loginUser.user_id}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
+            method: "PATCH", headers: {
+                "Content-Type": "application/json", "Authorization": `Bearer ${token}`
+            }, body: JSON.stringify({
+                password: password, newPassword: newPassword, confirmPassword: confirmPassword
+            }), credentials: "include"
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert("successfully changed")
+                    window.location.reload()
+                } else alert("failed to change " + data.message)
+            })
+            .catch(err => {
+                alert("internal server error" + err.message)
+            })
+    }
+
+    function changeEmail(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const email = formData.get("email");
+        if (email.trim() === "") {
+            document.querySelector("#email").style.borderColor = "red"
+            alert("email be fulled")
+            return
+        }
+
+        fetch(`${API_URL}/users/changeUserEmail/${loginUser.user_id}?email=${email}`, {
+            method: "PATCH", headers: {
                 "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                password: password, newPassword: newPassword,
-                confirmPassword: confirmPassword
-            }),
-            credentials: "include"
+            }, credentials: "include"
+        })
+
+            .then(res => res.json())
+            .then(data => {
+                setEmailSent(true)
+                if (data.success) {
+                    alert("email sent successfully, please check your email for the verification code")
+                    document.querySelector("#email").value = "";
+                } else alert("failed to change " + data.message)
+            })
+            .catch(err => {
+                alert("internal server error" + err.message)
+            })
+    }
+
+    function verificationCode(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const code = formData.get("code");
+
+
+        fetch(`${API_URL}/users/verifiedEmail/${loginUser.user_id}?code=${code}`, {
+            method: "PATCH", headers: {
+                "Authorization": `Bearer ${token}`
+            }, credentials: "include"
         })
             .then(res => res.json())
             .then(data => {
@@ -209,9 +249,7 @@ const Setting = () => {
                 <img src={userImage} alt="profile"/>
             </div>
             <div>
-                {croppedImage && (
-                    <span className={"profile-delete"} onClick={uploadCroppedPhoto}>Upload</span>
-                )}
+                {croppedImage && (<span className={"profile-delete"} onClick={uploadCroppedPhoto}>Upload</span>)}
                 <span className={"profile-delete"}>
                     Dlete Profile
                 </span>
@@ -227,11 +265,17 @@ const Setting = () => {
             </form>
         </section>
         <section>
-            <form action="">
+            {emailSent ? <form action="" onSubmit={verificationCode}>
+                <label htmlFor="code">Verification Code</label>
+                <input type="text" name={"code"} id={"code"}/>
+                <p>email sent successfully, please check your email for the verification code</p>
+                <button>Submit</button>
+            </form> : <form action="" onSubmit={changeEmail}>
                 <label htmlFor="email">New Email</label>
                 <input type="email" name={"email"} id={"email"}/>
                 <button>Send verification Code</button>
-            </form>
+            </form>}
+
         </section>
         <section>
             <form action="" onSubmit={changePassword}>

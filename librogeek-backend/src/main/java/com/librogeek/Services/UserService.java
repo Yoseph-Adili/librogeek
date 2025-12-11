@@ -1,5 +1,6 @@
 package com.librogeek.Services;
 
+import com.librogeek.Component.VerificationCodeManager;
 import com.librogeek.Models.User;
 import com.librogeek.Repositories.UserRepository;
 
@@ -9,11 +10,13 @@ import com.librogeek.Requests.LoginRequest;
 import com.librogeek.Requests.RegisterRequest;
 import com.librogeek.Utils.ServiceResult;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,15 +33,18 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    @Autowired
+    private final EmailService emailService;
+    private final VerificationCodeManager verificationCodeManager;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService, VerificationCodeManager verificationCodeManager) {
 
 
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-
+        this.emailService = emailService;
+        this.verificationCodeManager = verificationCodeManager;
 
     }
 
@@ -113,7 +119,7 @@ public class UserService {
             return ServiceResult.failure("User not found");
         }
         if (user_id != user.getUser_id()) {
-          return ServiceResult.failure("Unauthorized");
+            return ServiceResult.failure("Unauthorized");
         }
         if (userRepository.existsByUsername(request.getUsername()) && !user.getUsername().equals(request.getUsername())) {
             return ServiceResult.failure("Username already exists");
@@ -143,7 +149,44 @@ public class UserService {
         return ServiceResult.success(user, "User passwords changed successfully");
     }
 
-    public ServiceResult<User> uploadPhoto(Integer user_id,  @Valid MultipartFile imageFile) {
+    public ServiceResult<User> changeUserEmail(Integer user_id, @RequestParam String email) throws MessagingException {
+        User user = userRepository.findById(user_id)
+                .orElse(null);
+        if (user == null) {
+            return ServiceResult.failure("User not found");
+        }
+
+        String code = verificationCodeManager.generateCode(Long.valueOf(user_id), email);
+
+        emailService.sendHtmlEmail(
+                email,
+                "Verify your email",
+                user.getName(), // name 参数
+                code
+        );
+
+
+        return ServiceResult.success(null, "Verification email sent successfully");
+    }
+
+    public ServiceResult<User> verifiedEmail(Integer user_id, @RequestParam String code) {
+        User user = userRepository.findById(user_id)
+                .orElse(null);
+        if (user == null) {
+            return ServiceResult.failure("User not found");
+        }
+
+        String email = verificationCodeManager.verifyCode(Long.valueOf(user_id), code);
+        if (email == null) {
+            return ServiceResult.failure("Invalid verification code");
+        }
+        user.setEmail(email);
+        userRepository.save(user);
+
+        return ServiceResult.success(null, "Email verified and updated successfully");
+    }
+
+    public ServiceResult<User> uploadPhoto(Integer user_id, @Valid MultipartFile imageFile) {
 
         User user = userRepository.findById(user_id)
                 .orElse(null);

@@ -90,9 +90,7 @@ public class BookService {
     ) {
         List<Book> books;
 
-        // --------------------------
-        // 先获取符合条件的书
-        // --------------------------
+
         if (search == null || search.isEmpty()) {
             if ((type == null || type.equalsIgnoreCase("All")) && (category == null || category.equalsIgnoreCase("All"))) {
                 books = bookRepository.findAll();
@@ -128,9 +126,7 @@ public class BookService {
         int toIndex = Math.min(page * limit, total);
         List<BookWithLessInfoDTO> pageList = dtoList.subList(fromIndex, toIndex);
 
-        // --------------------------
-        // 返回
-        // --------------------------
+
         Map<String, Object> result = new HashMap<>();
         result.put("data", pageList);
         result.put("total", total);
