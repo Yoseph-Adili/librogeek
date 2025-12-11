@@ -14,7 +14,6 @@ public class VerificationCodeManager {
     private final Map<Long, Map<String, String>> codeMap = new HashMap<>();
 
 
-
     public String generateCode(Long userId, String email) {
         String code = randomLetters(6);
         Map<String, String> emailCodeMap = new HashMap<>();
@@ -39,6 +38,27 @@ public class VerificationCodeManager {
         return null;
     }
 
+    public String verifyCodeWith(String code) {
+
+        for (Map.Entry<Long, Map<String, String>> entry : codeMap.entrySet()) {
+            Map<String, String> emailCodeMap = entry.getValue();
+
+            for (Map.Entry<String, String> inner : emailCodeMap.entrySet()) {
+                String email = inner.getKey();
+                String correctCode = inner.getValue();
+                if (correctCode.equals(code)) {
+                    emailCodeMap.remove(email);
+                    if (emailCodeMap.isEmpty()) {
+                        codeMap.remove(entry.getKey());
+                    }
+
+                    return email;
+                }
+            }
+        }
+
+        return null;
+    }
 
 
     private String randomLetters(int length) {

@@ -244,5 +244,38 @@ public class UserService {
             return ServiceResult.failure("Failed to save image: " + e.getMessage());
         }
     }
+
+    public ServiceResult<User> loginUserByEmail(@RequestParam String email) throws MessagingException {
+        User user = (User) userRepository.findByEmail(email)
+                .orElse(null);
+        if (user == null) {
+            return ServiceResult.failure("User not found");
+        }
+
+        String code = verificationCodeManager.generateCode(Long.valueOf(user.getUser_id()), email);
+
+        emailService.sendHtmlEmail(
+                email,
+                "Verify your email",
+                user.getName(),
+                code
+        );
+
+
+        return ServiceResult.success(null, "Verification email sent successfully");
+    }
+
+    public ServiceResult<User> loginUserByEmailVerify(@RequestParam String code) {
+
+        String email = verificationCodeManager.verifyCodeWith(code);
+        if (email == null) {
+            return ServiceResult.failure("Invalid verification code");
+        }
+        User user = userRepository.getUserByEmail(email);
+
+
+        return ServiceResult.success(user, "user login successfully");
+    }
+
 }
 

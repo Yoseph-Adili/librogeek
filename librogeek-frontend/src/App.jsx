@@ -16,6 +16,7 @@ import {API_URL} from "./config/api.js";
 import Logout from "./pages/logout.jsx";
 import Setting from "./pages/setting.jsx";
 import Pdf from "./pages/pdf.jsx";
+import ForgetPassword from "./pages/forgetPassword.jsx";
 
 
 const UserContext = createContext();
@@ -103,6 +104,7 @@ function App() {
 
                     <Route path="/book/pdf/:bookId" element={<Pdf/>}/>
                     <Route path="/login" element={<Login/>}/>
+                    <Route path="/forgetPassword" element={<ForgetPassword/>}/>
                     <Route path="/register" element={<Register/>}/>
                     <Route path="/logout" element={<Logout/>}/>
                 </Routes>

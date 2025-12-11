@@ -32,6 +32,8 @@ public class SecurityConfig {
             "/api/users/status",
             "/api/users/refresh",
             "/api/users/logout",
+            "/api/users/loginUserByEmail",
+            "/api/users/loginUserByEmailVerify",
             "/api/users/uploadPhoto/{user_id}",
 
             "/api/books/mostRead",

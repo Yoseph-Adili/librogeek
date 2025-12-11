@@ -55,7 +55,15 @@
     font-family: var(--body-text);
     cursor: pointer;
 }
-
+.login-main form p{
+    margin: 0 0 2rem 0;
+    color: red;
+}
+.login-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 .login-main .logo-tag {
     width: 50px;
 }

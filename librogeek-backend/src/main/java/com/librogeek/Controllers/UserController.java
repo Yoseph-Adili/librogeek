@@ -59,7 +59,7 @@ public class UserController {
         }
 
         User user = result.getData();
-        String token = tokenManager.generateToken(user.getUser_id(),user.getUsername(), user.getRole());
+        String token = tokenManager.generateToken(user.getUser_id(), user.getUsername(), user.getRole());
         return ResponseEntity.ok(ApiResponse.success(token, "Logged in successfully"));
     }
 
@@ -75,7 +75,7 @@ public class UserController {
         }
 
         User user = serviceResult.getData();
-        String token = tokenManager.generateToken(user.getUser_id(),user.getUsername(), user.getRole());
+        String token = tokenManager.generateToken(user.getUser_id(), user.getUsername(), user.getRole());
         return ResponseEntity.ok(ApiResponse.success(token, "Logged in successfully"));
     }
 
@@ -137,6 +137,7 @@ public class UserController {
 
         return ResponseEntity.ok(ApiResponse.success(null, "User logout successfully"));
     }
+
     @PostMapping("/uploadPhoto/{user_id}")
     public ResponseEntity<ApiResponse> uploadPhoto(@PathVariable Integer user_id, @Valid @RequestPart MultipartFile imageFile, @RequestHeader(name = "Authorization", required = false) String authHeader) {
 
@@ -156,7 +157,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error("You cannot modify another user's account"));
         }
-        ServiceResult<User> result = userService.uploadPhoto(user_id,imageFile);
+        ServiceResult<User> result = userService.uploadPhoto(user_id, imageFile);
 
         if (!result.isSuccess()) {
             return ResponseEntity.badRequest()
@@ -165,8 +166,9 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
 
     }
+
     @PatchMapping("/changeUserNames/{user_id}")
-    public ResponseEntity<ApiResponse> changeUserNames(@PathVariable Integer user_id,@Valid @RequestBody ChangeNamesRequest request, @RequestHeader(name = "Authorization", required = false) String authHeader) {
+    public ResponseEntity<ApiResponse> changeUserNames(@PathVariable Integer user_id, @Valid @RequestBody ChangeNamesRequest request, @RequestHeader(name = "Authorization", required = false) String authHeader) {
         System.out.println("this is user:" + request.getUsername());
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -183,7 +185,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error("You cannot modify another user's account"));
         }
-        ServiceResult<User> result = userService.changeUserNames(user_id,request);
+        ServiceResult<User> result = userService.changeUserNames(user_id, request);
 
         if (!result.isSuccess()) {
             return ResponseEntity.badRequest()
@@ -192,6 +194,7 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
 
     }
+
     @PatchMapping("/changeUserPassword/{user_id}")
     public ResponseEntity<ApiResponse> changeUserPassword(
             @PathVariable Integer user_id,
@@ -259,6 +262,7 @@ public class UserController {
 
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
+
     @PatchMapping("/verifiedEmail/{user_id}")
     public ResponseEntity<ApiResponse> verifiedEmail(
             @PathVariable Integer user_id,
@@ -293,4 +297,33 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
 
+    @GetMapping("/loginUserByEmail")
+    public ResponseEntity<ApiResponse> loginUserByEmail(@RequestParam String email) throws MessagingException {
+
+
+        ServiceResult<User> result = userService.loginUserByEmail(email);
+
+        if (!result.isSuccess()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(result.getMessage()));
+        }
+
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+    }
+
+    @PatchMapping("/loginUserByEmailVerify")
+    public ResponseEntity<ApiResponse> loginUserByEmailVerify(@RequestParam String code) throws MessagingException {
+
+
+        ServiceResult<User> result = userService.loginUserByEmailVerify(code);
+
+        if (!result.isSuccess()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(result.getMessage()));
+        }
+
+        User user = result.getData();
+        String token = tokenManager.generateToken(user.getUser_id(), user.getUsername(), user.getRole());
+        return ResponseEntity.ok(ApiResponse.success(token, "Logged in successfully"));
+    }
 }

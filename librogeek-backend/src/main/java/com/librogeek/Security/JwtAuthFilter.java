@@ -18,6 +18,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     public static final List<String> WHITELIST_PATHS = List.of(
             "/api/users/register",
+            "/api/users/loginUserByEmail",
+            "/api/users/loginUserByEmailVerify",
             "/api/users/login",
             "/api/users/status",
             "/api/users/refresh",

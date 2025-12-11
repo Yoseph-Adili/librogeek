@@ -110,11 +110,12 @@ const Login = () => {
                 <input type="text" name="username" id="username"/>
                 <label htmlFor="password">Password</label>
                 <input type="password" name="password" id="password"/>
-
+                <div className={"login-container"}>
+                <Link to={"/forgetPassword"}>Forget password?</Link>
                 <button>
                     Login
                 </button>
-
+                </div>
             </form>
             <div>
                 <Link to={"/"}>Return to home page</Link>
