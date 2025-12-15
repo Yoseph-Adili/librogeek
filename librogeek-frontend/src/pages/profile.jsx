@@ -2,13 +2,18 @@ import './css/profile.css'
 import {Link} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import {UserContext} from "../App.jsx";
-import {STATIC_URL} from "../config/api.js";
+import {API_URL, STATIC_URL} from "../config/api.js";
+import Book from "../component/profile/book.jsx";
+import Comments from "../component/profile/Comments.jsx";
+
 
 const Profile = () => {
     const [showOption, setShowOption] = useState("Bookshelf")
     const {loginUser} = useContext(UserContext);
-
-
+    const token = localStorage.getItem("token") || null;
+    const [bookShelfBooks, setBookShelfBooks] = useState([])
+    const [historyBooks, setHistoryBooks] = useState([])
+    const [myComment, setMyComment] = useState([])
     useEffect(() => {
         if (loginUser === null) {
 
@@ -19,7 +24,44 @@ const Profile = () => {
     if (!loginUser) {
         return <div className="profile-page-container">Loading...</div>;
     }
+    useEffect(() => {
+        fetch(`${API_URL}/books/userBookShelf`, {
+            method: "GET", headers: {
+                Authorization: `Bearer ${token}`, "Content-Type": "application/json"
+            },
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    console.log(data)
+                    setBookShelfBooks(data.data)
+                }
+            });
+        fetch(`${API_URL}/books/userHistory`, {
+            method: "GET", headers: {
+                Authorization: `Bearer ${token}`, "Content-Type": "application/json"
+            },
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    setHistoryBooks(data.data)
+                }
+            });
+        fetch(`${API_URL}/books/book/userComments`, {
+            method: "GET", headers: {
+                Authorization: `Bearer ${token}`, "Content-Type": "application/json"
+            },
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    setMyComment(data.data)
+                    console.log(data)
+                }
+            });
 
+    }, []);
 
     let profile_photo = loginUser.profile_photo != null ? loginUser.profile_photo : "profile/unknown.jpg";
 
@@ -61,19 +103,30 @@ const Profile = () => {
                     className={`${showOption === "Bookshelf" ? "active" : ""}`}
                     onClick={() => setShowOption("Bookshelf")}
                 >
-                    Bookshelf
+
+
+                    {bookShelfBooks.map((option, index) => (
+                        <Book key={option.bookId} book={option} index={index} />
+                    ))}
+
+
                 </div>
                 <div
                     className={`${showOption === "History" ? "active" : ""}`}
                     onClick={() => setShowOption("History")}
                 >
-                    History
+                    {historyBooks.map((option, index) => (
+                        <Book key={option.bookId} book={option} index={index} />
+                    ))}
+
                 </div>
                 <div
                     className={`${showOption === "Comments" ? "active" : ""}`}
                     onClick={() => setShowOption("Comments")}
                 >
-                    Comments
+                    {myComment.map((option, index) => (
+                        <Comments key={option.bookId} book={option} index={index} />
+                    ))}
                 </div>
             </div>
         </div>

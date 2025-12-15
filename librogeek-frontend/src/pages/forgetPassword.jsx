@@ -54,7 +54,7 @@ const ForgetPassword = () => {
         const email = formData.get("email");
         if (email.trim() === "") {
             document.querySelector("#email").style.borderColor = "red"
-            alert("email be fulled")
+            alert("email must be fulled")
             return
         }
 
@@ -79,6 +79,16 @@ const ForgetPassword = () => {
         const code = formData.get("code");
         const password=formData.get("password")
 
+        if (code.trim()===""){
+            document.querySelector("#code").style.borderColor = "red"
+            alert("code must be fulled")
+            return
+        }
+        if (password.trim()===""){
+            document.querySelector("#password").style.borderColor = "red"
+            alert("password must be fulled")
+            return
+        }
 
         fetch(`${API_URL}/users/loginUserByEmailVerify?code=${code}&password=${password}`, {
             method: "PATCH"

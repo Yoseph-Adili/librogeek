@@ -2,6 +2,7 @@ package com.librogeek.Controllers;
 
 import com.librogeek.Component.TokenManager;
 import com.librogeek.DTO.BookDTO;
+import com.librogeek.DTO.UsersCommentsDTO;
 import com.librogeek.Models.Book;
 import com.librogeek.Models.Comment;
 import com.librogeek.Requests.CommentRequest;
@@ -40,5 +41,28 @@ public class CommentController {
         ServiceResult<Comment> result = commentService.addComment(book_id, token, commentRequest);
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
+    @GetMapping("/userComments")
+    public ResponseEntity<ApiResponse> userComments(
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
 
+        if (authHeader == null
+                || !authHeader.startsWith("Bearer ")
+                || authHeader.equalsIgnoreCase("Bearer null")) {
+            System.out.println("no auth header");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Please login first"));
+        }
+        String token = authHeader.substring(7).trim();
+        if (token.isEmpty() || !tokenManager.isTokenValid(token)) {
+            System.out.println("invalid token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Please login first"));
+
+        }
+        ServiceResult<List<UsersCommentsDTO>> result = commentService.userComments(token);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(result.getData(), result.getMessage())
+        );
+    }
 }

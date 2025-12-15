@@ -10,6 +10,7 @@ import com.librogeek.Repositories.*;
 import com.librogeek.Utils.ServiceResult;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
@@ -336,4 +337,28 @@ public class BookService {
         return ServiceResult.success(null, "User does not have access to the book");
 
     }
+
+    public ServiceResult<List<Book>> userBookShelf(String token) {
+        Integer userId=tokenManager.getUserId(token);
+        List<Book> bookResult = bookShelfRepository.findBooksByUserBookShelf(userId);
+
+        if (bookResult.isEmpty()) {
+            return ServiceResult.failure("No books found");
+        }
+
+        return ServiceResult.success(bookResult, "Books retrieved successfully");
+    }
+
+    public ServiceResult<List<Book>> userHistory(String token) {
+        Integer userId=tokenManager.getUserId(token);
+        List<Book> bookResult = historyRepository.findBooksByUserHistory(userId);
+
+        if (bookResult.isEmpty()) {
+            return  ServiceResult.failure("No books found");
+        }
+        return ServiceResult.success(bookResult, "Books retrieved successfully");
+    }
+
+
+
 }

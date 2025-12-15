@@ -4,6 +4,7 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.librogeek.Component.TokenManager;
 import com.librogeek.DTO.BookDTO;
 import com.librogeek.DTO.CommentDTO;
+import com.librogeek.DTO.UsersCommentsDTO;
 import com.librogeek.Models.*;
 import com.librogeek.Repositories.BookRepository;
 import com.librogeek.Repositories.BookShelfRepository;
@@ -56,6 +57,22 @@ public class CommentService {
         comment.setContent(commentRequest.getComment());
         commentRepository.save(comment);
         return ServiceResult.success(comment, "Comment added successfully");
+    }
+    public ServiceResult<List<UsersCommentsDTO>> userComments(String token) {
+        Integer userId = tokenManager.getUserId(token);
+
+        List<Book> books = commentRepository.findBooksByUserComments(userId);
+
+        List<UsersCommentsDTO> dtoList = new ArrayList<>();
+
+        for (Book b : books) {
+            List<Comment> comments = commentRepository.findByBookId(b.getBookId());
+            List<Tag> tags = tagRepository.findByBookId(b.getBookId());
+            UsersCommentsDTO dto = new UsersCommentsDTO(b, tags, comments);
+            dtoList.add(dto);
+        }
+
+        return ServiceResult.success(dtoList, "Books retrieved successfully");
     }
 
 }

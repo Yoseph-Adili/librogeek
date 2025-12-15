@@ -144,6 +144,8 @@ const Setting = () => {
             document.querySelector("#email").style.borderColor = "red"
             alert("email be fulled")
             return
+        }else {
+            document.querySelector("#email").style.borderColor = ""
         }
 
         fetch(`${API_URL}/users/changeUserEmail/${loginUser.user_id}?email=${email}`, {
@@ -169,7 +171,13 @@ const Setting = () => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const code = formData.get("code");
-
+        if (code.trim()===""){
+            document.querySelector("#code").style.borderColor = "red"
+            alert("code must be fulled")
+            return
+        }else {
+            document.querySelector("#code").style.borderColor = ""
+        }
 
         fetch(`${API_URL}/users/verifiedEmail/${loginUser.user_id}?code=${code}`, {
             method: "PATCH", headers: {

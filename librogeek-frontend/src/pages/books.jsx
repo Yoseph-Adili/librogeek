@@ -299,7 +299,8 @@ console.log("Sorting by:", list_books);
              style={{opacity: fade ? 0 : 1}}
 
         >
-            {list_books.map((option, index) => (<ListBook
+            {list_books.map((option, index) => (
+                <ListBook
                 key={option.bookId + '-' + sortedBy + '-' + index}
                 book_id={option.bookId} book_cover={STATIC_URL + "/" + option.cover_image}
                 book_title={option.title} book_info={option.description}

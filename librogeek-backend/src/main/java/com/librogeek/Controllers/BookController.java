@@ -40,11 +40,6 @@ public class BookController {
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
 
-//    @GetMapping("/all")
-//    public ResponseEntity<ApiResponse> allBooks() {
-//        ServiceResult<List<BookWithLessInfoDTO>> result = bookService.getAllBooks();
-//        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
-//    }
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> findBooks(
@@ -200,6 +195,56 @@ public class BookController {
 
         }
         ServiceResult<Integer> result = bookService.setBookPageAccess(book_id, token, pageNumber);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(result.getData(), result.getMessage())
+        );
+    }
+
+    @GetMapping("/userBookShelf")
+    public ResponseEntity<ApiResponse> userBookShelf(
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
+
+        if (authHeader == null
+                || !authHeader.startsWith("Bearer ")
+                || authHeader.equalsIgnoreCase("Bearer null")) {
+            System.out.println("no auth header");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Please login first"));
+        }
+        String token = authHeader.substring(7).trim();
+        if (token.isEmpty() || !tokenManager.isTokenValid(token)) {
+            System.out.println("invalid token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Please login first"));
+
+        }
+        ServiceResult<List<Book>> result = bookService.userBookShelf(token);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(result.getData(), result.getMessage())
+        );
+    }
+
+    @GetMapping("/userHistory")
+    public ResponseEntity<ApiResponse> userHistory(
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
+
+        if (authHeader == null
+                || !authHeader.startsWith("Bearer ")
+                || authHeader.equalsIgnoreCase("Bearer null")) {
+            System.out.println("no auth header");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Please login first"));
+        }
+        String token = authHeader.substring(7).trim();
+        if (token.isEmpty() || !tokenManager.isTokenValid(token)) {
+            System.out.println("invalid token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Please login first"));
+
+        }
+        ServiceResult<List<Book>> result = bookService.userHistory(token);
 
         return ResponseEntity.ok(
                 ApiResponse.success(result.getData(), result.getMessage())
