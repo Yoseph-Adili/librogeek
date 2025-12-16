@@ -170,7 +170,16 @@ ul li:nth-of-type(4):hover ~ .nav-menu-line {
 .user-icon {
     cursor: pointer;
 }
+.cart-container{
+    position: relative;
+}
+.cart-container span{
+font-size: 0.55rem;
+    position: absolute;
+    top: 18%;
+    left: 47%;
 
+}
 .menu {
     position: fixed;
     top: 70px;
@@ -225,4 +234,62 @@ ul li:nth-of-type(4):hover ~ .nav-menu-line {
 
     left: 100%;
     opacity: 1;
+}
+.cart-menu ul li{
+    min-height: 170px;
+    display: flex;
+    width: 100%;
+    max-width: 400px;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid gray;
+}
+.cart-menu ul li:nth-last-of-type(2){
+    border-bottom: none;
+}
+.cart-menu ul li:nth-last-of-type(1){
+    border-bottom: none;
+    height: auto;
+    min-height: unset;
+}
+.item-cover-container{
+    width: 30%;
+    height: 100%;
+}
+.item-cover-container img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.item-info-container{
+    padding-top: 1rem;
+    width: 60%;
+    max-height: 125px;
+}
+.item-info-container p{
+    max-height: 100px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+    word-break: break-word;
+}
+.delete-item-container{
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+.delete-item-container svg{
+    cursor: pointer;
+}
+.cart-menu ul li a{
+    margin-left: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--text-color);
+    color: var(--background-color);
+}
+.cart-menu ul li a:after{
+    content: '';
 }

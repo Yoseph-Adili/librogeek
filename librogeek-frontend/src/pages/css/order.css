@@ -1,0 +1,221 @@
+.order-page-container {
+    display: flex;
+    width: 90%;
+    max-width: 1300px;
+    margin: auto;
+    padding-top: 100px;
+    /*justify-content: center;*/
+    gap: 1%;
+    position: relative;
+}
+
+.orders-container {
+    width: 50%;
+}
+
+.order-page-container .customize-title {
+    font-size: 5rem;
+    font-family: var(--body-text);
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--text-color);
+}
+
+.order-page-container ul li {
+    display: flex;
+    gap: 1rem;
+}
+
+.order-cover-container {
+    width: 8.75rem;
+    height: 14rem;
+}
+
+.order-cover-container img {
+    width: 8.75rem;
+    height: 14rem;
+    object-fit: cover;
+}
+
+.order-info-container {
+    width: 70%;
+}
+
+.delete-order-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+    font-family: var(--body-text);
+}
+
+.delete-order-container span {
+    font-size: 3rem;
+}
+
+.delete-container {
+    border: 2px solid var(--text-color);
+    padding: 0.15rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.delete-container:hover {
+    background: var(--text-color);
+    color: var(--background-color);
+}
+
+.delete-container:hover span {
+    color: var(--background-color);
+    cursor: pointer;
+}
+
+.delete-container:hover svg {
+    stroke: var(--background-color);
+}
+
+.delete-container span {
+    font-size: 2rem;
+}
+
+.delete-order-container svg {
+    width: 32px;
+    height: 32px;
+    stroke: var(--text-color);
+    /*background: var(--text-color);*/
+
+}
+
+.payment-container {
+    width: 50%;
+    position: sticky;
+    top: 100px;
+    align-self: flex-start;
+    /*box-shadow: 0 8px 20px rgba(0,0,0,0.15);*/
+
+}
+
+.payment-container .shipping-info-form,
+.payment-container .payment-form {
+    width: 80%;
+    margin-left: 5rem;
+}
+
+.payment-container .shipping-info-form > div {
+    display: flex;
+    flex-direction: column;
+}
+
+#city-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+#city-container div {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.payment-container .shipping-info-form label {
+    display: block;
+}
+
+.payment-container .addresses-container {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+}
+
+.payment-container .addresses-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+/* 滚动条轨道 */
+.payment-container .addresses-container::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 3px;
+}
+
+/* 滚动条滑块 */
+.payment-container .addresses-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+/* 滑块悬停 */
+.payment-container .addresses-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+
+.payment-container h2 {
+    margin: 1rem 0;
+}
+
+.addresses-container input[type="radio"] {
+    display: none;
+}
+
+.addresses-container label p span {
+    margin-right: 1rem;
+}
+
+.addresses-container label {
+    padding: 5px 10px;
+    border: 1px solid gray;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.addresses-container .add-new-shopping-info-container {
+    border: 1px solid gray;
+    cursor: pointer;
+    width: 13rem;
+    position: relative;
+    display: flex;
+   flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+
+}
+.add-new-shopping-info-container b{
+    font-size: 5rem;
+}
+.add-new-shopping-info-container span{
+    font-size: 2rem;
+    font-family: var(--body-text);
+}
+.addresses-container input[type="radio"]:checked + label {
+    border: 2px solid var(--text-color);
+}
+
+.payment-container select {
+    width: 100%;
+    padding: 5px 10px;
+    font-size: 1.5rem;
+    background: var(--background-color);
+    color: var(--text-color);
+}
+.credit-cart-info >div{
+    display: flex;
+    flex-direction: column;
+}
+#creadit-date-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.payment-form button{
+    margin-top: 1rem;
+    width: 100%;
+}

@@ -162,7 +162,6 @@ console.log("Sorting by:", list_books);
         }, 600);
     };
 
-
     return (<div className={"books-page-container"}>
         <div className={`container-background ${categoriesContainer ? "active" : ""} ${tagsContainer ? "active" : ""}`}>
             <div className={`categories-container ${categoriesContainer ? "active" : ""}`}>
@@ -301,8 +300,8 @@ console.log("Sorting by:", list_books);
         >
             {list_books.map((option, index) => (
                 <ListBook
-                key={option.bookId + '-' + sortedBy + '-' + index}
-                book_id={option.bookId} book_cover={STATIC_URL + "/" + option.cover_image}
+                key={option.book_id + '-' + sortedBy + '-' + index}
+                book_id={option.book_id} book_cover={STATIC_URL + "/" + option.cover_image}
                 book_title={option.title} book_info={option.description}
                 tags={option.tags}
                 index={index}

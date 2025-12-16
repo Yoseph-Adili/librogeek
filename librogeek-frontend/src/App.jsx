@@ -17,6 +17,7 @@ import Logout from "./pages/logout.jsx";
 import Setting from "./pages/setting.jsx";
 import Pdf from "./pages/pdf.jsx";
 import ForgetPassword from "./pages/forgetPassword.jsx";
+import Order from "./pages/order.jsx";
 
 
 const UserContext = createContext();
@@ -99,7 +100,7 @@ function App() {
                         <Route path="/setting" element={<Setting/>}/>
                         <Route path="/contact" element={<Contact/>}/>
                         <Route path="/profile/:id" element={<Profile/>}/>
-
+                        <Route path="/order" element={<Order/>}/>
                     </Route>
 
                     <Route path="/book/pdf/:bookId" element={<Pdf/>}/>

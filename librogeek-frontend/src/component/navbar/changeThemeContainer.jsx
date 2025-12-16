@@ -1,10 +1,36 @@
 import {useContext, useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {UserContext} from "../../App.jsx";
+import CartItem from "./cartItem.jsx";
 
 export default function ChangeThemeContainer() {
     let currentTheme = false;
     const storedTheme = localStorage.getItem("theme");
+    const [cart, setCart] = useState(() => {
+        const stored = JSON.parse(localStorage.getItem("cart"));
+        return Array.isArray(stored) ? stored : [];
+    });
+    const [cartOpen, setCartOpen] = useState(false);
+    useEffect(() => {
+
+        const handleCartUpdate = () => {
+            const stored = JSON.parse(localStorage.getItem("cart")) || [];
+            setCart(Array.isArray(stored) && stored.length > 0 ? stored : []);
+            if (cart.length <= 0) {
+                setCartOpen(false);
+            }
+
+        };
+
+        window.addEventListener("cartUpdated", handleCartUpdate);
+
+        return () => {
+            window.removeEventListener("cartUpdated", handleCartUpdate);
+        };
+    }, []);
+
+
+
     if (storedTheme) {
         if (storedTheme === "light") {
             currentTheme = true;
@@ -47,7 +73,7 @@ export default function ChangeThemeContainer() {
 
     const [menuOpen, setMenuOpen] = useState(false);
     // const [user, setUser] = useState(null);
-    const { loginUser } = useContext(UserContext);
+    const {loginUser} = useContext(UserContext);
 
 
     function toggleMenu() {
@@ -60,11 +86,27 @@ export default function ChangeThemeContainer() {
 
     }
 
-
-
     return (
         <div className="change-theme-container">
+            <div className={"cart-container"}
+                onClick={() => {
+                    setCartOpen(prev => !prev);
+                    setMenuOpen(false);
+                }}
+                 style={{
+                     opacity: cart.length > 0 ? "1" : "0",
+                     pointerEvents:cart.length > 0 ? "" : "none",
+                     cursor:"pointer"
+            }}>
+    <span>{cart.length}</span>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M6.29977 5H21L19 12H7.37671M20 16H8L6 3H3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z"
+                        stroke="var(--text-color)" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+            </div>
             <div className="change-theme-button" onClick={changeTheme}>
+
 
                 <svg className={`sun ${themeIcon ? '' : 'active'}`} viewBox="0 0 31 32"
                      xmlns="http://www.w3.org/2000/svg">
@@ -82,7 +124,10 @@ export default function ChangeThemeContainer() {
                 </svg>
 
             </div>
-            <div className="user-icon" onClick={toggleMenu}>
+            <div className="user-icon" onClick={()=>{
+                toggleMenu();
+                setCartOpen(false)
+            }}>
 
                 <svg viewBox="0 0 38 51" fill="var(--text-color)" xmlns="http://www.w3.org/2000/svg">
                     <g clipPath="url(#clip0_13_53)">
@@ -116,6 +161,19 @@ export default function ChangeThemeContainer() {
             )
 
             }
+            <div className={`menu ${cartOpen ? 'active' : ''} cart-menu`}>
+                <ul>
+                    {cart.length > 0 ? (
+                        cart.map(item => (
+                            <CartItem key={item.bookId} book={item}></CartItem>
+                        ))
+                    ) : (
+                        <li>No items</li>
+                    )}
+                    <li><Link to="/order">Orders</Link></li>
+                </ul>
+            </div>
+
         </div>
     )
 }

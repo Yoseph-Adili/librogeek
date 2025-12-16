@@ -20,13 +20,15 @@ const AnimatedBackground = () => {
             setPage("contact");
         } else if (path === "/profile") {
             setPage("profile");
+        } else if (path === "/order") {
+            setPage("order");
         } else {
             setPage("");
         }
     }, [location]);
 
     return (<div className={`animated-background ${page}`}>
-        </div>)
+    </div>)
 }
 
 export default AnimatedBackground

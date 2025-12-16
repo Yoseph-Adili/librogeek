@@ -15,6 +15,22 @@ const BookInfo = ({book, fetchComments}) => {
     useEffect(() => {
         setBookInBookshelf(book.inBookShelf)
     }, [book])
+    const handleAdd = () => {
+        const stored = JSON.parse(localStorage.getItem("cart")) || [];
+
+        const exists = stored.some(item => item.bookId === book.bookId);
+        if (exists) {
+            alert("This book is already in your cart!");
+            return;
+        }
+
+        // Add the book
+        localStorage.setItem("cart", JSON.stringify([...stored, book]));
+
+        // Trigger update
+        window.dispatchEvent(new Event("cartUpdated"));
+    };
+
 
     function addToBookshelf() {
         if (!loginUser) {
@@ -160,7 +176,7 @@ const BookInfo = ({book, fetchComments}) => {
 
                     <Link to={`/book/pdf/${book.bookId}`} className={"read-book-btn"}>Read</Link>
                     :
-                    <Link to={`/book/order/${book.bookId}`} className={"read-book-btn"}>Order {book.price} €</Link>
+                    <span className={"read-book-btn"} onClick={handleAdd}>Order {book.price} €</span>
                 }
                 <span className={"add-to-bookshelf-btn"} onClick={() => addToBookshelf()}>
 
