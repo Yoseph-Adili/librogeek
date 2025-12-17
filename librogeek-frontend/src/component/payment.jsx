@@ -4,7 +4,16 @@ import {useState} from "react";
 const Payment = () => {
     const [shoppingInfo, setShoppingInfo] = useState(true)
     const [paymentOption, setPaymentOption] = useState("")
-    const [hasPhysicalBook, setHasPhysicalBook] = useState(false)
+    const [cart, setCart] = useState(() => {
+        const stored = JSON.parse(localStorage.getItem("cart"));
+        return Array.isArray(stored) ? stored : [];
+    });
+    console.log(cart)
+    const hasPhysicalBook = cart.some(item => item.book_type === "PHYSICAL");
+
+
+
+
     return (
 
         <div className="payment-container">

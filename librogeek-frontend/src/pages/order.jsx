@@ -1,16 +1,28 @@
 import Payment from "../component/payment.jsx";
 import CartItem from "../component/navbar/cartItem.jsx";
 import {Link} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import "./css/order.css"
 import {STATIC_URL} from "../config/api.js";
 import CustomizeTitle from "../component/cuntomizeTitle.jsx";
+import {UserContext} from "../App.jsx";
 
 const Order = () => {
     const [cart, setCart] = useState(() => {
         const stored = JSON.parse(localStorage.getItem("cart"));
         return Array.isArray(stored) ? stored : [];
     });
+    const {loginUser} = useContext(UserContext);
+    if (!loginUser){
+        return (
+            <div className={"order-page-container"}>
+                <div className="orders-container">
+                    <CustomizeTitle title={"Orders"}></CustomizeTitle>
+                    <h2>Please <Link to={"/login"}>login</Link> to view your orders.</h2>
+                </div>
+            </div>
+        )
+    }
 
     useEffect(() => {
 

@@ -16,6 +16,10 @@ const BookInfo = ({book, fetchComments}) => {
         setBookInBookshelf(book.inBookShelf)
     }, [book])
     const handleAdd = () => {
+        if (!loginUser){
+            alert("You must be logged in to order books");
+            return;
+        }
         const stored = JSON.parse(localStorage.getItem("cart")) || [];
 
         const exists = stored.some(item => item.bookId === book.bookId);

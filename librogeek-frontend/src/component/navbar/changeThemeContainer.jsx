@@ -16,11 +16,11 @@ export default function ChangeThemeContainer() {
         const handleCartUpdate = () => {
             const stored = JSON.parse(localStorage.getItem("cart")) || [];
             setCart(Array.isArray(stored) && stored.length > 0 ? stored : []);
-            if (cart.length <= 0) {
+            if (!stored.length) {
                 setCartOpen(false);
             }
-
         };
+
 
         window.addEventListener("cartUpdated", handleCartUpdate);
 
@@ -167,9 +167,7 @@ export default function ChangeThemeContainer() {
                         cart.map(item => (
                             <CartItem key={item.bookId} book={item}></CartItem>
                         ))
-                    ) : (
-                        <li>No items</li>
-                    )}
+                    ) : null}
                     <li><Link to="/order">Orders</Link></li>
                 </ul>
             </div>
