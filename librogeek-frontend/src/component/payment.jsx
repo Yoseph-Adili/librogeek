@@ -1,5 +1,8 @@
 import CustomizeTitle from "./cuntomizeTitle.jsx";
-import {useState} from "react";
+import {useContext, useState} from "react";
+import {UserContext} from "../App.jsx";
+import {API_URL} from "../config/api.js";
+import alert from "../config/utils.js";
 
 const Payment = () => {
     const [shoppingInfo, setShoppingInfo] = useState(true)
@@ -8,9 +11,47 @@ const Payment = () => {
         const stored = JSON.parse(localStorage.getItem("cart"));
         return Array.isArray(stored) ? stored : [];
     });
-    console.log(cart)
     const hasPhysicalBook = cart.some(item => item.book_type === "PHYSICAL");
+    const {loginUser} = useContext(UserContext);
+    const token = localStorage.getItem("token");
 
+    function AddShoppingInfo(e) {
+        e.preventDefault();
+        if (!loginUser) return alert("Please login to add shopping info");
+
+        const payload = {
+            fullName: e.target.fullName.value,
+            phoneNumber: e.target.telephone.value,
+            addressLine1: e.target.addressLine1.value,
+            addressLine2: e.target.addressLine2.value,
+            city: e.target.city.value,
+            country: e.target.country.value,
+            postcode: e.target.postCode.value
+        };
+
+        console.log("Payload to send:", payload);
+
+        fetch(`${API_URL}/shipping/addShippingRequest`, {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Shipping info added successfully");
+                    window.location.reload();
+                } else {
+                    alert("Failed to add shipping info: " + data.message);
+                }
+            })
+            .catch(err => {
+                alert("Internal server error: " + err.message);
+            });
+    }
 
 
 
@@ -76,14 +117,14 @@ const Payment = () => {
                     <button>Order</button>
                 </form>
             ) : (
-                <form action="" className={"shipping-info-form"}>
+                <form action="" className={"shipping-info-form"} onSubmit={ AddShoppingInfo}>
                     <div>
                         <label htmlFor="fullName">Full Name</label>
                         <input type="text" id={"fullName"} name={"fullName"}/>
                     </div>
                     <div>
                         <label htmlFor="telephone">Telephone Number</label>
-                        <input type="tel" id={"telephone"} name={"telephone"}/>
+                        <input type="text" id={"telephone"} name={"telephone"}/>
                     </div>
                     <div>
                         <label htmlFor="addressLine1">Address</label>

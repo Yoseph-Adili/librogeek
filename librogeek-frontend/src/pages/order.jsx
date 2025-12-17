@@ -13,16 +13,7 @@ const Order = () => {
         return Array.isArray(stored) ? stored : [];
     });
     const {loginUser} = useContext(UserContext);
-    if (!loginUser){
-        return (
-            <div className={"order-page-container"}>
-                <div className="orders-container">
-                    <CustomizeTitle title={"Orders"}></CustomizeTitle>
-                    <h2>Please <Link to={"/login"}>login</Link> to view your orders.</h2>
-                </div>
-            </div>
-        )
-    }
+
 
     useEffect(() => {
 
@@ -44,6 +35,17 @@ const Order = () => {
         const newCart = stored.filter(item => item.bookId !== bookId);
         localStorage.setItem("cart", JSON.stringify(newCart));
         window.dispatchEvent(new Event("cartUpdated"));
+    }
+
+    if (!loginUser){
+        return (
+            <div className={"order-page-container"}>
+                <div className="orders-container">
+                    <CustomizeTitle title={"Orders"}></CustomizeTitle>
+                    <h2>Please <Link to={"/login"}>login</Link> to view your orders.</h2>
+                </div>
+            </div>
+        )
     }
     return (
         <div className={"order-page-container"}>

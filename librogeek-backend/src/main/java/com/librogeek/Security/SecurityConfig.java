@@ -54,6 +54,8 @@ public class SecurityConfig {
 //            "/api/users/changeUserNames/{user_id}",
 
 
+            "/api/shipping/addShippingRequest",
+
             "/covers/**",
             "/pdf/**",
             "/profile/**"

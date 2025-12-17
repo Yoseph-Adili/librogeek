@@ -102,7 +102,7 @@ public class UserController {
         }
 
 
-//        emailService.sendEmail("user@example.com", "测试邮件", "Hello Mailpit!");
+
         String token = authHeader.substring(7);
         if (!tokenManager.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
