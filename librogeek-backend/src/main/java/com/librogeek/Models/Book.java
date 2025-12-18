@@ -4,6 +4,7 @@ import com.librogeek.Enums.BookType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
@@ -23,7 +24,7 @@ public class Book {
     private String cover_image;
     @NotEmpty
     private String category;
-    @NotEmpty
+    @NotNull
     @Enumerated(EnumType.STRING)
     private BookType bookType;
     @NotEmpty
@@ -51,6 +52,14 @@ public class Book {
         this.downloads = downloads;
         this.price = price;
         this.created_at = created_at;
+    }
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + bookId +
+                ", title='" + title + '\'' +
+                ", price=" + price +
+                '}';
     }
 
     public Integer getBookId() {

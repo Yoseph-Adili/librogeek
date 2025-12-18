@@ -3,6 +3,8 @@ package com.librogeek.Services;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.librogeek.Component.TokenManager;
 import com.librogeek.DTO.UsersCommentsDTO;
+import com.librogeek.Enums.BookType;
+import com.librogeek.Enums.DeliveryStatus;
 import com.librogeek.Models.*;
 import com.librogeek.Repositories.*;
 import com.librogeek.Requests.AddPaymentRequest;
@@ -71,6 +73,8 @@ public class ShippingService {
     public ServiceResult<Payment> addPayment(String token, @Valid AddPaymentRequest request) {
         Integer userId;
 
+//        System.out.println("this is books"+request.getBooks());
+
 
         userId = tokenManager.getUserId(token);
         User user= userService.getUserById(userId).getData();
@@ -83,19 +87,26 @@ public class ShippingService {
         for (Book book : books) {
             totalAmount = totalAmount.add(book.getPrice());
         }
-
+        System.out.println("this is book id out"+ books.get(0).getBookId());
         Payment payment = new Payment();
         payment.setUserId(user.getUser_id());
         payment.setAmount(totalAmount);
         payment.setPaymentMethod(request.getPaymentMethod());
         paymentRepository.save(payment);
         Integer paymentId = payment.getPaymentId();
+
         for (Book book : books) {
+            System.out.println("this is book id"+book.getBookId());
             PurchasedBook purchasedBook = new PurchasedBook();
             purchasedBook.setUserId(user.getUser_id());
             purchasedBook.setBookId(book.getBookId());
             purchasedBook.setPaymentId(paymentId);
             purchasedBook.setShippingInfoId(request.getShippingInfoId());
+            if (book.getBookType()== BookType.PDF) {
+                purchasedBook.setDeliveryStatus(DeliveryStatus.DELIVERED);
+            } else {
+                purchasedBook.setDeliveryStatus(DeliveryStatus.PENDING);
+            }
             purchasedBook.setPaidAmount(book.getPrice());
             purchasedBookRepository.save(purchasedBook);
         }

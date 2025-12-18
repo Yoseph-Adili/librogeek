@@ -5,6 +5,7 @@ import com.librogeek.Enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
@@ -14,18 +15,19 @@ public class PurchasedBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer purchasedBookId;
-    @NotEmpty
+    @NotNull
     private Integer userId;
-    @NotEmpty
+    @NotNull
     private Integer bookId;
-    @NotEmpty
+    @NotNull
     private Integer paymentId;
-    @NotEmpty
+    @NotNull
     private Integer shippingInfoId;
     @Enumerated(EnumType.STRING)
     private DeliveryStatus deliveryStatus = DeliveryStatus.PENDING;
     @DecimalMin(value = "0.0", inclusive = true)
     private BigDecimal paidAmount;
+    @Column(name = "purchased_at")
     private String purchaseAt;
 
     public Integer getPurchasedBookId() {
