@@ -3,7 +3,7 @@ import CartItem from "../component/navbar/cartItem.jsx";
 import {Link} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import "./css/order.css"
-import {STATIC_URL} from "../config/api.js";
+import {API_URL, STATIC_URL} from "../config/api.js";
 import CustomizeTitle from "../component/cuntomizeTitle.jsx";
 import {UserContext} from "../App.jsx";
 
@@ -29,6 +29,7 @@ const Order = () => {
             window.removeEventListener("cartUpdated", handleCartUpdate);
         };
     }, []);
+
 
     function removeBookFromCart(bookId) {
         const stored = JSON.parse(localStorage.getItem("cart")) || [];

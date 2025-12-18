@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -174,7 +175,7 @@ public class BookService {
         boolean inBookshelf = false;
         boolean ableToRead = true;
 
-        if (book.get().getPrice() > 0) {
+      if (book.get().getPrice().compareTo(BigDecimal.ZERO) > 0)  {
             ableToRead = false;
         }
 
@@ -182,7 +183,7 @@ public class BookService {
             try {
                 Integer tokenUserId = tokenManager.getUserId(token);
                 inBookshelf = bookShelfRepository.findByBookIdAndUserId(book_id, tokenUserId).isPresent();
-                if (book.get().getPrice() > 0) {
+              if (book.get().getPrice().compareTo(BigDecimal.ZERO) > 0)  {
                     Optional<PurchasedBook> purchasedBook = purchasedBookRepository.findByBookIdAndUserId(book_id, tokenUserId);
                     ableToRead = purchasedBook.isPresent();
                 }
@@ -260,8 +261,8 @@ public class BookService {
         if (book.isEmpty()) {
             return ServiceResult.failure("No book found");
         }
-        Float price = book.get().getPrice();
-        if (price != null && price > 0) {
+        BigDecimal price = book.get().getPrice();
+        if (price != null && price.compareTo(BigDecimal.ZERO) > 0){
             Integer userId = tokenManager.getUserId(token);
             ServiceResult<User> user = userService.getUserById(userId);
             if (token == null || token.isEmpty() || user.getData() == null) {

@@ -16,5 +16,5 @@ import java.util.List;
 public interface ShippingInfoRepository extends JpaRepository<ShippingInfo, Integer> {
 
 
-
+    List<ShippingInfo> findAllByUserId(Integer userId);
 }

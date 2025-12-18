@@ -5,6 +5,7 @@ import com.librogeek.Models.Book;
 
 import com.librogeek.Models.Tag;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public record BookDTO(
@@ -19,7 +20,7 @@ public record BookDTO(
         Integer uploaded_by,
         Integer views,
         Integer downloads,
-        Float price,
+        BigDecimal price,
         List<?> userComments,
         List<Tag> tags,
         Boolean inBookShelf,
@@ -40,7 +41,7 @@ public record BookDTO(
                 book.getUploaded_by(),
                 book.getViews(),
                 book.getDownloads(),
-                book.getPrice() != null ? book.getPrice() : 0.0f,
+                book.getPrice(),
 
                 userComments,
                 tags,

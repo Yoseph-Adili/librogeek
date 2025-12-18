@@ -5,6 +5,7 @@ import com.librogeek.Models.Book;
 import com.librogeek.Models.Comment;
 import com.librogeek.Models.Tag;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public record UsersCommentsDTO(
@@ -17,7 +18,7 @@ public record UsersCommentsDTO(
         BookType book_type,
         Integer views,
         Integer downloads,
-        Float price,
+        BigDecimal price,
         List<Tag> tags,
         List<Comment> comments
 ) {
@@ -33,7 +34,7 @@ public record UsersCommentsDTO(
                 book.getBookType(),
                 book.getViews(),
                 book.getDownloads(),
-                book.getPrice() != null ? book.getPrice() : 0.0f,
+                book.getPrice(),
                 tags,
                 comments
         );

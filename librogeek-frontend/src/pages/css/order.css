@@ -151,13 +151,30 @@
 }
 
 #city-container div {
-    width: 50%;
+    width: 48%;
     display: flex;
     flex-direction: column;
 }
+#address-button-container{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.back-to-addresses {
+    margin-top: 1rem;
+    display: inline-block;
+    cursor: pointer;
+    color: var(--text-color);
+    /*padding: .5rem 1rem;*/
+    transition: 0.5s;
+    height: 100%;
+    margin-right: auto;
+}
 
-.payment-container .shipping-info-form label {
-    display: block;
+#city-container div>button{
+    margin-left: 0;
 }
 
 .payment-container .addresses-container {
@@ -197,15 +214,23 @@
     display: none;
 }
 
-.addresses-container label p span {
+.addresses-container .address-item p span {
     margin-right: 1rem;
 }
 
-.addresses-container label {
+.light-theme .addresses-container .address-item {
+    border: 2px solid lightgray;
+}
+
+.addresses-container .address-item {
     padding: 5px 10px;
-    border: 1px solid gray;
+    border: 2px solid #616060;
     cursor: pointer;
     transition: 0.5s;
+}
+
+.addresses-container .address-item.active {
+    border: 2px solid var(--text-color);
 }
 
 .addresses-container .add-new-shopping-info-container {
@@ -218,7 +243,7 @@
     justify-content: center;
     align-items: center;
     gap: 1rem;
-
+    flex: none;
 }
 
 .add-new-shopping-info-container b {
@@ -230,9 +255,6 @@
     font-family: var(--body-text);
 }
 
-.addresses-container input[type="radio"]:checked + label {
-    border: 2px solid var(--text-color);
-}
 
 .payment-container select {
     width: 100%;
@@ -252,6 +274,11 @@
     flex-direction: row;
     justify-content: space-between;
     gap: 1rem;
+}
+#creadit-date-container>div{
+    width: 48%;
+    display: flex;
+    flex-direction: column;
 }
 
 .payment-form button {

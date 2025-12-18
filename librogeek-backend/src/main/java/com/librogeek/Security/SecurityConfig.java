@@ -55,6 +55,7 @@ public class SecurityConfig {
 
 
             "/api/shipping/addShippingRequest",
+            "/api/shipping/addPayment",
 
             "/covers/**",
             "/pdf/**",

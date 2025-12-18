@@ -3,7 +3,10 @@ package com.librogeek.Models;
 import com.librogeek.Enums.DeliveryStatus;
 import com.librogeek.Enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "purchased_books")
@@ -21,7 +24,9 @@ public class PurchasedBook {
     private Integer shippingInfoId;
     @Enumerated(EnumType.STRING)
     private DeliveryStatus deliveryStatus = DeliveryStatus.PENDING;
-    private String purchaseDate;
+    @DecimalMin(value = "0.0", inclusive = true)
+    private BigDecimal paidAmount;
+    private String purchaseAt;
 
     public Integer getPurchasedBookId() {
         return purchasedBookId;
@@ -71,8 +76,15 @@ public class PurchasedBook {
         this.deliveryStatus = deliveryStatus;
     }
 
-    public String getPurchaseDate() {
-        return purchaseDate;
+    public String getPurchaseAt() {
+        return purchaseAt;
     }
 
+    public BigDecimal getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(BigDecimal paidAmount) {
+        this.paidAmount = paidAmount;
+    }
 }

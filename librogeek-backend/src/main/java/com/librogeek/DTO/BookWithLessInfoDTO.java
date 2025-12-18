@@ -4,6 +4,7 @@ import com.librogeek.Enums.BookType;
 import com.librogeek.Models.Book;
 import com.librogeek.Models.Tag;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public record BookWithLessInfoDTO(
@@ -18,7 +19,7 @@ public record BookWithLessInfoDTO(
         Integer uploaded_by,
         Integer views,
         Integer downloads,
-        Float price,
+        BigDecimal price,
         List<Tag> tags,
         String created_at
 ) {
@@ -36,7 +37,7 @@ public record BookWithLessInfoDTO(
                 book.getUploaded_by(),
                 book.getViews(),
                 book.getDownloads(),
-                book.getPrice() != null ? book.getPrice() : 0.0f,
+                book.getPrice(),
                 tags,
                 book.getCreated_at()
         );

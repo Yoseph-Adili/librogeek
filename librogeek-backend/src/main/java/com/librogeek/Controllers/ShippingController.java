@@ -3,8 +3,10 @@ package com.librogeek.Controllers;
 import com.librogeek.Component.TokenManager;
 import com.librogeek.DTO.UsersCommentsDTO;
 import com.librogeek.Models.Comment;
+import com.librogeek.Models.Payment;
 import com.librogeek.Models.ShippingInfo;
 import com.librogeek.Models.User;
+import com.librogeek.Requests.AddPaymentRequest;
 import com.librogeek.Requests.AddShoppingInfoRequest;
 import com.librogeek.Requests.CommentRequest;
 import com.librogeek.Requests.RegisterRequest;
@@ -37,21 +39,6 @@ public class ShippingController {
     public ResponseEntity<ApiResponse> addShippingRequest(
             @RequestHeader(name = "Authorization", required = false) String authHeader,
             @Valid @RequestBody AddShoppingInfoRequest request) {
-
-
-
-
-        System.out.println("fullName: " + request.getFullName());
-        System.out.println("phoneNumber: " + request.getPhoneNumber());
-        System.out.println("addressLine1: " + request.getAddressLine1());
-        System.out.println("addressLine2: " + request.getAddressLine2());
-        System.out.println("city: " + request.getCity());
-        System.out.println("country: " + request.getCountry());
-        System.out.println("postcode: " + request.getPostcode());
-
-
-
-
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error("No token provided"));
@@ -63,6 +50,42 @@ public class ShippingController {
                     .body(ApiResponse.error("Invalid token"));
         }
         ServiceResult<ShippingInfo> result = shippingService.addShippingRequest(token,request);
+
+        return ResponseEntity.ok(ApiResponse.success(result,"Shipping request added successfully"));
+    }
+    @GetMapping("/getUserShippingInfo")
+    public ResponseEntity<ApiResponse> getUserShippingInfo(
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid token"));
+        }
+        ServiceResult<List<ShippingInfo>> result = shippingService.getUserShippingInfo(token);
+
+        return ResponseEntity.ok(ApiResponse.success(result,"Shipping request added successfully"));
+    }
+
+    @PostMapping("/addPayment")
+    public ResponseEntity<ApiResponse> addPayment(
+            @RequestHeader(name = "Authorization", required = false) String authHeader,
+            @Valid @RequestBody AddPaymentRequest request) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid token"));
+        }
+        ServiceResult<Payment> result = shippingService.addPayment(token,request);
 
         return ResponseEntity.ok(ApiResponse.success(result,"Shipping request added successfully"));
     }

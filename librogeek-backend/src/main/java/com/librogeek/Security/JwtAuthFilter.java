@@ -38,7 +38,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 
             "/api/shipping/addShippingRequest",
-
+            "/api/shipping/addPayment",
 
             "/covers/",
             "/profile/"

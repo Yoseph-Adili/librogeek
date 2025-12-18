@@ -2,7 +2,10 @@ package com.librogeek.Models;
 
 import com.librogeek.Enums.BookType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "books")
@@ -27,13 +30,14 @@ public class Book {
     private Integer uploaded_by;
     private Integer views;
     private Integer downloads;
-    private Float price;
+    @DecimalMin(value = "0.0", inclusive = true)
+    private BigDecimal  price;
     private String created_at;
 
     public Book() {
     }
 
-    public Book(Integer bookId, String title, String author, String description, String file_path, String cover_image, String category, BookType bookType, Integer uploaded_by, Integer views, Integer downloads, Float price, String created_at) {
+    public Book(Integer bookId, String title, String author, String description, String file_path, String cover_image, String category, BookType bookType, Integer uploaded_by, Integer views, Integer downloads, BigDecimal price, String created_at) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
@@ -137,11 +141,11 @@ public class Book {
         this.downloads = downloads;
     }
 
-    public Float getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Float price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
