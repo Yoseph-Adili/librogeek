@@ -6,7 +6,7 @@ import alert from "../config/utils.js";
 
 const Payment = () => {
     const [shoppingInfo, setShoppingInfo] = useState(true)
-    const [paymentOption, setPaymentOption] = useState("")
+    const [paymentOption, setPaymentOption] = useState("paypal")
     const [cart, setCart] = useState(() => {
         const stored = JSON.parse(localStorage.getItem("cart"));
         return Array.isArray(stored) ? stored : [];
@@ -70,16 +70,16 @@ const Payment = () => {
                 alert("Internal server error: " + err.message);
             });
     }
+
     function addPayment(e) {
         e.preventDefault();
         if (!loginUser) return alert("Please login to add shopping info");
-
+        if (cart.length<=0) return alert("Your cart is empty");
         const payload = {
-          books: cart,
-          shippingInfoId: selectedAddressId,
-          paymentMethod: paymentOption.toUpperCase().trim()
+            books: cart,
+            shippingInfoId: selectedAddressId,
+            paymentMethod: paymentOption.toUpperCase().trim()
         };
-
 
 
         fetch(`${API_URL}/shipping/addPayment`, {
@@ -91,7 +91,7 @@ const Payment = () => {
             .then(data => {
                 if (data.success) {
                     alert("Shipping info added successfully");
-                    window.location.reload();
+                    localStorage.setItem("cart", JSON.stringify([]));
                 } else {
                     alert("Failed to add shipping info: " + data.message);
                 }
@@ -101,7 +101,6 @@ const Payment = () => {
             });
     }
 
-    console.log(allAddresses);
     return (
 
         <div className="payment-container">
@@ -115,13 +114,16 @@ const Payment = () => {
                                          className={`address-item ${selectedAddressId == address.shippingInfoId ? "active" : ""}`}
                                          onClick={() => {
                                              setSelectedAddressId(address.shippingInfoId)
-                                         }}><input
-                                        type="radio"
-                                        id={`address-${address.shippingInfoId}`}
-                                        name="address"
-                                        value={address.shippingInfoId}
-                                        checked={selectedAddressId === address.shippingInfoId}
-                                    />
+                                         }}>
+                                        <input
+                                            type="radio"
+                                            id={`address-${address.shippingInfoId}`}
+                                            name="address"
+                                            value={address.shippingInfoId}
+                                            checked={selectedAddressId === address.shippingInfoId}
+                                            onChange={() => setSelectedAddressId(address.shippingInfoId)}
+                                        />
+
 
                                         <h3>{address.fullName}</h3>
                                         <p>{address.addressLine1}</p>

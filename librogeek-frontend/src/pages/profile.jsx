@@ -14,6 +14,7 @@ const Profile = () => {
     const [bookShelfBooks, setBookShelfBooks] = useState([])
     const [historyBooks, setHistoryBooks] = useState([])
     const [myComment, setMyComment] = useState([])
+    const [purchasedBooks, setPurchasedBooks] = useState([])
     useEffect(() => {
         if (loginUser === null) {
 
@@ -60,6 +61,18 @@ const Profile = () => {
                     console.log(data)
                 }
             });
+        fetch(`${API_URL}/shipping/userPurchased`, {
+            method: "GET", headers: {
+                Authorization: `Bearer ${token}`, "Content-Type": "application/json"
+            },
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    setPurchasedBooks(data.data)
+                    console.log(data)
+                }
+            });
 
     }, []);
 
@@ -92,6 +105,12 @@ const Profile = () => {
                 className={`${showOption === "Comments" ? "active" : ""}`}
                 onClick={() => setShowOption("Comments")}
             >Comments</span>
+            {purchasedBooks.length > 0 ?
+            <span
+                className={`${showOption === "Purchased" ? "active" : ""}`}
+                onClick={() => setShowOption("Purchased")}
+            >Purchased</span>
+                : null}
 
         </div>
         <div className="user-save-container">
@@ -106,7 +125,7 @@ const Profile = () => {
 
 
                     {bookShelfBooks.map((option, index) => (
-                        <Book key={option.bookId} book={option} index={index} />
+                        <Book key={option.bookId} book={option} index={index}/>
                     ))}
 
 
@@ -116,7 +135,7 @@ const Profile = () => {
                     onClick={() => setShowOption("History")}
                 >
                     {historyBooks.map((option, index) => (
-                        <Book key={option.bookId} book={option} index={index} />
+                        <Book key={option.bookId} book={option} index={index}/>
                     ))}
 
                 </div>
@@ -125,9 +144,19 @@ const Profile = () => {
                     onClick={() => setShowOption("Comments")}
                 >
                     {myComment.map((option, index) => (
-                        <Comments key={option.bookId} book={option} index={index} />
+                        <Comments key={option.bookId} book={option} index={index}/>
                     ))}
                 </div>
+                {purchasedBooks.length > 0 ?
+                    <div
+                        className={`${showOption === "Purchased" ? "active" : ""}`}
+                        onClick={() => setShowOption("Purchased")}
+                    >
+                        {purchasedBooks.map((option, index) => (
+                            <Book key={option.bookId} book={option} index={index}/>
+                        ))}
+                    </div>
+                    : null}
             </div>
         </div>
 

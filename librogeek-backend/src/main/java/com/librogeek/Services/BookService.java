@@ -183,10 +183,10 @@ public class BookService {
             try {
                 Integer tokenUserId = tokenManager.getUserId(token);
                 inBookshelf = bookShelfRepository.findByBookIdAndUserId(book_id, tokenUserId).isPresent();
-              if (book.get().getPrice().compareTo(BigDecimal.ZERO) > 0)  {
-                    Optional<PurchasedBook> purchasedBook = purchasedBookRepository.findByBookIdAndUserId(book_id, tokenUserId);
-                    ableToRead = purchasedBook.isPresent();
+                if (book.get().getPrice().compareTo(BigDecimal.ZERO) > 0) {
+                    ableToRead = purchasedBookRepository.existsByBookIdAndUserId(book_id, tokenUserId);
                 }
+
 
 
             } catch (JWTDecodeException e) {

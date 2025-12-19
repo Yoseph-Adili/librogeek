@@ -2,10 +2,7 @@ package com.librogeek.Controllers;
 
 import com.librogeek.Component.TokenManager;
 import com.librogeek.DTO.UsersCommentsDTO;
-import com.librogeek.Models.Comment;
-import com.librogeek.Models.Payment;
-import com.librogeek.Models.ShippingInfo;
-import com.librogeek.Models.User;
+import com.librogeek.Models.*;
 import com.librogeek.Requests.AddPaymentRequest;
 import com.librogeek.Requests.AddShoppingInfoRequest;
 import com.librogeek.Requests.CommentRequest;
@@ -88,6 +85,24 @@ public class ShippingController {
         ServiceResult<Payment> result = shippingService.addPayment(token,request);
 
         return ResponseEntity.ok(ApiResponse.success(result,"Shipping request added successfully"));
+    }
+
+    @GetMapping("/userPurchased")
+    public ResponseEntity<ApiResponse> userPurchased(
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid token"));
+        }
+        ServiceResult<List<Book>> result = shippingService.userPurchased(token);
+
+        return ResponseEntity.ok(ApiResponse.success(result.getData(),"purchased book get successfully"));
     }
 
 }

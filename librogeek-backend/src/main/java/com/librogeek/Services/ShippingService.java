@@ -11,6 +11,7 @@ import com.librogeek.Requests.AddPaymentRequest;
 import com.librogeek.Requests.AddShoppingInfoRequest;
 import com.librogeek.Requests.CommentRequest;
 import com.librogeek.Utils.ServiceResult;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.stereotype.Service;
@@ -70,6 +71,7 @@ public class ShippingService {
         List<ShippingInfo> shippingInfos = shippingInfoRepository.findAllByUserId(user.getUser_id());
         return ServiceResult.success(shippingInfos, "User shipping info retrieved successfully");
     }
+    @Transactional
     public ServiceResult<Payment> addPayment(String token, @Valid AddPaymentRequest request) {
         Integer userId;
 
@@ -82,6 +84,9 @@ public class ShippingService {
             return ServiceResult.failure("User not found");
         }
         List<Book>books= request.getBooks();
+        if (books == null || books.isEmpty()) {
+            return ServiceResult.failure("Books list is empty");
+        }
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (Book book : books) {
@@ -97,6 +102,14 @@ public class ShippingService {
 
         for (Book book : books) {
             System.out.println("this is book id"+book.getBookId());
+
+            boolean bookExist=purchasedBookRepository.existsByBookIdAndUserId(book.getBookId(), user.getUser_id());
+            if(bookExist){
+                continue;
+            }
+            if (book.getPrice() == null) {
+                continue;
+            }
             PurchasedBook purchasedBook = new PurchasedBook();
             purchasedBook.setUserId(user.getUser_id());
             purchasedBook.setBookId(book.getBookId());
@@ -112,5 +125,16 @@ public class ShippingService {
         }
 
         return ServiceResult.success(payment, "Shipping request added successfully");
+    }
+
+    public ServiceResult<List<Book>> userPurchased(String token) {
+        Integer userId = tokenManager.getUserId(token);
+        User user = userService.getUserById(userId).getData();
+        if (user == null) {
+            return ServiceResult.failure("User not found");
+        }
+        List<Book> books = purchasedBookRepository.findPurchasedBooksByUserId(user.getUser_id());
+
+        return ServiceResult.success(books, "User purchased books retrieved successfully");
     }
 }

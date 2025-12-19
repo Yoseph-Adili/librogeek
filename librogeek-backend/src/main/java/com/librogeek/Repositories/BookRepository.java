@@ -36,6 +36,7 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     List<String> getAllTypes();
 
 
+
     @Query("SELECT b FROM Book b WHERE (:category IS NULL OR b.category = :category) AND (:type IS NULL OR b.bookType = :type)")
     List<Book> findBooksByCategoryAndType(@Param("category") String category, @Param("type") BookType bookType);
 
