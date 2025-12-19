@@ -1,6 +1,6 @@
 import './css/login.css'
 import Logo from "../component/logo.jsx";
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import alert from "../config/utils.js";
 import {API_URL} from "../config/api.js";
 import {useContext, useEffect} from "react";
@@ -8,7 +8,7 @@ import {UserContext} from "../App.jsx";
 
 const Login = () => {
     const {loginUser} = useContext(UserContext);
-    if (loginUser) window.location.href = "/"
+    if (loginUser)     return <Navigate to="/" replace />;
     async function loginForm(e) {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -53,8 +53,8 @@ const Login = () => {
 
             if (res.ok) {
                 localStorage.setItem("token", data.data);
-                window.location.href = "/"
                 alert("successfully logged in");
+                return <Navigate to="/" replace />;
             } else {
                 alert("login failed" + data.message);
             }

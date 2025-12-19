@@ -18,12 +18,13 @@ import Setting from "./pages/setting.jsx";
 import Pdf from "./pages/pdf.jsx";
 import ForgetPassword from "./pages/forgetPassword.jsx";
 import Order from "./pages/order.jsx";
+import AdminLayout from "./layout/adminLayout.jsx";
 
 
 const UserContext = createContext();
 
 function App() {
-    const [loginUser, setLoginUser] = useState(null);
+    const [loginUser, setLoginUser] = useState(undefined);
     let lightTheme;
     const theme = () => {
         if (localStorage.key("theme")) {
@@ -84,7 +85,6 @@ function App() {
             .catch(() => setLoginUser(null));
     }, []);
 
-
     return (
         <UserContext.Provider value={{loginUser, setLoginUser}}>
             <div className={`app ${theme() ? ' light-theme' : ''}`}>
@@ -102,6 +102,13 @@ function App() {
                         <Route path="/profile/:id" element={<Profile/>}/>
                         <Route path="/order" element={<Order/>}/>
                     </Route>
+
+
+                    <Route element={<AdminLayout />}>
+                        <Route path="/admin" element={<div>177777777</div>}/>
+                    </Route>
+
+
 
                     <Route path="/book/pdf/:bookId" element={<Pdf/>}/>
                     <Route path="/login" element={<Login/>}/>

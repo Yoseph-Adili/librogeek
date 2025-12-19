@@ -4,27 +4,27 @@ import {UserContext} from "../App.jsx";
 import {API_URL, STATIC_URL} from "../config/api.js";
 import alert from "../config/utils.js";
 import ImageCropper from "../component/setting/ImageCropper.jsx";
+import {Navigate} from "react-router-dom";
 
 const Setting = () => {
-    const loginUser = useContext(UserContext).loginUser;
-    const [emailSent, setEmailSent] = useState(false);
-    useEffect(() => {
-        if (loginUser === null) {
+    const user = useContext(UserContext);
 
-            window.location.href = "/";
-        }
-    }, [loginUser]);
 
-    if (!loginUser) {
-        return <div className="profile-page-container">Loading...</div>;
-    }
+    const loginUser = user?.loginUser || {};
     let profile_photo = loginUser.profile_photo != null ? loginUser.profile_photo : "profile/unknown.jpg";
     const [userImage, setUserImage] = useState(STATIC_URL + "/" + profile_photo);
     const [newUserImage, setNewUserImage] = useState(null);
     const [croppedImage, setCroppedImage] = useState(null);
-
-
+    const [emailSent, setEmailSent] = useState(false);
     const token = localStorage.getItem("token");
+    useEffect(() => {
+        const newProfile = loginUser.profile_photo != null ? loginUser.profile_photo : "profile/unknown.jpg";
+        setUserImage(STATIC_URL + "/" + newProfile);
+    }, [loginUser.profile_photo]);
+
+    if (user === undefined) return <div className="profile-page-container">Loading...</div>;
+    if (user === null) return <Navigate to="/" replace />;
+
 
     function selectPhoto(e) {
 
@@ -144,7 +144,7 @@ const Setting = () => {
             document.querySelector("#email").style.borderColor = "red"
             alert("email be fulled")
             return
-        }else {
+        } else {
             document.querySelector("#email").style.borderColor = ""
         }
 
@@ -171,11 +171,11 @@ const Setting = () => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const code = formData.get("code");
-        if (code.trim()===""){
+        if (code.trim() === "") {
             document.querySelector("#code").style.borderColor = "red"
             alert("code must be fulled")
             return
-        }else {
+        } else {
             document.querySelector("#code").style.borderColor = ""
         }
 

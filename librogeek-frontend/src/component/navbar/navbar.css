@@ -192,11 +192,13 @@ ul li:nth-of-type(4):hover ~ .nav-menu-line {
     transition: all 0.3s ease;
     transform: translateX(50%);
     opacity: 0;
+    pointer-events: none;
 }
 
 .menu.active {
     transform: translateX(0%);
     opacity: 1;
+    pointer-events: auto;
 }
 
 .menu ul {

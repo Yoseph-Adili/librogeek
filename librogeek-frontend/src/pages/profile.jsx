@@ -1,5 +1,5 @@
 import './css/profile.css'
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import {UserContext} from "../App.jsx";
 import {API_URL, STATIC_URL} from "../config/api.js";
@@ -8,77 +8,58 @@ import Comments from "../component/profile/Comments.jsx";
 
 
 const Profile = () => {
-    const [showOption, setShowOption] = useState("Bookshelf")
-    const {loginUser} = useContext(UserContext);
+    const { loginUser } = useContext(UserContext);
     const token = localStorage.getItem("token") || null;
-    const [bookShelfBooks, setBookShelfBooks] = useState([])
-    const [historyBooks, setHistoryBooks] = useState([])
-    const [myComment, setMyComment] = useState([])
-    const [purchasedBooks, setPurchasedBooks] = useState([])
-    useEffect(() => {
-        if (loginUser === null) {
 
-            window.location.href = "/";
+    const [showOption, setShowOption] = useState("Bookshelf");
+    const [bookShelfBooks, setBookShelfBooks] = useState([]);
+    const [historyBooks, setHistoryBooks] = useState([]);
+    const [myComment, setMyComment] = useState([]);
+    const [purchasedBooks, setPurchasedBooks] = useState([]);
+    const [userImage, setUserImage] = useState(STATIC_URL + "/profile/unknown.jpg");
+
+    useEffect(() => {
+        if (loginUser) {
+            const profile_photo = loginUser.profile_photo || "profile/unknown.jpg";
+            setUserImage(STATIC_URL + "/" + profile_photo);
         }
+    }, [loginUser?.profile_photo]);
+
+
+    useEffect(() => {
+        if (!loginUser) return;
+        fetch(`${API_URL}/books/userBookShelf`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        })
+            .then(res => res.json())
+            .then(data => { if (data.success) setBookShelfBooks(data.data); });
+
+        fetch(`${API_URL}/books/userHistory`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        })
+            .then(res => res.json())
+            .then(data => { if (data.success) setHistoryBooks(data.data); });
+
+        fetch(`${API_URL}/books/book/userComments`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        })
+            .then(res => res.json())
+            .then(data => { if (data.success) setMyComment(data.data); });
+
+        fetch(`${API_URL}/shipping/userPurchased`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        })
+            .then(res => res.json())
+            .then(data => { if (data.success) setPurchasedBooks(data.data); });
     }, [loginUser]);
 
-    if (!loginUser) {
-        return <div className="profile-page-container">Loading...</div>;
-    }
-    useEffect(() => {
-        fetch(`${API_URL}/books/userBookShelf`, {
-            method: "GET", headers: {
-                Authorization: `Bearer ${token}`, "Content-Type": "application/json"
-            },
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    console.log(data)
-                    setBookShelfBooks(data.data)
-                }
-            });
-        fetch(`${API_URL}/books/userHistory`, {
-            method: "GET", headers: {
-                Authorization: `Bearer ${token}`, "Content-Type": "application/json"
-            },
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    setHistoryBooks(data.data)
-                }
-            });
-        fetch(`${API_URL}/books/book/userComments`, {
-            method: "GET", headers: {
-                Authorization: `Bearer ${token}`, "Content-Type": "application/json"
-            },
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    setMyComment(data.data)
-                    console.log(data)
-                }
-            });
-        fetch(`${API_URL}/shipping/userPurchased`, {
-            method: "GET", headers: {
-                Authorization: `Bearer ${token}`, "Content-Type": "application/json"
-            },
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    setPurchasedBooks(data.data)
-                    console.log(data)
-                }
-            });
+    if (loginUser === null) return <Navigate to="/" replace />;
+    if (!loginUser) return <div className="profile-page-container">Loading...</div>;
 
-    }, []);
-
-    let profile_photo = loginUser.profile_photo != null ? loginUser.profile_photo : "profile/unknown.jpg";
-
-    let userImage = STATIC_URL + "/" + profile_photo;
     return (<div className={"profile-page-container"}>
         <div className="user-info-container">
             <div className="profile-photo">

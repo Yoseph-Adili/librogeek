@@ -1,6 +1,6 @@
 import './css/login.css'
 import Logo from "../component/logo.jsx";
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import alert from "../config/utils.js";
 import {API_URL} from "../config/api.js";
 import {useContext, useEffect, useState} from "react";
@@ -8,7 +8,7 @@ import {UserContext} from "../App.jsx";
 
 const ForgetPassword = () => {
     const {loginUser} = useContext(UserContext);
-    if (loginUser) window.location.href = "/"
+    if (loginUser)    return <Navigate to="/" replace />;
 
     const [emailSent,setEmailSent]=useState(false)
 
@@ -96,7 +96,7 @@ const ForgetPassword = () => {
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    window.location.href = "/login"
+                    return <Navigate to="/login" replace />;
                 } else alert("failed to change " + data.message)
             })
             .catch(err => {

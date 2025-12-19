@@ -301,11 +301,13 @@
 }
 
 .list-book-container .list-book-cover {
+
     width: 13vw;
     height: 20vw;
 }
 
 .list-book-container .list-book-cover a {
+    display: block;
     width: 100%;
     height: 100%;
 }
@@ -343,6 +345,7 @@
 .books-container.block .list-book-container .list-book-cover {
     width: 100%;
     max-height: 30rem;
+    flex: auto;
 }
 
 .books-container.block .list-book-container .list-book-text {

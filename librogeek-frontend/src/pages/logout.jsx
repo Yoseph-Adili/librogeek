@@ -1,13 +1,13 @@
 import {useContext, useEffect} from "react";
 import './css/login.css'
 import Logo from "../component/logo.jsx";
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import {API_URL} from "../config/api.js";
 import {UserContext} from "../App.jsx";
 
 const Logout = () => {
     const {loginUser} = useContext(UserContext);
-    if (!loginUser) window.location.href = "/"
+    if (!loginUser)  return <Navigate to="/" replace />;
     useEffect(() => {
         const logout = async () => {
             try {
@@ -22,7 +22,7 @@ const Logout = () => {
 
                     console.log("Logged out successfully");
 
-                    window.location.href = "/"
+                    return <Navigate to="/" replace />;
                 } else {
                     console.log("Could not logout", data);
                 }

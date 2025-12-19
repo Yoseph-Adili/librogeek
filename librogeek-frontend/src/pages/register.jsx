@@ -1,6 +1,6 @@
 import './css/login.css'
 import Logo from "../component/logo.jsx";
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import {API_URL} from "../config/api.js";
 import alert from "../config/utils.js";
 import {useContext} from "react";
@@ -9,7 +9,7 @@ import {UserContext} from "../App.jsx";
 const Register = () => {
 
     const {loginUser} = useContext(UserContext);
-    if (loginUser) window.location.href = "/"
+    if (loginUser)   return <Navigate to="/" replace />;
 
     async function registerForm(e) {
         e.preventDefault();
@@ -72,8 +72,8 @@ const Register = () => {
 
 
             if (res.ok) {
-                window.location.href = "/"
                 alert("successfully registered");
+                return <Navigate to="/" replace />;
             } else {
                 alert("register failed" + data.message);
             }
