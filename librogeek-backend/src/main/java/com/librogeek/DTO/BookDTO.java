@@ -6,6 +6,7 @@ import com.librogeek.Models.Book;
 import com.librogeek.Models.Tag;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record BookDTO(
@@ -25,7 +26,7 @@ public record BookDTO(
         List<Tag> tags,
         Boolean inBookShelf,
         Boolean readable,
-        String created_at
+        LocalDateTime created_at
 ) {
 
     public BookDTO(Book book, List<?> userComments , List<Tag> tags, Boolean inBookShelf, Boolean readable) {

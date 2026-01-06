@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "shipping_info")
 public class ShippingInfo {
@@ -33,7 +35,8 @@ public class ShippingInfo {
     @NotEmpty(message = "postcode is required")
     private String postcode;
 
-    private String createdAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     public Integer getShippingInfoId() {
         return shippingInfoId;
@@ -107,7 +110,7 @@ public class ShippingInfo {
         this.postcode = postcode;
     }
 
-    public String getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 

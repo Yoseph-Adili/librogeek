@@ -35,13 +35,13 @@ const Earning = () => {
     const {loginUser} = useContext(UserContext);
     useEffect(() => {
         if (!loginUser || loginUser.role !== "ADMIN") return;
-        fetch(`${API_URL}/books/userBookShelf`, {
+        fetch(`${API_URL}/shipping/allUserPurchased`, {
             method: "GET",
             headers: {Authorization: `Bearer ${token}`, "Content-Type": "application/json"},
         })
             .then(res => res.json())
             .then(data => {
-                if (data.success) setBookShelfBooks(data.data);
+               console.log(data)
             });
 
 

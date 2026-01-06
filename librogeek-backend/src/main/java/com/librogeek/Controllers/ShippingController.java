@@ -2,6 +2,7 @@ package com.librogeek.Controllers;
 
 import com.librogeek.Component.TokenManager;
 import com.librogeek.DTO.UsersCommentsDTO;
+import com.librogeek.DTO.earningDTO;
 import com.librogeek.Models.*;
 import com.librogeek.Requests.AddPaymentRequest;
 import com.librogeek.Requests.AddShoppingInfoRequest;
@@ -102,6 +103,23 @@ public class ShippingController {
         }
         ServiceResult<List<Book>> result = shippingService.userPurchased(token);
 
+        return ResponseEntity.ok(ApiResponse.success(result.getData(),"purchased book get successfully"));
+    }
+    @GetMapping("/allUserPurchased")
+    public ResponseEntity<ApiResponse> allUserPurchased(
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid token"));
+        }
+        ServiceResult<List<earningDTO>> result = shippingService.allUserPurchased(token);
+        System.out.println("this is earning dto"+result);
         return ResponseEntity.ok(ApiResponse.success(result.getData(),"purchased book get successfully"));
     }
 

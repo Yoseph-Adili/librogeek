@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "purchased_books")
@@ -28,7 +29,8 @@ public class PurchasedBook {
     @DecimalMin(value = "0.0", inclusive = true)
     private BigDecimal paidAmount;
     @Column(name = "purchased_at")
-    private String purchaseAt;
+    private LocalDateTime purchasedAt;
+
 
     public Integer getPurchasedBookId() {
         return purchasedBookId;
@@ -78,8 +80,8 @@ public class PurchasedBook {
         this.deliveryStatus = deliveryStatus;
     }
 
-    public String getPurchaseAt() {
-        return purchaseAt;
+    public LocalDateTime getPurchaseAt() {
+        return purchasedAt;
     }
 
     public BigDecimal getPaidAmount() {

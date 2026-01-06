@@ -1,6 +1,7 @@
 package com.librogeek.Repositories;
 
 import com.librogeek.DTO.TagDTO;
+import com.librogeek.DTO.earningDTO;
 import com.librogeek.Models.Book;
 import com.librogeek.Models.PurchasedBook;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,6 +29,21 @@ public interface PurchasedBookRepository extends JpaRepository<PurchasedBook, In
                 WHERE pb.userId = :userId
             """)
     List<Book> findPurchasedBooksByUserId(@Param("userId") Integer userId);
+
+    @Query("""
+    SELECT new com.librogeek.DTO.earningDTO(
+        b.bookId,
+        pb.paidAmount,
+        b.bookType,
+        pb.purchasedAt
+    )
+    FROM PurchasedBook pb
+    JOIN Book b ON pb.bookId = b.bookId
+""")
+    List<earningDTO> findEarnings();
+
+
+
 
 
 }

@@ -3,6 +3,7 @@ package com.librogeek.Services;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.librogeek.Component.TokenManager;
 import com.librogeek.DTO.UsersCommentsDTO;
+import com.librogeek.DTO.earningDTO;
 import com.librogeek.Enums.BookType;
 import com.librogeek.Enums.DeliveryStatus;
 import com.librogeek.Models.*;
@@ -136,5 +137,15 @@ public class ShippingService {
         List<Book> books = purchasedBookRepository.findPurchasedBooksByUserId(user.getUser_id());
 
         return ServiceResult.success(books, "User purchased books retrieved successfully");
+    }
+    public ServiceResult<List<earningDTO>> allUserPurchased(String token) {
+        Integer userId = tokenManager.getUserId(token);
+        User user = userService.getUserById(userId).getData();
+        if (user == null || !user.getRole().equals("ADMIN")) {
+            return ServiceResult.failure("User not found");
+        }
+        List<earningDTO> purchasedBook = purchasedBookRepository.findEarnings();
+        System.out.println("this is earning dto"+purchasedBook);
+        return ServiceResult.success(purchasedBook, "User purchased books retrieved successfully");
     }
 }

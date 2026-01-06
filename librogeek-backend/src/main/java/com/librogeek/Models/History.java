@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "history")
 public class History {
@@ -16,7 +18,8 @@ public class History {
     private Integer userId;
 
     private Integer page;
-    private String createdAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     public Integer getHistoryId() {
         return historyId;
@@ -50,7 +53,7 @@ public class History {
         this.page = page;
     }
 
-    public String getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 

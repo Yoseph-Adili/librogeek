@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "payments")
@@ -28,7 +29,9 @@ public class Payment {
 
     @Enumerated(EnumType.STRING)
     private Status status= Status.PENDING;
-    private String createdAt;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
 
     public Integer getPaymentId() {
@@ -71,7 +74,7 @@ public class Payment {
         this.status = status;
     }
 
-    public String getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 

@@ -29,11 +29,12 @@ margin: 0 auto;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding:  0 1rem;
+    /*padding:  0 1rem;*/
 }
 .earning-count-container h2{
     background: var(--second-color);
     padding: 1rem;
+    margin: 0 1rem;
 }
 .light-theme .earning-count-container h2 {
     background: var(--background-color);

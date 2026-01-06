@@ -5,6 +5,7 @@ import com.librogeek.Models.Book;
 import com.librogeek.Models.Tag;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record BookWithLessInfoDTO(
@@ -21,7 +22,7 @@ public record BookWithLessInfoDTO(
         Integer downloads,
         BigDecimal price,
         List<Tag> tags,
-        String created_at
+        LocalDateTime created_at
 ) {
 
     public BookWithLessInfoDTO(Book book, List<Tag> tags) {

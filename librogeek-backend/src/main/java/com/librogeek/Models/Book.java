@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "books")
@@ -33,12 +34,15 @@ public class Book {
     private Integer downloads;
     @DecimalMin(value = "0.0", inclusive = true)
     private BigDecimal  price;
-    private String created_at;
+    @Column(name = "created_at")
+    private LocalDateTime created_at;
+
+
 
     public Book() {
     }
 
-    public Book(Integer bookId, String title, String author, String description, String file_path, String cover_image, String category, BookType bookType, Integer uploaded_by, Integer views, Integer downloads, BigDecimal price, String created_at) {
+    public Book(Integer bookId, String title, String author, String description, String file_path, String cover_image, String category, BookType bookType, Integer uploaded_by, Integer views, Integer downloads, BigDecimal price, LocalDateTime created_at) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
@@ -158,11 +162,11 @@ public class Book {
         this.price = price;
     }
 
-    public String getCreated_at() {
+    public LocalDateTime getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(String created_at) {
+    public void setCreated_at(LocalDateTime created_at) {
         this.created_at = created_at;
     }
 
