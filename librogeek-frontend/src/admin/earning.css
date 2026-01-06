@@ -1,0 +1,89 @@
+.earning-page-container{
+    width: 90%;
+    max-width: 1300px;
+    min-height: 100vh;
+    padding-top: 100px;
+margin: 0 auto;
+
+}
+.earning-page-container h1{
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--text-color);
+    padding-bottom: 0.5rem;
+}
+.earning-charts-container{
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    height: 25rem;
+    margin-bottom: 2rem;
+}
+.earning-charts-container .earning-count-container{
+    width: 10%;
+    font-family: var(--body-text);
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding:  0 1rem;
+}
+.earning-count-container h2{
+    background: var(--second-color);
+    padding: 1rem;
+}
+.light-theme .earning-count-container h2 {
+    background: var(--background-color);
+    border: 1px solid var(--text-color);
+
+}
+.chart-line{
+    width: 59%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--second-color);
+    padding: 1rem;
+    /*border-radius: 1rem;*/
+    border: none;
+}
+.light-theme .chart-line {
+    background: var(--background-color);
+    border: 1px solid var(--text-color);
+
+}
+.chart-doughnut{
+    width: 29%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--second-color);
+    padding: 1rem;
+    border: none;
+}
+.light-theme .chart-doughnut {
+    background: var(--background-color);
+    border: 1px solid var(--text-color);
+
+}
+
+.books-charts-container{
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    padding-bottom: 5rem;
+}
+.chart-bar{
+    width: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--second-color);
+    padding: 1rem;
+    border: none;
+}

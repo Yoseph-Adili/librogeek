@@ -19,6 +19,8 @@ import Pdf from "./pages/pdf.jsx";
 import ForgetPassword from "./pages/forgetPassword.jsx";
 import Order from "./pages/order.jsx";
 import AdminLayout from "./layout/adminLayout.jsx";
+import AdminBooks from "./admin/adminBooks.jsx";
+import Earning from "./admin/earning.jsx";
 
 
 const UserContext = createContext();
@@ -105,7 +107,10 @@ function App() {
 
 
                     <Route element={<AdminLayout />}>
-                        <Route path="/admin" element={<div>177777777</div>}/>
+                        <Route path="/admin" element={<AdminBooks/>}/>
+                        <Route path="/admin/books" element={<AdminBooks/>}/>
+                        <Route path="/admin/books/category/:category" element={<AdminBooks />} />
+                        <Route path="/admin/earning" element={<Earning/>}/>
                     </Route>
 
 
