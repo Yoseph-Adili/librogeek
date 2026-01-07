@@ -1,4 +1,4 @@
-import { Line } from "react-chartjs-2";
+import {Line} from "react-chartjs-2";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -11,7 +11,6 @@ import {
     Filler,
 } from "chart.js";
 
-// 注册 Chart.js 元素
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -23,40 +22,73 @@ ChartJS.register(
     Filler,
 );
 
-const EarningLine = () => {
+const EarningLine = ({data}) => {
+    const sortedDates = Object.keys(data).sort(
+        (a, b) => new Date(a) - new Date(b)
+    );
+    const totalAmounts = sortedDates.map(
+        date => data[date].amount
+    );
+
+
+    const pdfAmounts = sortedDates.map(date =>
+        data[date].bookType === "PDF"
+            ? data[date].amount
+            : 0
+    );
+
+    const physicalAmounts = sortedDates.map(date =>
+        data[date].bookType === "PHYSICAL"
+            ? data[date].amount
+            : 0
+    );
+
     const lineData = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: sortedDates,
         datasets: [
-            {
-                label: 'Earnings in USD',
-                data: [1200, 1900, 3000, 5000, 2300, 3400, 4500],
-                borderColor: '#28a745',
-                backgroundColor:'rgba(40,167,69,0.78)',
+
+
+            pdfAmounts.some(v => v > 0) && {
+                label: 'PDF Earnings in EUR',
+                data: pdfAmounts,
+                borderColor: '#652F8D',
+                backgroundColor: '#652F8D',
                 tension: 0.5,
                 // fill: true,
                 pointRadius: 4,
                 pointHoverRadius: 6,
             },
 
-            {
-                label: 'Earnings in 25',
-                data: [120, 100, 3000, 500, 2300, 300, 4500],
-                borderColor: 'rgba(40,167,69,0.52)',
-                backgroundColor: 'rgba(40,167,69,0.1)',
+            physicalAmounts.some(v => v > 0) && {
+                label: 'Physical Earnings in EUR',
+                data: physicalAmounts,
+                borderColor: '#EE4037',
+                backgroundColor: '#EE4037',
                 tension: 0.5,
                 // fill: true,
                 pointRadius: 4,
                 pointHoverRadius: 6,
             },
-        ],
+            {
+                label: 'Total Earnings in EUR',
+                data: totalAmounts,
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40,167,69,0.3)',
+                tension: 0.5,
+                fill: true,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+            },
+        ].filter(Boolean),
     };
+
 
     const lineOptions = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                labels: { color: '#ccc' },
+                labels: {color: '#ccc'},
                 position: 'top',
             },
             tooltip: {
@@ -66,14 +98,14 @@ const EarningLine = () => {
             },
         },
         scales: {
-            x: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-            y: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+            x: {ticks: {color: '#ccc'}, grid: {color: 'rgba(255,255,255,0.1)'}},
+            y: {ticks: {color: '#ccc'}, grid: {color: 'rgba(255,255,255,0.1)'}},
         },
     };
 
     return (
-        <div style={{ height: '300px', width: '100%' }}>
-            <Line data={lineData} options={lineOptions} />
+        <div style={{height: '300px', width: '100%'}}>
+            <Line data={lineData} options={lineOptions}/>
         </div>
     );
 };

@@ -108,6 +108,7 @@ public class ShippingController {
     @GetMapping("/allUserPurchased")
     public ResponseEntity<ApiResponse> allUserPurchased(
             @RequestHeader(name = "Authorization", required = false) String authHeader) {
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error("No token provided"));
@@ -118,9 +119,11 @@ public class ShippingController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error("Invalid token"));
         }
+
         ServiceResult<List<earningDTO>> result = shippingService.allUserPurchased(token);
-        System.out.println("this is earning dto"+result);
+        System.out.println("this is earning dto contro"+result.getData());
         return ResponseEntity.ok(ApiResponse.success(result.getData(),"purchased book get successfully"));
     }
+
 
 }

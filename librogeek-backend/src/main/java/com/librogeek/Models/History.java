@@ -18,7 +18,7 @@ public class History {
     private Integer userId;
 
     private Integer page;
-    @Column(name = "created_at")
+    @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
     public Integer getHistoryId() {

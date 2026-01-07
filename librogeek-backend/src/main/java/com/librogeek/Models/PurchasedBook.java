@@ -28,7 +28,7 @@ public class PurchasedBook {
     private DeliveryStatus deliveryStatus = DeliveryStatus.PENDING;
     @DecimalMin(value = "0.0", inclusive = true)
     private BigDecimal paidAmount;
-    @Column(name = "purchased_at")
+    @Column(name = "purchased_at", insertable = false, updatable = false)
     private LocalDateTime purchasedAt;
 
 

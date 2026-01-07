@@ -6,6 +6,7 @@ import com.librogeek.DTO.UsersCommentsDTO;
 import com.librogeek.DTO.earningDTO;
 import com.librogeek.Enums.BookType;
 import com.librogeek.Enums.DeliveryStatus;
+import com.librogeek.Enums.Role;
 import com.librogeek.Models.*;
 import com.librogeek.Repositories.*;
 import com.librogeek.Requests.AddPaymentRequest;
@@ -138,12 +139,15 @@ public class ShippingService {
 
         return ServiceResult.success(books, "User purchased books retrieved successfully");
     }
+
     public ServiceResult<List<earningDTO>> allUserPurchased(String token) {
         Integer userId = tokenManager.getUserId(token);
         User user = userService.getUserById(userId).getData();
-        if (user == null || !user.getRole().equals("ADMIN")) {
+        if (user == null || user.getRole() != Role.ADMIN) {
+            System.out.println("user is not admin or not found: " + (user != null ? user.getRole() : "null"));
             return ServiceResult.failure("User not found");
         }
+
         List<earningDTO> purchasedBook = purchasedBookRepository.findEarnings();
         System.out.println("this is earning dto"+purchasedBook);
         return ServiceResult.success(purchasedBook, "User purchased books retrieved successfully");

@@ -16,7 +16,7 @@ public class Bookshelf {
     @Column(name = "book_id")
     private Integer bookId;
 
-    @Column(updatable = false)
+    @Column(insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist

@@ -34,7 +34,7 @@ public class Book {
     private Integer downloads;
     @DecimalMin(value = "0.0", inclusive = true)
     private BigDecimal  price;
-    @Column(name = "created_at")
+    @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime created_at;
 
 

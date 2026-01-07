@@ -14,7 +14,7 @@ import {
     Legend
 } from "chart.js";
 import EarningLine from "./component/earning/earningLine.jsx";
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useState} from "react";
 import {API_URL} from "../config/api.js";
 import {UserContext} from "../App.jsx";
 
@@ -33,6 +33,8 @@ ChartJS.register(
 const Earning = () => {
     const token = localStorage.getItem("token") || null;
     const {loginUser} = useContext(UserContext);
+
+    const [earningData, setEarningData] = useState([]);
     useEffect(() => {
         if (!loginUser || loginUser.role !== "ADMIN") return;
         fetch(`${API_URL}/shipping/allUserPurchased`, {
@@ -41,11 +43,53 @@ const Earning = () => {
         })
             .then(res => res.json())
             .then(data => {
-               console.log(data)
+
+                if (data.success) setEarningData(data.data);
             });
 
 
     }, [loginUser]);
+
+    const dailyEarnings = {};
+    let totalEarnings = 0;
+    let monthlyEarnings = 0;
+    let weeklyEarnings = 0;
+    const now = new Date();
+    const oneWeekAgo = new Date(now);
+    oneWeekAgo.setDate(now.getDate() - 7);
+    const oneMonthAgo = new Date(now);
+    oneMonthAgo.setMonth(now.getMonth() - 1);
+
+    const soldBookType = {}
+    earningData.forEach(item => {
+
+        const date = new Date(item.purchasedAt).toISOString().split('T')[0];
+
+        if (!dailyEarnings[date]) {
+            dailyEarnings[date] = {
+                amount: 0,
+                bookType: item.bookType
+            }
+        }
+
+        dailyEarnings[date].amount += item.price;
+        totalEarnings += item.price;
+
+        const purchasedDate = new Date(item.purchasedAt);
+        if (purchasedDate >= oneMonthAgo) {
+            monthlyEarnings += item.price;
+        }
+        if (purchasedDate >= oneWeekAgo) {
+            weeklyEarnings += item.price;
+        }
+        if (!soldBookType[item.bookType]) {
+            soldBookType[item.bookType] = 0;
+        }
+        soldBookType[item.bookType] += 1;
+
+    });
+
+
     return (
         <div className={"earning-page-container"}>
             <h1>Earning</h1>
@@ -53,29 +97,29 @@ const Earning = () => {
                 <div className="earning-count-container">
                     <h2>Total Earnings:
                         <br/>
-                        <span style={{color: '#28a745'}}>$20,000</span>
+                        <span style={{color: '#28a745'}}>€ {totalEarnings}</span>
                     </h2>
                     <h2>Monthly Earnings:
                         <br/>
-                        <span style={{color: '#28a745'}}>$20,000</span>
+                        <span style={{color: '#28a745'}}>€ {monthlyEarnings}</span>
                     </h2>
                     <h2>Weekly Earnings:
                         <br/>
-                        <span style={{color: '#28a745'}}>$20,000</span>
+                        <span style={{color: '#28a745'}}>€ {weeklyEarnings}</span>
                     </h2>
                 </div>
 
                 <div className={"chart-line"}>
 
-                    <EarningLine></EarningLine>
+                    <EarningLine data={dailyEarnings}></EarningLine>
                 </div>
                 <div className={"chart-doughnut"}>
                     <Doughnut data={{
-                        labels: ['Books', 'Electronics', 'Clothing', 'Home & Kitchen'],
+                        labels: Object.keys(soldBookType),
                         datasets: [
                             {
                                 label: 'Sales Distribution',
-                                data: [300, 50, 100, 80],
+                                data: Object.values(soldBookType),
                                 backgroundColor: [
                                     '#EE4037',
                                     '#652F8D',

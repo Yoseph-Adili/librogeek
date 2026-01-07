@@ -35,7 +35,7 @@ public class ShippingInfo {
     @NotEmpty(message = "postcode is required")
     private String postcode;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
     public Integer getShippingInfoId() {

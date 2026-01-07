@@ -30,7 +30,7 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private Status status= Status.PENDING;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
 
