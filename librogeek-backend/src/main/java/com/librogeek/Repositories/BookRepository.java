@@ -1,5 +1,6 @@
 package com.librogeek.Repositories;
 
+import com.librogeek.DTO.BookCountDTO;
 import com.librogeek.DTO.BookWithLessInfoDTO;
 import com.librogeek.Enums.BookType;
 import com.librogeek.Models.Book;
@@ -45,4 +46,8 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     List<Book> findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(String title, String author);
 
     List<Book> findBooksByBookType(BookType bookType);
+
+    @Query("SELECT b.category, COUNT(b) FROM Book b GROUP BY b.category")
+    List<Object[]> countBooksGroupByType();
+
 }

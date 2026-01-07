@@ -1,8 +1,10 @@
 package com.librogeek.Controllers;
 
 import com.librogeek.Component.TokenManager;
+import com.librogeek.DTO.BookCountDTO;
 import com.librogeek.DTO.BookDTO;
 import com.librogeek.DTO.BookWithLessInfoDTO;
+import com.librogeek.DTO.earningDTO;
 import com.librogeek.Models.Book;
 import com.librogeek.Requests.AddTagRequest;
 import com.librogeek.Services.BookService;
@@ -249,5 +251,23 @@ public class BookController {
         return ResponseEntity.ok(
                 ApiResponse.success(result.getData(), result.getMessage())
         );
+    }
+    @GetMapping("/allBooksCount")
+    public ResponseEntity<ApiResponse> allBooksCount(
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid token"));
+        }
+        ServiceResult<List<BookCountDTO>> result = bookService.allBooksCount(token);
+
+        return ResponseEntity.ok(ApiResponse.success(result.getData(),""));
     }
 }

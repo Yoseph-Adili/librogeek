@@ -35,6 +35,7 @@ const Earning = () => {
     const {loginUser} = useContext(UserContext);
 
     const [earningData, setEarningData] = useState([]);
+    const [bookCountData, setBookCountData] = useState([]);
     useEffect(() => {
         if (!loginUser || loginUser.role !== "ADMIN") return;
         fetch(`${API_URL}/shipping/allUserPurchased`, {
@@ -47,8 +48,20 @@ const Earning = () => {
                 if (data.success) setEarningData(data.data);
             });
 
+        fetch(`${API_URL}/books/allBooksCount`, {
+            method: "GET",
+            headers: {Authorization: `Bearer ${token}`, "Content-Type": "application/json"},
+        })
+            .then(res => res.json())
+            .then(data => {
+
+                if (data.success) setBookCountData(data.data);
+            });
+
+
 
     }, [loginUser]);
+
 
     const dailyEarnings = {};
     let totalEarnings = 0;
@@ -88,6 +101,84 @@ const Earning = () => {
         soldBookType[item.bookType] += 1;
 
     });
+
+
+
+
+    const colorMap = {
+        'Fiction': '#007bff',
+        'Sci-Fi': '#28a745',
+        'History': '#EE4037',
+        'Cooking': '#FFC107',
+        'Programming': '#6f42c1',
+        'Technology': '#17a2b8',
+        'Literature': '#fd7e14',
+        'Data Science': '#20c997',
+        'Science Fiction': '#6610f2',
+        'Self-help': '#e83e8c',
+    };
+
+    const barData = {
+        labels: ['Books'],
+        datasets: bookCountData.map(item => ({
+            label: item.category,
+            data: [item.count],
+            backgroundColor: colorMap[item.category] || '#ccc',
+        })),
+    };
+    const barOptions = {
+        // indexAxis: 'y',
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {color: '#ccc'},
+            }
+        },
+        scales: {
+            x: {
+                ticks: {color: '#ccc'},
+                grid: {color: 'rgba(255, 255, 255, 0.1)'},
+            },
+            y: {
+                ticks: {color: '#ccc'},
+                grid: {color: 'rgba(255, 255, 255, 0.1)'},
+            },
+        },
+    };
+    const doughnutData = {
+        labels: bookCountData.map(item => item.category),
+        datasets: [
+            {
+                label: 'Sales Distribution',
+                data: bookCountData.map(item => item.count),
+                backgroundColor: bookCountData.map(item => colorMap[item.category] || '#ccc'),
+                borderWidth: 0,        // ✅ 设置为 0，就没有边框
+                borderColor: 'transparent',
+            },
+        ],
+    };
+
+    const doughnutOptions = {
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const value = context.raw;
+                        const data = context.dataset.data;
+                        const sum = data.reduce((a, b) => a + b, 0);
+                        const percentage = ((value / sum) * 100).toFixed(1) + '%';
+                        return `${context.label}: (${percentage})`;
+                    }
+                }
+            },
+            legend: {
+                position: 'bottom',
+                display: false,
+                borderColor:  bookCountData.map(item => colorMap[item.category] || '#ccc'),
+            }
+        }
+    };
+
 
 
     return (
@@ -142,42 +233,10 @@ const Earning = () => {
             <div className="books-charts-container">
 
                 <div className={"chart-bar chart-line"}>
-                    <Bar data={{
-                        labels: ['Book A', 'Book B', 'Book C', 'Book D', 'Book E'],
-                        datasets: [
-                            {
-                                label: 'Units Sold',
-                                data: [150, 200, 100, 250, 300],
-                                backgroundColor: '#28a745',
-                            },
-
-                        ],
-
-                    }}/>
+                    <Bar data={barData} options={barOptions}/>
                 </div>
                 <div className={"chart-doughnut"}>
-                    <Doughnut data={{
-                        labels: ['Fiction', 'Non-Fiction', 'Science', 'History'],
-                        datasets: [
-                            {
-                                label: 'Genre Distribution',
-                                data: [120, 90, 60, 30],
-                                backgroundColor: [
-                                    '#FF6384',
-                                    '#36A2EB',
-                                    '#FFCE56',
-                                    '#4BC0C0',
-                                ],
-                                borderColor: [
-                                    '#FF6384',
-                                    '#36A2EB',
-                                    '#FFCE56',
-                                    '#4BC0C0',
-                                ],
-                                borderWidth: 1,
-                            },
-                        ],
-                    }}/>
+                    <Doughnut data={doughnutData} options={doughnutOptions} />
                 </div>
             </div>
         </div>

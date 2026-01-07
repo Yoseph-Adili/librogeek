@@ -4,6 +4,7 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.librogeek.Component.TokenManager;
 import com.librogeek.DTO.*;
 import com.librogeek.Enums.BookType;
+import com.librogeek.Enums.Role;
 import com.librogeek.Models.*;
 
 import com.librogeek.Repositories.*;
@@ -360,6 +361,25 @@ public class BookService {
         return ServiceResult.success(bookResult, "Books retrieved successfully");
     }
 
+    public ServiceResult<List<BookCountDTO>> allBooksCount(String token) {
+        Integer userId = tokenManager.getUserId(token);
+        User user = userService.getUserById(userId).getData();
+
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return ServiceResult.failure("Unauthorized access");
+        }
+
+        List<Object[]> result = bookRepository.countBooksGroupByType();
+
+        List<BookCountDTO> bookResult = result.stream()
+                .map(row -> new BookCountDTO(
+                        (String) row[0],                  // category
+                        ((Number) row[1]).longValue()     // count
+                ))
+                .toList();
+
+        return ServiceResult.success(bookResult, "Books retrieved successfully");
+    }
 
 
 }
