@@ -88,18 +88,17 @@ const EarningLine = ({data}) => {
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                labels: {color: '#ccc'},
+                labels: {color: '#787878'},
                 position: 'top',
             },
             tooltip: {
                 backgroundColor: '#333',
-                titleColor: '#fff',
-                bodyColor: '#fff',
+                bodyColor: '#787878',
             },
         },
         scales: {
-            x: {ticks: {color: '#ccc'}, grid: {color: 'rgba(255,255,255,0.1)'}},
-            y: {ticks: {color: '#ccc'}, grid: {color: 'rgba(255,255,255,0.1)'}},
+            x: {ticks: {color: '#787878'}, grid: {color: 'rgba(120,120,120,0.25)'}},
+            y: {ticks: {color: '#787878'}, grid: {color: 'rgba(120,120,120,0.25)'}},
         },
     };
 

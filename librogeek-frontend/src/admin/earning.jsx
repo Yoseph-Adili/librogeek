@@ -104,26 +104,27 @@ const Earning = () => {
 
 
 
-
     const colorMap = {
-        'Fiction': '#007bff',
-        'Sci-Fi': '#28a745',
+        'Fiction': '#652F8D',      
+        'Sci-Fi': '#9D2062',
         'History': '#EE4037',
-        'Cooking': '#FFC107',
-        'Programming': '#6f42c1',
-        'Technology': '#17a2b8',
-        'Literature': '#fd7e14',
-        'Data Science': '#20c997',
-        'Science Fiction': '#6610f2',
-        'Self-help': '#e83e8c',
+        'Cooking': '#F59121',
+        'Programming': '#6F42C1',
+        'Technology': '#17A2B8',
+        'Literature': '#FD7E14',
+        'Data Science': '#20C997',
+        'Science Fiction': '#6610F2',
+        'Self-help': '#E83E8C',
     };
+
+
 
     const barData = {
         labels: ['Books'],
         datasets: bookCountData.map(item => ({
             label: item.category,
             data: [item.count],
-            backgroundColor: colorMap[item.category] || '#ccc',
+            backgroundColor: colorMap[item.category] || '#787878',
         })),
     };
     const barOptions = {
@@ -131,17 +132,17 @@ const Earning = () => {
         plugins: {
             legend: {
                 position: 'bottom',
-                labels: {color: '#ccc'},
+                labels: {color: '#787878'},
             }
         },
         scales: {
             x: {
-                ticks: {color: '#ccc'},
-                grid: {color: 'rgba(255, 255, 255, 0.1)'},
+                ticks: {color: '#787878'},
+                grid: {color: '#787878'},
             },
             y: {
-                ticks: {color: '#ccc'},
-                grid: {color: 'rgba(255, 255, 255, 0.1)'},
+                ticks: {color: '#787878'},
+                grid: {color: 'rgba(120,120,120,0.25)'},
             },
         },
     };
@@ -151,8 +152,8 @@ const Earning = () => {
             {
                 label: 'Sales Distribution',
                 data: bookCountData.map(item => item.count),
-                backgroundColor: bookCountData.map(item => colorMap[item.category] || '#ccc'),
-                borderWidth: 0,        // ✅ 设置为 0，就没有边框
+                backgroundColor: bookCountData.map(item => colorMap[item.category] || '#787878'),
+                borderWidth: 0,
                 borderColor: 'transparent',
             },
         ],
@@ -174,8 +175,9 @@ const Earning = () => {
             legend: {
                 position: 'bottom',
                 display: false,
-                borderColor:  bookCountData.map(item => colorMap[item.category] || '#ccc'),
+                borderColor:  bookCountData.map(item => colorMap[item.category] || '#787878'),
             }
+
         }
     };
 

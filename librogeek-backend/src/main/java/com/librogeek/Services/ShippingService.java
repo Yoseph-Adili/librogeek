@@ -2,6 +2,7 @@ package com.librogeek.Services;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.librogeek.Component.TokenManager;
+import com.librogeek.DTO.OrdersDTO;
 import com.librogeek.DTO.UsersCommentsDTO;
 import com.librogeek.DTO.earningDTO;
 import com.librogeek.Enums.BookType;
@@ -32,7 +33,7 @@ public class ShippingService {
     private final PurchasedBookRepository purchasedBookRepository;
 
 
-    public ShippingService(UserService userService, TokenManager tokenManager,ShippingInfoRepository shippingInfoRepository, PaymentRepository paymentRepository, PurchasedBookRepository purchasedBookRepository) {
+    public ShippingService(UserService userService, TokenManager tokenManager, ShippingInfoRepository shippingInfoRepository, PaymentRepository paymentRepository, PurchasedBookRepository purchasedBookRepository) {
         this.userService = userService;
         this.tokenManager = tokenManager;
         this.shippingInfoRepository = shippingInfoRepository;
@@ -44,9 +45,9 @@ public class ShippingService {
         Integer userId;
 
 
-            userId = tokenManager.getUserId(token);
-        User user= userService.getUserById(userId).getData();
-        if(user==null){
+        userId = tokenManager.getUserId(token);
+        User user = userService.getUserById(userId).getData();
+        if (user == null) {
             return ServiceResult.failure("User not found");
         }
         ShippingInfo shippingInfo = new ShippingInfo();
@@ -73,6 +74,7 @@ public class ShippingService {
         List<ShippingInfo> shippingInfos = shippingInfoRepository.findAllByUserId(user.getUser_id());
         return ServiceResult.success(shippingInfos, "User shipping info retrieved successfully");
     }
+
     @Transactional
     public ServiceResult<Payment> addPayment(String token, @Valid AddPaymentRequest request) {
         Integer userId;
@@ -81,11 +83,11 @@ public class ShippingService {
 
 
         userId = tokenManager.getUserId(token);
-        User user= userService.getUserById(userId).getData();
-        if(user==null){
+        User user = userService.getUserById(userId).getData();
+        if (user == null) {
             return ServiceResult.failure("User not found");
         }
-        List<Book>books= request.getBooks();
+        List<Book> books = request.getBooks();
         if (books == null || books.isEmpty()) {
             return ServiceResult.failure("Books list is empty");
         }
@@ -94,19 +96,20 @@ public class ShippingService {
         for (Book book : books) {
             totalAmount = totalAmount.add(book.getPrice());
         }
-        System.out.println("this is book id out"+ books.get(0).getBookId());
+        System.out.println("this is book id out" + books.get(0).getBookId());
         Payment payment = new Payment();
         payment.setUserId(user.getUser_id());
+        payment.setShippingInfoId(request.getShippingInfoId());
         payment.setAmount(totalAmount);
         payment.setPaymentMethod(request.getPaymentMethod());
         paymentRepository.save(payment);
         Integer paymentId = payment.getPaymentId();
 
         for (Book book : books) {
-            System.out.println("this is book id"+book.getBookId());
+            System.out.println("this is book id" + book.getBookId());
 
-            boolean bookExist=purchasedBookRepository.existsByBookIdAndUserId(book.getBookId(), user.getUser_id());
-            if(bookExist){
+            boolean bookExist = purchasedBookRepository.existsByBookIdAndUserId(book.getBookId(), user.getUser_id());
+            if (bookExist) {
                 continue;
             }
             if (book.getPrice() == null) {
@@ -117,7 +120,7 @@ public class ShippingService {
             purchasedBook.setBookId(book.getBookId());
             purchasedBook.setPaymentId(paymentId);
             purchasedBook.setShippingInfoId(request.getShippingInfoId());
-            if (book.getBookType()== BookType.PDF) {
+            if (book.getBookType() == BookType.PDF) {
                 purchasedBook.setDeliveryStatus(DeliveryStatus.DELIVERED);
             } else {
                 purchasedBook.setDeliveryStatus(DeliveryStatus.PENDING);
@@ -149,7 +152,35 @@ public class ShippingService {
         }
 
         List<earningDTO> purchasedBook = purchasedBookRepository.findEarnings();
-        System.out.println("this is earning dto"+purchasedBook);
+        System.out.println("this is earning dto" + purchasedBook);
         return ServiceResult.success(purchasedBook, "User purchased books retrieved successfully");
+    }
+
+    public ServiceResult<List<OrdersDTO>> allUserOrders(String token) {
+        Integer userId = tokenManager.getUserId(token);
+        User user = userService.getUserById(userId).getData();
+        if (user == null || user.getRole() != Role.ADMIN) {
+            System.out.println("user is not admin or not found: " + (user != null ? user.getRole() : "null"));
+            return ServiceResult.failure("User not found");
+        }
+
+        List<Payment> allPayment = paymentRepository.findAll();
+        List<OrdersDTO> orders = new ArrayList<>();
+        for (Payment payment : allPayment) {
+            OrdersDTO ordersDTO = new OrdersDTO(
+                    payment.getPaymentId(),
+                    paymentRepository.findBooksByPaymentId(payment.getPaymentId()),
+                    userService.getUserById(payment.getUserId()).getData(),
+                    shippingInfoRepository.findById(payment.getShippingInfoId()).orElse(null),
+                    payment.getAmount(),
+                    payment.getPaymentMethod(),
+                    payment.getStatus(),
+                    payment.getCreatedAt()
+            );
+
+            orders.add(ordersDTO);
+        }
+
+        return ServiceResult.success(orders, "User purchased books retrieved successfully");
     }
 }

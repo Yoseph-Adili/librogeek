@@ -1,6 +1,7 @@
 package com.librogeek.Controllers;
 
 import com.librogeek.Component.TokenManager;
+import com.librogeek.DTO.OrdersDTO;
 import com.librogeek.DTO.UsersCommentsDTO;
 import com.librogeek.DTO.earningDTO;
 import com.librogeek.Models.*;
@@ -121,7 +122,26 @@ public class ShippingController {
         }
 
         ServiceResult<List<earningDTO>> result = shippingService.allUserPurchased(token);
-        System.out.println("this is earning dto contro"+result.getData());
+
+        return ResponseEntity.ok(ApiResponse.success(result.getData(),"purchased book get successfully"));
+    }
+    @GetMapping("/allUserOrders")
+    public ResponseEntity<ApiResponse> allUserOrders(
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid token"));
+        }
+
+        ServiceResult<List<OrdersDTO>> result = shippingService.allUserOrders(token);
+
         return ResponseEntity.ok(ApiResponse.success(result.getData(),"purchased book get successfully"));
     }
 

@@ -19,6 +19,7 @@ public class Payment {
     private Integer PaymentId;
     @NotNull
     private Integer userId;
+    private Integer shippingInfoId;
     @NotNull
     @DecimalMin(value = "0.0", inclusive = true)
     private BigDecimal amount;
@@ -48,6 +49,14 @@ public class Payment {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public Integer getShippingInfoId() {
+        return shippingInfoId;
+    }
+
+    public void setShippingInfoId(Integer shippingInfoId) {
+        this.shippingInfoId = shippingInfoId;
     }
 
     public BigDecimal getAmount() {
