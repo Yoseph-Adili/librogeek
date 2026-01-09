@@ -11,6 +11,17 @@
     width: 40%;
     margin: auto;
     margin-bottom: 2rem;
+    position: relative;
+}
+
+.order-search-form svg {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-color);
 }
 
 .order-search-form input[type="text"] {
@@ -19,7 +30,8 @@
     font-size: 2rem;
     padding-left: 0.5rem;
     width: 100%;
-    margin-bottom: 0.5rem;
+    padding-right: 35px;
+    margin-bottom: 0;
 }
 
 .orders-line-container {
@@ -48,21 +60,33 @@
 .order-item {
     width: 100%;
     padding: 0 1rem;
+    border-bottom: 1px solid var(--text-color);
+    margin-bottom: 1rem;
 }
 
 .order-summary {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+
     /*background: #e6e5e5;*/
     cursor: pointer;
 
 }
 
-.order-summary div {
+.order-summary > div {
     display: flex;
     gap: 1rem;
+}
+
+.order_deal_type {
+    min-width: 120px;
+    display: flex;
+}
+
+.order_deal_status {
+    min-width: 120px;
+    display: flex;
 }
 
 .triangle {
@@ -77,4 +101,74 @@
 
 .triangle.active {
     transform: rotate(180deg);
+}
+
+.order-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    margin-top: 1rem;
+
+}
+
+.order-details.active {
+    max-height: 1000px; /* Ajusta este valor según el contenido */
+}
+
+.order-shipping-info {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1rem;
+
+    margin-bottom: 1rem;
+}
+
+.order-shipping-info > div {
+    width: 50%;
+}
+
+.order-shipping-info h3 {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    border-bottom: 1px solid var(--text-color);
+    font-family: var(--body-text);
+}
+
+.user-details {
+    display: flex;
+    gap: 1rem;
+}
+
+.user-details img {
+    width: 5.83rem;
+    height: 9.33rem;
+    object-fit: cover;
+}
+.order-book-item{
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    justify-content: space-between;
+}
+.order-book-item>div{
+    display: flex;
+    gap: 1rem;
+}
+.order-book-item img {
+    width: 5.83rem;
+    height: 9.33rem;
+    object-fit: cover;
+}
+.order-book-item-details h4 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+.order-book-item-details p {
+    font-size: 1.6rem;
+    margin-bottom: 0.3rem;
+}
+.book-price{
+    font-family: var(--body-text);
+    font-size: 2rem;
 }

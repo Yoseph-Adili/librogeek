@@ -93,7 +93,7 @@ const EarningLine = ({data}) => {
             },
             tooltip: {
                 backgroundColor: '#333',
-                bodyColor: '#787878',
+                bodyColor: '#ffffff',
             },
         },
         scales: {

@@ -52,7 +52,7 @@ const OrderLine = ({ method, data, color = '#28a745' }) => {
             },
             tooltip: {
                 backgroundColor: '#333',
-                bodyColor: '#787878',
+                bodyColor: '#ffffff',
             },
         },
         scales: {

@@ -22,6 +22,7 @@ import AdminLayout from "./layout/adminLayout.jsx";
 import AdminBooks from "./admin/adminBooks.jsx";
 import Earning from "./admin/earning.jsx";
 import Orders from "./admin/orders.jsx";
+import Users from "./admin/users.jsx";
 
 
 const UserContext = createContext();
@@ -113,7 +114,7 @@ function App() {
                         <Route path="/admin/books/category/:category" element={<AdminBooks />} />
                         <Route path="/admin/earning" element={<Earning/>}/>
                         <Route path="/admin/orders" element={<Orders/>}/>
-                        <Route path="/admin/users" element={<Orders/>}/>
+                        <Route path="/admin/users" element={<Users/>}/>
                     </Route>
 
 
