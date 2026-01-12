@@ -40,3 +40,35 @@
     font-family: var(--body-text);
     border-bottom: 1px solid var(--text-color);
 }
+.user-item{
+    display: flex;
+    border-bottom: 1px solid var(--text-color);
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+    justify-content: space-between;
+}
+.user-item div{
+    display: flex;
+    gap: 1rem;
+}
+.order_id{
+    min-width: 30px;
+}
+.user-name{
+    min-width: 100px;
+}
+.user-role{
+    min-width: 80px;
+    text-align: center;
+    border: 1px solid var(--text-color);
+    border-bottom: 0;
+    padding: 0.2rem 0.5rem;
+}
+.user-role.ADMIN{
+    color: var(--background-color);
+    background: var(--text-color);
+}
+.user-role.USER{
+    color: var(--text-color);
+    background: var(--background-color);
+}

@@ -1,6 +1,9 @@
 package com.librogeek.Services;
 
+import com.librogeek.Component.TokenManager;
 import com.librogeek.Component.VerificationCodeManager;
+import com.librogeek.DTO.BookCountDTO;
+import com.librogeek.Enums.Role;
 import com.librogeek.Models.User;
 import com.librogeek.Repositories.UserRepository;
 
@@ -14,6 +17,7 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,15 +41,17 @@ public class UserService {
     @Autowired
     private final EmailService emailService;
     private final VerificationCodeManager verificationCodeManager;
+    private final TokenManager tokenManager;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService, VerificationCodeManager verificationCodeManager) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService, VerificationCodeManager verificationCodeManager, TokenManager tokenManager) {
 
 
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.verificationCodeManager = verificationCodeManager;
+        this.tokenManager = tokenManager;
 
     }
 
@@ -268,13 +275,13 @@ public class UserService {
         return ServiceResult.success(null, "Verification email sent successfully");
     }
 
-    public ServiceResult<User> loginUserByEmailVerify(@RequestParam String code,@RequestParam String password) {
+    public ServiceResult<User> loginUserByEmailVerify(@RequestParam String code, @RequestParam String password) {
 
         String email = verificationCodeManager.verifyCodeWith(code);
         if (email == null) {
             return ServiceResult.failure("Invalid verification code");
         }
-        if (password==null || password.isEmpty()) {
+        if (password == null || password.isEmpty()) {
             return ServiceResult.failure("Password required");
         }
         User user = userRepository.getUserByEmail(email);
@@ -283,6 +290,52 @@ public class UserService {
 
         return ServiceResult.success(null, "user login successfully");
     }
+
+    public ServiceResult<List<User>> getAllUsers(String token) {
+        Integer userId = tokenManager.getUserId(token);
+        User user = this.getUserById(userId).getData();
+
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return ServiceResult.failure("Unauthorized access");
+        }
+
+        List<User> result = userRepository.findAll();
+
+
+        return ServiceResult.success(result, "Books retrieved successfully");
+    }
+
+    public ServiceResult<List<User>> getAllSearchUsers(String token, @Param("query") String search) {
+
+        Integer userId = tokenManager.getUserId(token);
+        User user = this.getUserById(userId).getData();
+
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return ServiceResult.failure("Unauthorized access");
+        }
+
+        if (search == null || search.isEmpty()) {
+            return ServiceResult.failure("Query parameter is required");
+        }
+
+
+        Integer queryAsUserId = null;
+        try {
+            queryAsUserId = Integer.parseInt(search.trim());
+        } catch (NumberFormatException ignored) {
+        }
+
+
+        List<User> result = userRepository.searchUsers(search, queryAsUserId);
+
+        if (result.isEmpty()) {
+            System.out.println("No users found matching the query: " + search);
+            return ServiceResult.failure("No users found matching the query");
+        }
+        System.out.println("users foun query: " + search);
+        return ServiceResult.success(result, "Users retrieved successfully");
+    }
+
 
 }
 

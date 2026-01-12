@@ -2,6 +2,7 @@ package com.librogeek.Controllers;
 
 import com.librogeek.Component.TokenBlacklist;
 import com.librogeek.Component.TokenManager;
+import com.librogeek.DTO.BookCountDTO;
 import com.librogeek.DTO.UserDTO;
 import com.librogeek.Repositories.UserRepository;
 import com.librogeek.Requests.ChangeNamesRequest;
@@ -23,6 +24,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -39,7 +45,7 @@ public class UserController {
 
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d+}")
     public ResponseEntity<ApiResponse> findById(@PathVariable Integer id) {
         ServiceResult<User> result = userService.getUserById(id);
         ApiResponse response = result.isSuccess()
@@ -323,5 +329,50 @@ public class UserController {
         }
 
         return ResponseEntity.ok(ApiResponse.success(null, "password changed successfully"));
+    }
+
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<ApiResponse> getAllUsers(
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid token"));
+        }
+        ServiceResult<List<User>> result = userService.getAllUsers(token);
+
+        return ResponseEntity.ok(ApiResponse.success(result.getData(),""));
+    }
+
+    @GetMapping("/getAllSearchUsers")
+    public ResponseEntity<ApiResponse> getAllSearchUsers(
+            @RequestHeader(name = "Authorization", required = false) String authHeader,
+            @RequestParam(required = false) String search
+    ){
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid token"));
+        }
+        ServiceResult<List<User>> result = userService.getAllSearchUsers(token,search);
+        System.out.println("users foun query: " + result.getData() + " for search: " + search);
+        if (!result.isSuccess()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(result.getMessage()));
+        }
+
+        return ResponseEntity.ok(ApiResponse.success(result.getData(),""));
     }
 }

@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -25,6 +27,9 @@ public class User {
     @NotEmpty
     @Email
     private String email;
+
+    @Column(name = "created_at", insertable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     public User() {
     }
@@ -94,4 +99,9 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
 }
