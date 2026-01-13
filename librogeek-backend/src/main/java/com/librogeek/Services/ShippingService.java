@@ -188,66 +188,66 @@ public class ShippingService {
         return ServiceResult.success(orders, "User purchased books retrieved successfully");
     }
 
-//    public ServiceResult<List<OrdersDTO>> getAllSearchUserOrders(String token, String search) {
-//        Integer userId = tokenManager.getUserId(token);
-//        User admin = userService.getUserById(userId).getData();
-//
-//        if (admin == null || admin.getRole() != Role.ADMIN) {
-//            return ServiceResult.failure("Unauthorized access");
-//        }
-//
-//        if (search == null || search.isEmpty()) {
-//            return ServiceResult.failure("Query parameter is required");
-//        }
-//
-//        Integer searchUserId = null;
-//        try {
-//            searchUserId = Integer.parseInt(search.trim());
-//        } catch (NumberFormatException ignored) {
-//        }
-//        List<User> users = userService.getAllSearchUsers(token, search).getData();
-//
-//        if (users.isEmpty()) {
-//            return ServiceResult.failure("No users found matching the query");
-//        }
-//
-//
-//        List<Integer> userIds = users.stream().map(User::getUser_id).toList();
-//
-//
-//        List<Payment> payments = paymentRepository.findPaymentsByUserIds(userIds);
-//        if (payments.isEmpty()) {
-//            return ServiceResult.failure("No orders found matching the query");
-//        }
-//
-//        Map<Integer, User> userMap = users.stream().collect(Collectors.toMap(User::getUser_id, u -> u));
-//        List<Integer> shippingIds = payments.stream()
-//                .map(Payment::getShippingInfoId)
-//                .filter(Objects::nonNull)
-//                .toList();
-//        Map<Integer, ShippingInfo> shippingMap = shippingInfoRepository.findAllById(shippingIds).stream()
-//                .collect(Collectors.toMap(ShippingInfo::getShippingInfoId, s -> s));
-//
-//
-//        List<OrdersDTO> orders = payments.stream().map(payment -> {
-//            List<Book> books = paymentRepository.findBooksByPaymentId(payment.getPaymentId());
-//            User user = userMap.get(payment.getUserId());
-//            ShippingInfo shipping = shippingMap.get(payment.getShippingInfoId());
-//            return new OrdersDTO(
-//                    payment.getPaymentId(),
-//                    books,
-//                    user,
-//                    shipping,
-//                    payment.getAmount(),
-//                    payment.getPaymentMethod(),
-//                    payment.getStatus(),
-//                    payment.getCreatedAt()
-//            );
-//        }).toList();
-//
-//
-//
-//        return ServiceResult.success(orders, "Orders retrieved successfully");
-//    }
+    public ServiceResult<List<OrdersDTO>> getAllSearchUserOrders(String token, String search) {
+        Integer userId = tokenManager.getUserId(token);
+        User admin = userService.getUserById(userId).getData();
+
+        if (admin == null || admin.getRole() != Role.ADMIN) {
+            return ServiceResult.failure("Unauthorized access");
+        }
+
+        if (search == null || search.isEmpty()) {
+            return ServiceResult.failure("Query parameter is required");
+        }
+
+        Integer searchUserId = null;
+
+        List<User> users = userService.getAllSearchUsers(token, search).getData();
+
+        if (users.isEmpty()) {
+            return ServiceResult.failure("No users found matching the query");
+        }
+
+
+        List<Integer> userIds = users.stream().map(User::getUser_id).toList();
+
+        if (userIds.isEmpty()){
+            return ServiceResult.failure("No users found matching the query");
+        }
+
+        List<Payment> payments = paymentRepository.findByUserIdIn(userIds);
+        if (payments.isEmpty()) {
+            return ServiceResult.failure("No orders found matching the query");
+        }
+
+        Map<Integer, User> userMap = users.stream().collect(Collectors.toMap(User::getUser_id, u -> u));
+        List<Integer> shippingIds = payments.stream()
+                .map(Payment::getShippingInfoId)
+                .filter(Objects::nonNull)
+                .toList();
+        Map<Integer, ShippingInfo> shippingMap = shippingInfoRepository.findAllById(shippingIds).stream()
+                .collect(Collectors.toMap(ShippingInfo::getShippingInfoId, s -> s));
+
+
+        List<OrdersDTO> orders = payments.stream().map(payment -> {
+            List<Book> books = paymentRepository.findBooksByPaymentId(payment.getPaymentId());
+            User user = userMap.get(payment.getUserId());
+            ShippingInfo shipping = shippingMap.get(payment.getShippingInfoId());
+            return new OrdersDTO(
+                    payment.getPaymentId(),
+                    books,
+                    user,
+                    shipping,
+                    payment.getAmount(),
+                    payment.getPaymentMethod(),
+                    payment.getStatus(),
+                    payment.getCreatedAt()
+            );
+        }).toList();
+
+
+
+        return ServiceResult.success(orders, "Orders retrieved successfully");
+    }
 
 }

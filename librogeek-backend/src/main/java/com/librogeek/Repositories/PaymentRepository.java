@@ -25,7 +25,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
     List<Book> findBooksByPaymentId(@Param("paymentId") Integer paymentId);
 
 
-//    List<Payment> findPaymentsByUser(String search, Integer searchUserId);
-//
-//    List<Payment> findPaymentsByUserIds(List<Integer> userIds);
+
+    List<Payment> findByUserIdIn(List<Integer> userIds);
+
 }

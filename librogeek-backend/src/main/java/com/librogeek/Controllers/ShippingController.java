@@ -150,27 +150,27 @@ public class ShippingController {
             @RequestHeader(name = "Authorization", required = false) String authHeader,
             @RequestParam(required = false) String search
     ){
-        return ResponseEntity.ok(ApiResponse.success(null,""));
+//        return ResponseEntity.ok(ApiResponse.success(null,""));
 
 
-//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//                    .body(ApiResponse.error("No token provided"));
-//        }
-//
-//        String token = authHeader.substring(7);
-//        if (!tokenManager.isTokenValid(token)) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//                    .body(ApiResponse.error("Invalid token"));
-//        }
-////        ServiceResult<List<OrdersDTO>> result = shippingService.getAllSearchUserOrders(token,search);
-//
-//        System.out.println("users foun query: " + result.getData() + " for search: " + search);
-//        if (!result.isSuccess()) {
-//            return ResponseEntity.badRequest()
-//                    .body(ApiResponse.error(result.getMessage()));
-//        }
-//
-//        return ResponseEntity.ok(ApiResponse.success(result.getData(),""));
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid token"));
+        }
+        ServiceResult<List<OrdersDTO>> result = shippingService.getAllSearchUserOrders(token,search);
+
+        System.out.println("users foun query: " + result.getData() + " for search: " + search);
+        if (!result.isSuccess()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(result.getMessage()));
+        }
+
+        return ResponseEntity.ok(ApiResponse.success(result.getData(),""));
     }
 }

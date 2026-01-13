@@ -23,16 +23,25 @@ const Orders = () => {
         const url = `${API_URL}/shipping/${searchQuery.trim() ? "getAllSearchUserOrders" : "allUserOrders"}?${params.toString()}`;
 
         fetch(url, {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    setOrders(data.data);
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
                 }
+                return res.text();
             })
-            .catch(err => console.error(err));
+            .then(text => text ? JSON.parse(text) : { success: true, data: [] })
+            .then(data => {
+                setOrders(data.data || []);
+            })
+            .catch(err => {
+                console.error(err);
+                setOrders([]);
+            });
+
 
     }, [loginUser, searchQuery, token]);
 
@@ -70,7 +79,7 @@ const Orders = () => {
     }
 
     const ordersByMethod = groupOrdersByMethodAndDate(orders);
-    console.log(orders)
+    // console.log(orders)
 
     return (
         <div className={"orders-page-container"}>
@@ -91,7 +100,8 @@ const Orders = () => {
                     </g>
                 </svg>
             </form>
-            <div className="orders-line-container">
+            <div className="orders-line-container" style={{ display: orders.length === 0 ? "none" : "flex" }}
+            >
                 {Object.entries(ordersByMethod).map(([method, data]) => (
                     <OrderLine
                         key={method}

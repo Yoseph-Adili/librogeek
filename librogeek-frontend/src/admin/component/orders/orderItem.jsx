@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {STATIC_URL} from "../../../config/api.js";
 
 const OrderItem = ({order}) => {
-    console.log(order)
+
     const date = new Date(order.createdAt).toISOString().split('T')[0];
 
     const [open, setOpen] = useState(false);
