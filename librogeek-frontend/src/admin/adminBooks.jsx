@@ -203,11 +203,15 @@ const AdminBooks = () => {
         <div className="filter-option-container">
 
             <CustomizeTitle key={categoryTitle} title={categoryTitle}></CustomizeTitle>
-            <p style={{'--i': 1}} onClick={() => {
+            <div className="section-container" >
+            <p  onClick={() => {
                 setCategoriesContainer(true);
             }}
+                id={"category-button"}
             >Category</p>
-            <form style={{'--i': 0}} action="">
+                <Link to={"/admin/books/addBook"} id={"add-book-button"}>Add Book</Link>
+            </div>
+            <form action="">
                 <input type="text" name="name"
                        onChange={(e) => {
                            setSearchQuery(e.target.value)
@@ -215,7 +219,6 @@ const AdminBooks = () => {
             </form>
             <div id={"selected-tags-container"}
                  style={{
-                     '--i': 2,
                      marginTop: selectedTags.length === 0 ? '0px' : '2rem',
                  }}>
                 {selectedTags.map((selectedTag) => (
@@ -227,8 +230,8 @@ const AdminBooks = () => {
                     </span>
                 ))}
             </div>
-            <div className="section-container">
-            <div style={{'--i': 2}} className="type-sections">
+            <div className="section-container" >
+            <div  className="type-sections">
                 <p>Type</p>
                 <div className="type-options">
 
@@ -243,7 +246,7 @@ const AdminBooks = () => {
                     ))}
                 </div>
             </div>
-            <div style={{'--i': 3}} className="sort-sections">
+            <div  className="sort-sections">
                 <p>Sort by</p>
                 <div className="sort-options">
 
@@ -255,13 +258,13 @@ const AdminBooks = () => {
                 </div>
             </div>
             </div>
-            <div className="section-container">
-            <p style={{'--i': 4}} id="tags-sections" onClick={() => {
+            <div className="section-container" >
+            <p  id="tags-sections" onClick={() => {
                 setTagsContainer(true)
             }}>Tags</p>
 
 
-            <div style={{'--i': 5}} className="list-book-style">
+            <div  className="list-book-style">
 
 
                 <svg onClick={() => toggleLayout(false)}

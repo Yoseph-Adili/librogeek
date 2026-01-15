@@ -1,18 +1,40 @@
-#admin-nav-links li:nth-of-type(2):hover ~ .nav-menu-line,
-#admin-nav-links li:nth-of-type(2).active ~ .nav-menu-line
-{
+#admin-nav-links li:nth-of-type(1).active ~ .nav-menu-line {
+    left: 0%;
+    opacity: 1;
+}
+
+#admin-nav-links li:nth-of-type(2).active ~ .nav-menu-line {
     left: 26%;
     opacity: 1;
 }
 
-#admin-nav-links li:nth-of-type(3):hover ~ .nav-menu-line,
-#admin-nav-links li:nth-of-type(3).active ~ .nav-menu-line{
+#admin-nav-links li:nth-of-type(3).active ~ .nav-menu-line {
     left: 56%;
     opacity: 1;
 }
 
-#admin-nav-links li:nth-of-type(4):hover ~ .nav-menu-line,
-#admin-nav-links li:nth-of-type(4).active ~ .nav-menu-line{
+#admin-nav-links li:nth-of-type(4).active ~ .nav-menu-line {
+    left: 83.5%;
+    opacity: 1;
+}
+
+/* hover */
+#admin-nav-links li:nth-of-type(1):hover ~ .nav-menu-line {
+    left: 0%;
+    opacity: 1;
+}
+
+#admin-nav-links li:nth-of-type(2):hover ~ .nav-menu-line {
+    left: 26%;
+    opacity: 1;
+}
+
+#admin-nav-links li:nth-of-type(3):hover ~ .nav-menu-line {
+    left: 56%;
+    opacity: 1;
+}
+
+#admin-nav-links li:nth-of-type(4):hover ~ .nav-menu-line {
     left: 83.5%;
     opacity: 1;
 }

@@ -84,6 +84,7 @@ const Login = () => {
                 if (data?.success) {
                     console.log("User logged in:", data.data);
                     setUser(data.data);
+                    window.location="/"
                 } else {
                     setUser(null);
                     console.log("User not logged in");
