@@ -6,10 +6,12 @@ import com.librogeek.DTO.BookDTO;
 import com.librogeek.DTO.BookWithLessInfoDTO;
 import com.librogeek.DTO.earningDTO;
 import com.librogeek.Models.Book;
+import com.librogeek.Requests.AddBookRequest;
 import com.librogeek.Requests.AddTagRequest;
 import com.librogeek.Services.BookService;
 import com.librogeek.Utils.ApiResponse;
 import com.librogeek.Utils.ServiceResult;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -17,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,7 +65,6 @@ public class BookController {
     }
 
 
-
     @GetMapping("/getMostReadCategory")
     public ResponseEntity<ApiResponse> mostReadCategory() {
         ServiceResult<List<List<Book>>> result = bookService.getBookByMostReadCategory();
@@ -81,6 +83,7 @@ public class BookController {
         ServiceResult<List<String>> result = bookService.getCategories();
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
+
     @GetMapping("/getAllTypes")
     public ResponseEntity<ApiResponse> getAllTypes() {
         ServiceResult<List<String>> result = bookService.getAllTypes();
@@ -111,6 +114,7 @@ public class BookController {
         ServiceResult<BookDTO> result = bookService.addToBookshelf(book_id, token);
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
     }
+
     @GetMapping("/book/pdf/{book_id}")
     public ResponseEntity<Resource> getBookPdfById(
             @PathVariable Integer book_id,
@@ -252,6 +256,7 @@ public class BookController {
                 ApiResponse.success(result.getData(), result.getMessage())
         );
     }
+
     @GetMapping("/allBooksCount")
     public ResponseEntity<ApiResponse> allBooksCount(
             @RequestHeader(name = "Authorization", required = false) String authHeader) {
@@ -268,6 +273,41 @@ public class BookController {
         }
         ServiceResult<List<BookCountDTO>> result = bookService.allBooksCount(token);
 
-        return ResponseEntity.ok(ApiResponse.success(result.getData(),""));
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), ""));
+    }
+
+    @PostMapping("/addBook")
+    public ResponseEntity<?> addBook(
+            @Valid AddBookRequest request,
+            @RequestPart(value = "cover_image", required = false) MultipartFile coverImage,
+            @RequestPart(value = "book_file", required = false) MultipartFile bookFile,
+            @RequestHeader(name = "Authorization", required = false) String authHeader
+    ) {
+        System.out.println("add book request:"
+                + request.getTitle()
+                + ", " + request.getAuthor()
+                + ", " + request.getPrice()
+                + ", " + request.getBookType()
+                + ", " + request.getCategory()
+                + ", " + request.getDescription()
+        );
+        System.out.println("cover image:" + (coverImage != null ? coverImage.getOriginalFilename() : "null"));
+        System.out.println("book file:" + (bookFile != null ? bookFile.getOriginalFilename() : "null"));
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid or expired token"));
+        }
+        Integer tokenUserId = tokenManager.getUserId(token);
+
+        ServiceResult<Book> result = bookService.addBook(request, coverImage, bookFile, tokenUserId);
+        System.out.println("add book result:" + result.getData());
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+
     }
 }

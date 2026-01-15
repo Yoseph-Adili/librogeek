@@ -28,10 +28,13 @@ public class Book {
     @NotNull
     @Enumerated(EnumType.STRING)
     private BookType bookType;
-    @NotEmpty
+    @NotNull
     private Integer uploaded_by;
-    private Integer views;
-    private Integer downloads;
+    @Column(nullable = false)
+    private Integer views = 0;
+    @Column(nullable = false)
+    private Integer downloads = 0;
+
     @DecimalMin(value = "0.0", inclusive = true)
     private BigDecimal  price;
     @Column(name = "created_at", insertable = false, updatable = false)

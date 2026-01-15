@@ -8,15 +8,25 @@ import com.librogeek.Enums.Role;
 import com.librogeek.Models.*;
 
 import com.librogeek.Repositories.*;
+import com.librogeek.Requests.AddBookRequest;
 import com.librogeek.Utils.ServiceResult;
+
+import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -176,7 +186,7 @@ public class BookService {
         boolean inBookshelf = false;
         boolean ableToRead = true;
 
-      if (book.get().getPrice().compareTo(BigDecimal.ZERO) > 0)  {
+        if (book.get().getPrice().compareTo(BigDecimal.ZERO) > 0) {
             ableToRead = false;
         }
 
@@ -187,7 +197,6 @@ public class BookService {
                 if (book.get().getPrice().compareTo(BigDecimal.ZERO) > 0) {
                     ableToRead = purchasedBookRepository.existsByBookIdAndUserId(book_id, tokenUserId);
                 }
-
 
 
             } catch (JWTDecodeException e) {
@@ -263,7 +272,7 @@ public class BookService {
             return ServiceResult.failure("No book found");
         }
         BigDecimal price = book.get().getPrice();
-        if (price != null && price.compareTo(BigDecimal.ZERO) > 0){
+        if (price != null && price.compareTo(BigDecimal.ZERO) > 0) {
             Integer userId = tokenManager.getUserId(token);
             ServiceResult<User> user = userService.getUserById(userId);
             if (token == null || token.isEmpty() || user.getData() == null) {
@@ -341,7 +350,7 @@ public class BookService {
     }
 
     public ServiceResult<List<Book>> userBookShelf(String token) {
-        Integer userId=tokenManager.getUserId(token);
+        Integer userId = tokenManager.getUserId(token);
         List<Book> bookResult = bookShelfRepository.findBooksByUserBookShelf(userId);
 
         if (bookResult.isEmpty()) {
@@ -352,11 +361,11 @@ public class BookService {
     }
 
     public ServiceResult<List<Book>> userHistory(String token) {
-        Integer userId=tokenManager.getUserId(token);
+        Integer userId = tokenManager.getUserId(token);
         List<Book> bookResult = historyRepository.findBooksByUserHistory(userId);
 
         if (bookResult.isEmpty()) {
-            return  ServiceResult.failure("No books found");
+            return ServiceResult.failure("No books found");
         }
         return ServiceResult.success(bookResult, "Books retrieved successfully");
     }
@@ -379,6 +388,95 @@ public class BookService {
                 .toList();
 
         return ServiceResult.success(bookResult, "Books retrieved successfully");
+    }
+
+    public ServiceResult<Book> addBook(
+            AddBookRequest request,
+            @Valid MultipartFile coverImage,
+            @Valid MultipartFile bookFile,
+            Integer tokenUserId
+    ) {
+
+        User user = userService.getUserById(tokenUserId).getData();
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return ServiceResult.failure("Unauthorized access");
+        }
+
+
+        if (coverImage == null || coverImage.isEmpty()) {
+            return ServiceResult.failure("No cover image provided");
+        }
+        if (!coverImage.getContentType().startsWith("image/")) {
+            return ServiceResult.failure("Invalid cover image type");
+        }
+
+
+        if (request.getBookType() == BookType.PDF) {
+            if (bookFile == null || bookFile.isEmpty()) {
+                return ServiceResult.failure("No book file provided for PDF");
+            }
+            if (!bookFile.getContentType().equals("application/pdf")) {
+                return ServiceResult.failure("Invalid PDF file type");
+            }
+        }
+
+
+        Path coverDir = Paths.get("librogeek-backend/uploads/books/covers/");
+        Path pdfDir   = Paths.get("librogeek-backend/uploads/books/PDFs/");
+
+        try {
+
+            if (!Files.exists(coverDir)) Files.createDirectories(coverDir);
+            if (!Files.exists(pdfDir)) Files.createDirectories(pdfDir);
+
+
+            String coverExt = getFileExtension(coverImage.getOriginalFilename());
+            String coverFilename = "book_" + System.currentTimeMillis() + "_" + UUID.randomUUID() + coverExt;
+            Path finalCoverPath = coverDir.resolve(coverFilename);
+            try (InputStream input = coverImage.getInputStream()) {
+                Files.copy(input, finalCoverPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+
+            String pdfFilename = null;
+            if (bookFile != null && !bookFile.isEmpty()) {
+                String pdfExt = getFileExtension(bookFile.getOriginalFilename());
+                pdfFilename = "bookfile_" + System.currentTimeMillis() + "_" + UUID.randomUUID() + pdfExt;
+                Path finalPdfPath = pdfDir.resolve(pdfFilename);
+                try (InputStream input = bookFile.getInputStream()) {
+                    Files.copy(input, finalPdfPath, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+
+
+            Book savedBook = new Book();
+            savedBook.setTitle(request.getTitle());
+            savedBook.setAuthor(request.getAuthor());
+            savedBook.setCategory(request.getCategory());
+            savedBook.setDescription(request.getDescription());
+            savedBook.setPrice(request.getPrice());
+            savedBook.setBookType(request.getBookType());
+            savedBook.setCover_image("covers/" + coverFilename);
+            savedBook.setFile_path(pdfFilename);
+            savedBook.setUploaded_by(user.getUser_id());
+
+            bookRepository.save(savedBook);
+
+
+            return ServiceResult.success(savedBook, "Book added successfully");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ServiceResult.failure("Failed to save files: " + e.getMessage());
+        }
+    }
+
+
+    private String getFileExtension(String filename) {
+        if (filename != null && filename.contains(".")) {
+            return filename.substring(filename.lastIndexOf("."));
+        }
+        return "";
     }
 
 
