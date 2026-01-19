@@ -24,6 +24,7 @@ import Earning from "./admin/earning.jsx";
 import Orders from "./admin/orders.jsx";
 import Users from "./admin/users.jsx";
 import AddBook from "./admin/addBook.jsx";
+import EditBook from "./admin/editBook.jsx";
 
 
 const UserContext = createContext();
@@ -117,6 +118,7 @@ function App() {
                         <Route path="/admin/orders" element={<Orders/>}/>
                         <Route path="/admin/users" element={<Users/>}/>
                         <Route path="/admin/books/addBook" element={<AddBook/>}/>
+                        <Route path="/admin/book/:bookId" element={<EditBook/>}/>
                     </Route>
 
 

@@ -15,6 +15,8 @@ public class AddBookRequest {
     private String author;
 
 
+
+    @jakarta.validation.constraints.PositiveOrZero
     private BigDecimal price;
 
     @NotNull(message = "bookType is required")

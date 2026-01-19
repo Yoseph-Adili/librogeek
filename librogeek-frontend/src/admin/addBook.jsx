@@ -102,13 +102,12 @@ const AddBook = () => {
                 let cropWidth, cropHeight, cropX, cropY;
 
                 if (srcRatio > targetRatio) {
-                    // 图片太宽，裁左右
+
                     cropHeight = srcHeight;
                     cropWidth = cropHeight * targetRatio;
                     cropX = (srcWidth - cropWidth) / 2;
                     cropY = 0;
                 } else {
-                    // 图片太高，裁上下
                     cropWidth = srcWidth;
                     cropHeight = cropWidth / targetRatio;
                     cropX = 0;
@@ -187,7 +186,7 @@ const AddBook = () => {
             return;
         }
 
-        if (price === "" || isNaN(price) || Number(price) < 0) {
+        if (isNaN(price) || Number(price) < 0) {
             alert("price must be a non-negative number");
             return;
         }
@@ -208,7 +207,17 @@ const AddBook = () => {
         controllerFormData.set("author", author);
         controllerFormData.set("category", category);
         controllerFormData.set("description", description);
-        controllerFormData.set("price", parseFloat(price));
+        const rawPrice = price?.trim();
+
+        let finalPrice = 0.00;
+
+        if (rawPrice !== "" && !isNaN(rawPrice)) {
+            finalPrice = Number(rawPrice);
+        }
+
+        controllerFormData.set("price", finalPrice.toFixed(2));
+
+
         controllerFormData.set("bookType", bookOptions);
 
         if (image) {
@@ -232,7 +241,7 @@ const AddBook = () => {
             .then(data => {
                 if (data.success) {
                     alert("successfully added");
-                    // window.location.reload();
+                    window.location.reload();
                 } else {
                     alert("failed: " + data.message);
                 }

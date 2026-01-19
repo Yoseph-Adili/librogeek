@@ -20,8 +20,9 @@ public class Book {
     private String title;
     private String author;
     private String description;
-    @NotEmpty
+
     private String file_path;
+    @NotEmpty
     private String cover_image;
     @NotEmpty
     private String category;

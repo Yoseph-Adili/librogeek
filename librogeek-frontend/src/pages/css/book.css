@@ -55,6 +55,7 @@
 }
 .book-info h1 {
     font-size: 3rem;
+    max-width: 550px;
 }
 
 .book-info a {

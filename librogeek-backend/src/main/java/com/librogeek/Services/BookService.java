@@ -297,7 +297,8 @@ public class BookService {
                 historyRepository.save(history);
             }
         }
-
+        book.get().setViews(book.get().getViews() + 1);
+        bookRepository.save(book.get());
         return ServiceResult.success(book.get().getFile_path(), "Book retrieved successfully");
 
     }
@@ -422,7 +423,7 @@ public class BookService {
 
 
         Path coverDir = Paths.get("librogeek-backend/uploads/books/covers/");
-        Path pdfDir   = Paths.get("librogeek-backend/uploads/books/PDFs/");
+        Path pdfDir = Paths.get("librogeek-backend/uploads/books/PDFs/");
 
         try {
 
