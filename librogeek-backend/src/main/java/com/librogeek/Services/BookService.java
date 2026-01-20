@@ -9,12 +9,12 @@ import com.librogeek.Models.*;
 
 import com.librogeek.Repositories.*;
 import com.librogeek.Requests.AddBookRequest;
+import com.librogeek.Requests.EditBookRequest;
 import com.librogeek.Utils.ServiceResult;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
@@ -470,6 +470,102 @@ public class BookService {
             e.printStackTrace();
             return ServiceResult.failure("Failed to save files: " + e.getMessage());
         }
+    }
+
+    public ServiceResult<Book> editBook(
+            EditBookRequest request,
+            Integer tokenUserId
+    ) {
+
+        User user = userService.getUserById(tokenUserId).getData();
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return ServiceResult.failure("Unauthorized access");
+        }
+
+
+        Book savedBook = bookRepository.findById(request.getBookId()).orElse(null);
+        if (savedBook == null) {
+            return ServiceResult.failure("Book not found");
+        }
+        savedBook.setTitle(request.getTitle());
+        savedBook.setAuthor(request.getAuthor());
+        savedBook.setCategory(request.getCategory());
+        savedBook.setDescription(request.getDescription());
+        savedBook.setPrice(request.getPrice());
+        savedBook.setBookType(request.getBookType());
+        savedBook.setUploaded_by(user.getUser_id());
+
+        bookRepository.save(savedBook);
+
+
+        return ServiceResult.success(savedBook, "Book updated successfully");
+
+    }
+
+    public ServiceResult<Book> updateCover(
+            MultipartFile coverImage,
+            Integer tokenUserId,
+            Integer bookId
+    ) {
+
+        User user = userService.getUserById(tokenUserId).getData();
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return ServiceResult.failure("Unauthorized access");
+        }
+
+        if (coverImage == null || coverImage.isEmpty()) {
+            return ServiceResult.failure("No cover image provided");
+        }
+
+        String contentType = coverImage.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            return ServiceResult.failure("Invalid cover image type");
+        }
+
+        long maxSize = 5 * 1024 * 1024;
+        if (coverImage.getSize() > maxSize) {
+            return ServiceResult.failure("Cover image too large (max 5MB)");
+        }
+
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        Path coverDir = Paths.get("librogeek-backend/uploads/books/covers/");
+        try {
+            Files.createDirectories(coverDir);
+        } catch (IOException e) {
+            return ServiceResult.failure("Failed to create cover directory");
+        }
+
+        String ext = getFileExtension(coverImage.getOriginalFilename()).toLowerCase();
+        if (!List.of(".jpg", ".jpeg", ".png", ".webp").contains(ext)) {
+            return ServiceResult.failure("Only JPG, PNG, WEBP images allowed");
+        }
+
+        String newFilename = "book_" + System.currentTimeMillis() + "_" + UUID.randomUUID() + ext;
+        Path newPath = coverDir.resolve(newFilename);
+
+        try (InputStream in = coverImage.getInputStream()) {
+            Files.copy(in, newPath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            return ServiceResult.failure("Failed to save cover image");
+        }
+
+        String oldCover = book.getCover_image();
+        book.setCover_image("covers/"+newFilename);
+        bookRepository.save(book);
+
+        if (oldCover != null && !oldCover.isBlank()) {
+            try {
+                Path oldPath = coverDir.resolve(Paths.get(oldCover).getFileName());
+                Files.deleteIfExists(oldPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        return ServiceResult.success(book, "Cover updated successfully");
     }
 
 

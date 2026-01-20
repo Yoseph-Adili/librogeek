@@ -50,6 +50,7 @@ public class SecurityConfig {
             "/api/books/book/comment/{book_id}",
             "/api/books/book/pdf/{bookId}",
             "/api/books/book/bookPage/{book_id}",
+            "/api/books/updateCover/{book_id}",
 //            "/api/debug/cover/{fileName}"
 //            "/api/users/changeUserNames/{user_id}",
 

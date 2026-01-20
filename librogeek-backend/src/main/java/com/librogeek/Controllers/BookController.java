@@ -8,6 +8,7 @@ import com.librogeek.DTO.earningDTO;
 import com.librogeek.Models.Book;
 import com.librogeek.Requests.AddBookRequest;
 import com.librogeek.Requests.AddTagRequest;
+import com.librogeek.Requests.EditBookRequest;
 import com.librogeek.Services.BookService;
 import com.librogeek.Utils.ApiResponse;
 import com.librogeek.Utils.ServiceResult;
@@ -306,6 +307,66 @@ public class BookController {
         Integer tokenUserId = tokenManager.getUserId(token);
 
         ServiceResult<Book> result = bookService.addBook(request, coverImage, bookFile, tokenUserId);
+        System.out.println("add book result:" + result.getData());
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+
+    }
+
+    @PatchMapping("/editBook")
+    public ResponseEntity<?> editBook(
+            @Valid @RequestBody  EditBookRequest request,
+            @RequestHeader(name = "Authorization", required = false) String authHeader
+    ) {
+
+        System.out.println("edit book request:"
+                + request.getBookId()
+                + ", " + request.getTitle()
+                + ", " + request.getAuthor()
+                + ", " + request.getPrice()
+                + ", " + request.getBookType()
+                + ", " + request.getCategory()
+                + ", " + request.getDescription()
+        );
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid or expired token"));
+        }
+        Integer tokenUserId = tokenManager.getUserId(token);
+
+        ServiceResult<Book> result = bookService.editBook(request, tokenUserId);
+        System.out.println("updated book result:" + result.getData());
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+
+    }
+    @PostMapping("/updateCover/{book_id}")
+    public ResponseEntity<?> updateCover(
+            @PathVariable Integer book_id,
+            @RequestPart(value = "cover_image", required = false) MultipartFile coverImage,
+            @RequestHeader(name = "Authorization", required = false) String authHeader
+    ) {
+
+        System.out.println(
+                "update cover for book id:"
+                + book_id
+                + ", cover image:" + (coverImage != null ? coverImage.getOriginalFilename() : "null")
+        );
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid or expired token"));
+        }
+        Integer tokenUserId = tokenManager.getUserId(token);
+
+        ServiceResult<Book> result = bookService.updateCover(coverImage,tokenUserId,book_id);
         System.out.println("add book result:" + result.getData());
         return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
 

@@ -31,10 +31,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/api/books/getCategories",
             "/api/books/getMostReadCategory",
             "/api/books/getMostDownloaded",
+            "/api/books/updateCover/",
             "/api/books/book/",
             "/api/books/book/bookshelf/",
             "/api/books/book/pdf/",
             "/api/books/book/bookPage/",
+
 
 
             "/api/shipping/addShippingRequest",
