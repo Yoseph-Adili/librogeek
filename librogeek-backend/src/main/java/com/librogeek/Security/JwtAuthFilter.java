@@ -36,7 +36,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/api/books/book/bookshelf/",
             "/api/books/book/pdf/",
             "/api/books/book/bookPage/",
-
+            "/api/books/deleteBook/",
 
 
             "/api/shipping/addShippingRequest",
@@ -47,10 +47,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     );
 
 
-
     @Autowired
     private TokenManager tokenManager;
-
 
 
     @Override

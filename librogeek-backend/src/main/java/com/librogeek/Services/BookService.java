@@ -568,7 +568,48 @@ public class BookService {
         return ServiceResult.success(book, "Cover updated successfully");
     }
 
+    public ServiceResult<Book> deleteBook(
+            Integer bookId,
+            Integer tokenUserId
+    ) {
 
+        User user = userService.getUserById(tokenUserId).getData();
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return ServiceResult.failure("Unauthorized access");
+        }
+
+
+        Book book = bookRepository.findById(bookId).orElse(null);
+        if (book == null) {
+            return ServiceResult.failure("Book not found");
+        }
+        Path coverDir = Paths.get("librogeek-backend/uploads/books/covers/");
+        Path fileDir = Paths.get("librogeek-backend/uploads/books/PDFs/");
+        String oldCover = book.getCover_image();
+        String oldFile = book.getFile_path();
+
+        if (oldCover != null && !oldCover.isBlank()) {
+            try {
+                Path oldPath = coverDir.resolve(Paths.get(oldCover).getFileName());
+                Files.deleteIfExists(oldPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (oldFile != null && !oldFile.isBlank()) {
+            try {
+                Path oldPath = fileDir.resolve(Paths.get(oldFile).getFileName());
+                Files.deleteIfExists(oldPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        bookRepository.delete(book);
+
+
+        return ServiceResult.success(null, "Book updated successfully");
+
+    }
     private String getFileExtension(String filename) {
         if (filename != null && filename.contains(".")) {
             return filename.substring(filename.lastIndexOf("."));

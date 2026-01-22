@@ -157,7 +157,7 @@ const AddBook = () => {
 
     function addBook(e) {
         e.preventDefault();
-
+        if (!loginUser || loginUser.role !== "ADMIN") return;
         const formData = new FormData(e.target);
 
         const title = formData.get("title")?.trim();

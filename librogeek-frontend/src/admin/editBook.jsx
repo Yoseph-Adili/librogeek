@@ -176,11 +176,45 @@ const EditBook = () => {
             })
             .catch(err => alert("Error: " + err.message));
     }
+    function deleteBook() {
 
+
+        if (!loginUser || loginUser.role !== "ADMIN") {
+            alert("You must be an admin to edit books.");
+            return;
+        }
+
+
+        if (book.book_type!== "PDF" && book.book_type!== "PHYSICAL"){
+            alert("Book type must be either 'PDF' or 'PHYSICAL'.");
+            return;
+        }
+
+
+        fetch(`${API_URL}/books/deleteBook/${bookId}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            credentials: "include"
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Book deleted successfully");
+                    window.location="/admin/books"
+                } else {
+                    alert("Failed: " + data.message);
+                }
+            })
+            .catch(err => alert("Server error: " + err.message));
+    }
     return (
         <div className="edit-book-page-container">
             <div className="book-info-container">
                 <form className="book-cover edit-cover-container" onSubmit={uploadCroppedPhoto}>
+                    <div>
                     {image && <img src={image} alt="cover"/>}
 
                     <input
@@ -212,6 +246,9 @@ const EditBook = () => {
                     </label>
 
                     <button className="edit-cover-button">Edit Cover</button>
+                    </div>
+                    {/*<br/>*/}
+                    <span onClick={deleteBook} className={"delete-book-button"}>Delete</span>
                 </form>
 
                 <form className="book-info edit-form" onSubmit={editBook}>

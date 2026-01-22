@@ -54,6 +54,34 @@ public class UserController {
         return ResponseEntity.status(result.isSuccess() ? HttpStatus.OK : HttpStatus.NOT_FOUND)
                 .body(response);
     }
+    @GetMapping("/editUser/{user_id}")
+    public ResponseEntity<ApiResponse> changeUserEmail(
+            @PathVariable Integer user_id,
+            @RequestHeader(name = "Authorization", required = false) String authHeader) throws MessagingException {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("No token provided"));
+        }
+
+        String token = authHeader.substring(7);
+        if (!tokenManager.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid or expired token"));
+        }
+        Integer tokenUserId = tokenManager.getUserId(token);
+
+
+
+        ServiceResult<User> result = userService.editUser(user_id, tokenUserId);
+
+        if (!result.isSuccess()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(result.getMessage()));
+        }
+
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getMessage()));
+    }
 
 
     @PostMapping("/login")

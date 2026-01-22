@@ -337,5 +337,20 @@ public class UserService {
     }
 
 
+    public ServiceResult<User> editUser(Integer user_id,Integer tokenUserId) {
+
+        User user = this.getUserById(tokenUserId).getData();
+        if (user == null || user.getRole() != Role.ADMIN) {
+            return ServiceResult.failure("Unauthorized access");
+        }
+
+        User userToEdit = this.getUserById(user_id).getData();
+        if (userToEdit == null) {
+            return ServiceResult.failure("User not found");
+        }
+        return ServiceResult.success(userToEdit, "user found successfully");
+    }
+
+
 }
 

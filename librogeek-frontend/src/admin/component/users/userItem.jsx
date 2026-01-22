@@ -19,7 +19,7 @@ const UserItem = ({user}) => {
                 {/*<p className="order_deal_status">{order.paymentStatus}</p>*/}
                 <p className={`user-role ${user.role}`}>{user.role}</p>
                 <p className="order_date">{date}</p>
-                <Link to={"/admin/user"}>
+                <Link to={"/admin/user/"+user.user_id} className="edit-user-btn">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width={"24"} height={"24"}>
                         <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
                         <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
