@@ -1,11 +1,17 @@
 import "./adminNav.css"
-import {Link, useMatch, useResolvedPath} from "react-router-dom";
+import {Link, Navigate, useMatch, useResolvedPath} from "react-router-dom";
 import LogoContainer from "./logoContainer.jsx";
 
 import AdminChangeThemeContainer from "./adminChangeThemeContainer.jsx";
+import {useContext} from "react";
+import {UserContext} from "../../../App.jsx";
 
 const AdminNav = () => {
-
+    const { loginUser } = useContext(UserContext);
+    if (loginUser === undefined) return <div className="page-loading">Loading...</div>;
+    // if (loginUser === undefined) return <Navigate to="/login" replace />;
+    if (!loginUser) return <Navigate to="/login" replace />;
+    if (loginUser.role !== "ADMIN") return <Navigate to="/" replace />;
     return (
         <header>
             <div className="navbar-background"></div>

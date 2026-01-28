@@ -1,130 +1,112 @@
 import './css/login.css'
 import Logo from "../component/logo.jsx";
-import {Link, Navigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import alert from "../config/utils.js";
-import {API_URL} from "../config/api.js";
-import {useContext, useEffect} from "react";
-import {UserContext} from "../App.jsx";
+import { API_URL } from "../config/api.js";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../App.jsx";
 
 const Login = () => {
-    const {loginUser} = useContext(UserContext);
-    if (loginUser)     return <Navigate to="/" replace />;
+    const { loginUser, setLoginUser } = useContext(UserContext);
+    const navigate = useNavigate();
+
+    const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        fetch(`${API_URL}/users/status`, {
+            credentials: "include",
+            headers: {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            }
+        })
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data?.success) {
+                    setLoginUser(data.data);
+                    navigate("/", { replace: true });
+                }
+            })
+            .catch(() => {});
+    }, []);
+
     async function loginForm(e) {
         e.preventDefault();
         const formData = new FormData(e.target);
+        const username = formData.get("username")?.trim();
+        const password = formData.get("password")?.trim();
 
+        const newErrors = {};
 
-        const username = formData.get("username")
-        const password = formData.get("password")
+        if (!username) newErrors.username = true;
+        if (!password) newErrors.password = true;
+        else if (password.length < 8) newErrors.password = "len";
 
-
-        if (username.trim() === "") {
-            document.querySelector("#username").style.borderColor = "red"
-            alert("username must be fulled")
-            return
+        if (Object.keys(newErrors).length) {
+            setErrors(newErrors);
+            alert("Please fix the form errors");
+            return;
         }
-
-        if (password.trim() === "") {
-            document.querySelector("#password").style.borderColor = "red"
-            alert("password must be fulled")
-            return
-        }else if(password.length < 8){
-            document.querySelector("#password").style.borderColor = "red"
-            alert("password must be at least 8 characters long")
-            return
-        }
-
-
-        const user = {
-            username: username, password: password,
-        };
-
 
         try {
             const res = await fetch(`${API_URL}/users/login`, {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(user),
+                headers: { "Content-Type": "application/json" },
                 credentials: "include",
+                body: JSON.stringify({ username, password })
             });
 
             const data = await res.json();
 
-
             if (res.ok) {
                 localStorage.setItem("token", data.data);
-                alert("successfully logged in");
-                return <Navigate to="/" replace />;
+                setLoginUser(data.user || true);
+                alert("Successfully logged in");
+                navigate(-1);
             } else {
-                alert("login failed" + data.message);
+                alert(data.message || "Login failed");
             }
         } catch (err) {
-            alert("internal server error" + err.message);
+            alert("Server error: " + err.message);
         }
     }
 
-    useEffect(() => {
-        fetch(`${API_URL}/users/status`,
-            {
-                credentials: "include",
-                headers: {
-                    "Authorization": "Bearer " + localStorage.getItem("token")
-                }
-            })
-            .then(async res => {
-                console.log("HTTP status:", res.status);
-                if (res.ok) return res.json();
-                else {
-                    const errData = await res.json().catch(() => null);
-                    console.log("Error response:", errData);
-                    return null;
-                }
-            })
-            .then(data => {
-                if (data?.success) {
-                    console.log("User logged in:", data.data);
-                    setUser(data.data);
-                    window.location="/"
-                } else {
-                    setUser(null);
-                    console.log("User not logged in");
-                }
-            })
-            .catch(err => {
-                console.error("Fetch error:", err);
-            });
+    if (loginUser) return null;
 
-
-
-
-    }, []);
     return (
-
-        <main className={"login-main"}>
-            <Link to={"/"}>
-                <Logo className={"logo-tag"}></Logo>
+        <main className="login-main">
+            <Link to="/">
+                <Logo className="logo-tag" />
                 <span>ibroGeek</span>
             </Link>
-            <form action="" onSubmit={loginForm}>
 
+            <form onSubmit={loginForm}>
                 <label htmlFor="username">User Name</label>
-                <input type="text" name="username" id="username"/>
+                <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    className={errors.username ? "input-error" : ""}
+                />
+
                 <label htmlFor="password">Password</label>
-                <input type="password" name="password" id="password"/>
-                <div className={"login-container"}>
-                <Link to={"/forgetPassword"}>Forget password?</Link>
-                <button>
-                    Login
-                </button>
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    className={errors.password ? "input-error" : ""}
+                />
+
+                <div className="login-container">
+                    <Link to="/forgetPassword">Forget password?</Link>
+                    <button type="submit">Login</button>
                 </div>
             </form>
+
             <div>
-                <Link to={"/"}>Return to home page</Link>
-                <Link to={"/register"}>No account?</Link>
+                <Link to="/">Return to home page</Link>
+                <Link to="/register">No account?</Link>
             </div>
-
         </main>
-
     );
 };
 

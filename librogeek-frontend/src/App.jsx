@@ -81,7 +81,10 @@ function App() {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-        if (!token) return;
+        if (!token){
+            setLoginUser(null);
+            return;
+        }
 
         fetch(`${API_URL}/users/status`, {
             credentials: "include",

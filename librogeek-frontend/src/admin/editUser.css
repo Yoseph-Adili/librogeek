@@ -5,3 +5,33 @@
     padding-top: 15vh;
     max-width: 1300px;
 }
+#edit-user-form p{
+    font-size: 1.5rem;
+    border-bottom:1px solid var(--text-color);
+}
+#edit-user-form input, #edit-user-form span{
+    font-size: 2rem;
+    border:none;
+ }
+
+#edit-user-form input:focus{
+    outline:none;
+    border: 1px solid var(--second-color);
+
+}
+#edit-user-form button{
+    padding: 0.5rem 1rem;
+    font-size: 2rem;
+    background-color: var(--text-color);
+    color: var(--background-color);
+    cursor: pointer;
+    font-family: var(--body-text);
+    display: flex;
+    justify-content: center;
+}
+.address-label{
+    font-size: 2rem;
+    font-family: var(--body-text);
+    margin-top: 1rem;
+    border-bottom: 1px solid var(--text-color);
+}
